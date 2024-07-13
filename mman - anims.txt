@@ -1,0 +1,8 @@
+121 158 - idle
+134 162 - run
+217 196 - attack
+
+Idle - 120 136 Left-x3(0,0) Right-x3(0,136)  Origin - R-60x68
+
+TransRun - 135x136 Left-x1(0,0) Right-x1(0,136) Origin - 67.5x73
+Run -136x140 - Left-x10(0,0) Right-x10(0,140) Origin - 68x70

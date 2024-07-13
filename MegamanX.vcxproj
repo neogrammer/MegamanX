@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{b0611bf0-af29-4f22-8fea-ee8c70410d19}</ProjectGuid>
+    <RootNamespace>MegamanX</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdclatest</LanguageStandard_C>
+      <AdditionalIncludeDirectories>C:\Users\jlhar\source\repos\MegamanX\src;C:\sdks\sfml_64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\sdks\sfml_64\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openal32.lib;sfml-system-d.lib;sfml-window-d.lib;sfml-graphics-d.lib;sfml-audio-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\action\Action.cpp" />
+    <ClCompile Include="src\app\Game.cpp" />
+    <ClCompile Include="src\app\Wndw.cpp" />
+    <ClCompile Include="src\game_state\GameState.cpp" />
+    <ClCompile Include="src\game_state\game_states\SandboxState.cpp" />
+    <ClCompile Include="src\mgmt\AnimationMgr.cpp" />
+    <ClCompile Include="src\mgmt\CollisionMgr.cpp" />
+    <ClCompile Include="src\mgmt\GameStateMgr.cpp" />
+    <ClCompile Include="src\mgmt\StageMgr.cpp" />
+    <ClCompile Include="src\res\Cfg.cpp" />
+    <ClCompile Include="src\sprite\Animation.cpp" />
+    <ClCompile Include="src\sprite\ASprite.cpp" />
+    <ClCompile Include="src\sprite\sprites\Bullet.cpp" />
+    <ClCompile Include="src\sprite\sprites\Player.cpp" />
+    <ClCompile Include="src\sprite\sprites\Tile.cpp" />
+    <ClCompile Include="src\stage\Stage.cpp" />
+    <ClCompile Include="src\stage\stages\SandboxStage.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameState.hpp" />
+    <ClInclude Include="src\action\Action.hpp" />
+    <ClInclude Include="src\action\ActionMap.hpp" />
+    <ClInclude Include="src\action\ActionTarget.hpp" />
+    <ClInclude Include="src\app\Game.hpp" />
+    <ClInclude Include="src\app\Wndw.hpp" />
+    <ClInclude Include="src\game_state\GameState.hpp" />
+    <ClInclude Include="src\game_state\game_states\SandboxState.hpp" />
+    <ClInclude Include="src\mgmt\AnimationMgr.hpp" />
+    <ClInclude Include="src\mgmt\CollisionMgr.hpp" />
+    <ClInclude Include="src\mgmt\GameStateMgr.hpp" />
+    <ClInclude Include="src\mgmt\StageMgr.hpp" />
+    <ClInclude Include="src\misc\globals.hpp" />
+    <ClInclude Include="src\res\Cfg.hpp" />
+    <ClInclude Include="src\res\ResourceManager.hpp" />
+    <ClInclude Include="src\sprite\Animation.hpp" />
+    <ClInclude Include="src\sprite\ASprite.hpp" />
+    <ClInclude Include="src\sprite\sprites\Bullet.hpp" />
+    <ClInclude Include="src\sprite\sprites\Player.hpp" />
+    <ClInclude Include="src\sprite\sprites\Tile.hpp" />
+    <ClInclude Include="src\stage\Stage.hpp" />
+    <ClInclude Include="src\stage\stages\SandboxStage.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\action\tpl\ActionMap.tpl" />
+    <None Include="src\action\tpl\ActionTarget.tpl" />
+    <None Include="src\res\tpl\ResourceManager.tpl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\tex\megaman\idle120x136_3_60x76.png" />
+    <Image Include="assets\tex\megaman\run136x140_10_68x70.png" />
+    <Image Include="assets\tex\megaman\trans_run135x136_1_67pt5x72.png" />
+    <Image Include="assets\tex\projectiles\bustershot_normal.png" />
+    <Image Include="assets\tex\tilesets\tileset1.png" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

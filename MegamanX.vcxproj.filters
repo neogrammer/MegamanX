@@ -1,0 +1,257 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\misc">
+      <UniqueIdentifier>{d96f35f2-6a02-4e00-99ca-fd434fd552d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\app">
+      <UniqueIdentifier>{85d740f1-6146-448c-beeb-d2750a475250}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\action">
+      <UniqueIdentifier>{f00598bb-c4a2-478f-9c23-671bec1c96ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\app">
+      <UniqueIdentifier>{aa5a9d7a-0923-4f00-8e9f-5c989886e158}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\action">
+      <UniqueIdentifier>{6cdbe48d-2f72-426b-9294-2c9c35aa0ff1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mgmt">
+      <UniqueIdentifier>{3cd8040a-751c-49d3-97bc-7cd56292fab0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\action\tpl">
+      <UniqueIdentifier>{bb793fed-7f81-4b21-8833-0583dbd06f57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\res">
+      <UniqueIdentifier>{cb892328-0377-46a3-ba92-4671e7695056}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\res\tpl">
+      <UniqueIdentifier>{7512741e-07a8-40f2-ad22-1ce965ab5742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\res">
+      <UniqueIdentifier>{f8850283-d28a-4555-a999-dbd25bdd0d99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\map">
+      <UniqueIdentifier>{c09c0e16-c99e-478b-be3f-a3e48edde2ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\map">
+      <UniqueIdentifier>{5bf3c0bd-cddc-419f-9a80-9f6a226db9c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mgmt">
+      <UniqueIdentifier>{86954068-3b89-44c8-99d3-f9882b9372fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\assets">
+      <UniqueIdentifier>{fef97080-3812-42de-8ab8-2d6842359019}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\assets\tex">
+      <UniqueIdentifier>{9071b6bb-37fd-4877-a8ec-d4e03c4620d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\assets\tex\tilesets">
+      <UniqueIdentifier>{4f6a3f84-e7d9-44d0-b981-c38ef11d4c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\assets\tex\megaman">
+      <UniqueIdentifier>{06c75a76-61d6-4757-93b9-5359db9131a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game_state">
+      <UniqueIdentifier>{4184fbf8-bcff-4df7-b7b4-a54a68f43cd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game_state">
+      <UniqueIdentifier>{ccc323a0-ca1e-4293-bee8-987fedc729a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\game_state\game_states">
+      <UniqueIdentifier>{9b146121-fbf1-48f4-93dc-05f7d9dac2da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\game_state\game_states">
+      <UniqueIdentifier>{0e0af7c0-4cc8-4c27-9798-dd482393350f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\stage">
+      <UniqueIdentifier>{7ec11f9c-d516-4483-91e5-1637e290b226}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\stage\stages">
+      <UniqueIdentifier>{76686812-cbf0-4444-8b9a-49056e23e2af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\stage">
+      <UniqueIdentifier>{bb74936b-fd5d-40df-8294-694fcc544fa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\stage\stages">
+      <UniqueIdentifier>{192e2b45-8934-4f3b-a0d7-f6651e2cc6cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\sprite">
+      <UniqueIdentifier>{90a97d59-3207-4753-ba66-3979c7af86e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\sprite\sprites">
+      <UniqueIdentifier>{1f218c0a-e24d-469b-ba4e-5ffa225a01d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sprite">
+      <UniqueIdentifier>{c750f54f-efea-49a8-ab04-e2423d91a5ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sprite\sprites">
+      <UniqueIdentifier>{9da3fd8e-944c-4533-a479-6aa91d915117}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\assets\tex\projectiles">
+      <UniqueIdentifier>{aa32c9b4-7179-409a-9ed2-3a617e90d28a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\app\Game.cpp">
+      <Filter>Source Files\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\Wndw.cpp">
+      <Filter>Source Files\app</Filter>
+    </ClCompile>
+    <ClCompile Include="src\action\Action.cpp">
+      <Filter>Source Files\action</Filter>
+    </ClCompile>
+    <ClCompile Include="src\res\Cfg.cpp">
+      <Filter>Source Files\res</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game_state\GameState.cpp">
+      <Filter>Source Files\game_state</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game_state\game_states\SandboxState.cpp">
+      <Filter>Source Files\game_state\game_states</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mgmt\GameStateMgr.cpp">
+      <Filter>Source Files\mgmt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stage\Stage.cpp">
+      <Filter>Source Files\stage</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stage\stages\SandboxStage.cpp">
+      <Filter>Source Files\stage\stages</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mgmt\StageMgr.cpp">
+      <Filter>Source Files\mgmt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sprite\sprites\Bullet.cpp">
+      <Filter>Source Files\sprite\sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sprite\sprites\Tile.cpp">
+      <Filter>Source Files\sprite\sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sprite\ASprite.cpp">
+      <Filter>Source Files\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mgmt\CollisionMgr.cpp">
+      <Filter>Source Files\mgmt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sprite\Animation.cpp">
+      <Filter>Source Files\sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mgmt\AnimationMgr.cpp">
+      <Filter>Source Files\mgmt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sprite\sprites\Player.cpp">
+      <Filter>Source Files\sprite\sprites</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\app\Game.hpp">
+      <Filter>Header Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\res\Cfg.hpp">
+      <Filter>Header Files\res</Filter>
+    </ClInclude>
+    <ClInclude Include="src\res\ResourceManager.hpp">
+      <Filter>Header Files\res</Filter>
+    </ClInclude>
+    <ClInclude Include="src\misc\globals.hpp">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\Wndw.hpp">
+      <Filter>Header Files\app</Filter>
+    </ClInclude>
+    <ClInclude Include="src\action\Action.hpp">
+      <Filter>Header Files\action</Filter>
+    </ClInclude>
+    <ClInclude Include="src\action\ActionMap.hpp">
+      <Filter>Header Files\action</Filter>
+    </ClInclude>
+    <ClInclude Include="src\action\ActionTarget.hpp">
+      <Filter>Header Files\action</Filter>
+    </ClInclude>
+    <ClInclude Include="GameState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game_state\GameState.hpp">
+      <Filter>Header Files\game_state</Filter>
+    </ClInclude>
+    <ClInclude Include="src\game_state\game_states\SandboxState.hpp">
+      <Filter>Header Files\game_state\game_states</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mgmt\GameStateMgr.hpp">
+      <Filter>Header Files\mgmt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stage\Stage.hpp">
+      <Filter>Header Files\stage</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stage\stages\SandboxStage.hpp">
+      <Filter>Header Files\stage\stages</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mgmt\StageMgr.hpp">
+      <Filter>Header Files\mgmt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sprite\ASprite.hpp">
+      <Filter>Header Files\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sprite\sprites\Bullet.hpp">
+      <Filter>Header Files\sprite\sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sprite\sprites\Tile.hpp">
+      <Filter>Header Files\sprite\sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mgmt\CollisionMgr.hpp">
+      <Filter>Header Files\mgmt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sprite\Animation.hpp">
+      <Filter>Header Files\sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mgmt\AnimationMgr.hpp">
+      <Filter>Header Files\mgmt</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sprite\sprites\Player.hpp">
+      <Filter>Header Files\sprite\sprites</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\res\tpl\ResourceManager.tpl">
+      <Filter>Header Files\res\tpl</Filter>
+    </None>
+    <None Include="src\action\tpl\ActionMap.tpl">
+      <Filter>Header Files\action\tpl</Filter>
+    </None>
+    <None Include="src\action\tpl\ActionTarget.tpl">
+      <Filter>Header Files\action\tpl</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\tex\megaman\run136x140_10_68x70.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\trans_run135x136_1_67pt5x72.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\tilesets\tileset1.png">
+      <Filter>Resource Files\assets\tex\tilesets</Filter>
+    </Image>
+    <Image Include="assets\tex\projectiles\bustershot_normal.png">
+      <Filter>Resource Files\assets\tex\projectiles</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\idle120x136_3_60x76.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
