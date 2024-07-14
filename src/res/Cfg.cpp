@@ -10,6 +10,8 @@ ResourceManager<sf::SoundBuffer, int> Cfg::sounds = {};
 
 ActionMap<int> Cfg::playerInputs = {};
 
+float Cfg::Gravity = 4200.f;
+
 void Cfg::Initialize()
 {
     initTextures();
@@ -48,8 +50,8 @@ void Cfg::initPlayerInputs()
 	// Keyboard pressed commands
 	playerInputs.map(Cfg::PlayerInputs::X, Action(sf::Keyboard::Num9));
 	playerInputs.map(Cfg::PlayerInputs::Y, Action(sf::Keyboard::Num5));
-	playerInputs.map(Cfg::PlayerInputs::A, Action(sf::Keyboard::Space));
-	playerInputs.map(Cfg::PlayerInputs::B, Action(sf::Keyboard::Num0));
+	playerInputs.map(Cfg::PlayerInputs::A, Action(sf::Keyboard::Num0));
+	playerInputs.map(Cfg::PlayerInputs::B, Action(sf::Keyboard::Space));
 	playerInputs.map(Cfg::PlayerInputs::L1, Action(sf::Keyboard::Num7));
 	playerInputs.map(Cfg::PlayerInputs::R1, Action(sf::Keyboard::Add));
 	// menu controls

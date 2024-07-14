@@ -37,6 +37,10 @@ protected:
 	SpriteType type_{ SpriteType::Count };
 	bool grounded_{ false };
 	bool affectedByGravity_{ false };
+	bool movingRight_{ false };
+	bool movingLeft_{ false };
+	bool facingRight_{ true };
+
 	sf::Sprite spr_;
 	sf::Vector2f vel_;
 	sf::Time gameTime_;

@@ -1,6 +1,9 @@
 #include "Player.hpp"
 #include <res/Cfg.hpp>
 #include <iostream>
+
+float Player::JumpForce = -1600.f;
+float Player::MoveSpeed = 600.f;
 Player::Player()
 	: ASprite{ SpriteType::Actor, Cfg::textures.get((int)Cfg::Textures::PlayerIdle) }
 	, ActionTarget<int>{Cfg::playerInputs}
@@ -20,10 +23,7 @@ Player::Player()
 	affectedByGravity_ = true;
 	grounded_ = false;
 
-	bind(Cfg::PlayerInputs::Up, [this](const sf::Event&) {
-		// what the fuck!
-		std::cout << "Working! Finally, dumbass..  don't tell noone.. well you can tell Gemini." << std::endl;
-		});
+	
 
 	bindActions();
 }
@@ -45,6 +45,9 @@ Player& Player::operator=(const Player& other)
 
 void Player::processInput()
 {
+	movingRight_ = false;
+	movingLeft_ = false;
+	jumpHeld_ = false;
 	ActionTarget<int>::processEvents();
 }
 
@@ -55,15 +58,81 @@ void Player::update(const sf::Time& l_dt)
 	if (affectedByGravity_)
 	{
 		if (!grounded_)
-			vel_.y += 98.f * l_dt.asSeconds();
+		{
+			if (!jumpHeld_ && jumpLetGo_ && vel_.y < -40.f)
+			{
+				vel_.y = -40.f;
+				jumpLetGo_ = false;
+			}
+
+			vel_.y += Cfg::Gravity * l_dt.asSeconds();
+		}
+
+
 
 	}
+	// apply input force, if any
+	if (!movingLeft_ && !movingRight_)
+	{
+		vel_.x = 0.f;
+	}
+	else
+	{
+		if (movingLeft_)
+		{
+			vel_.x = -Player::MoveSpeed;
+		}
+		if (movingRight_)
+		{
+			vel_.x = Player::MoveSpeed;
+		}
+	}
+	animMgr.SetFacingRight(facingRight_);
+
 	gameTime_ = l_dt;
 	animMgr.Update(l_dt);
 }
 
 void Player::bindActions()
 {
+	bind(Cfg::PlayerInputs::Up, [this](const sf::Event&) {
+		
+		
+		});
 
+	bind(Cfg::PlayerInputs::Right, [this](const sf::Event&) {
+		if (movingLeft_)
+		{
+			movingLeft_ = false;
+		}
+		else
+		{
+			movingRight_ = true;
+			facingRight_ = true;
+		}
+		});
+
+	bind(Cfg::PlayerInputs::Left, [this](const sf::Event&) {
+		if (movingRight_)
+		{
+			movingRight_ = false;
+		}
+		else
+		{
+			movingLeft_ = true;
+			facingRight_ = false;
+		}
+		});
+
+	bind(Cfg::PlayerInputs::B, [this](const sf::Event&) {
+		jumpHeld_ = true;
+		
+		if (grounded_)
+		{
+			grounded_ = false;
+			jumpLetGo_ = true;
+			vel_.y = Player::JumpForce;
+		}
+		});
 }
 

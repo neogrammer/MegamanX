@@ -27,6 +27,7 @@ void AnimationMgr::Update(const sf::Time& l_dt)
 	{
 		return;
 	}
+	m_currAnim->m_facingRight = m_facingRight;
 
 	m_currAnim->update(l_dt);
 	
@@ -40,4 +41,9 @@ void AnimationMgr::Update(const sf::Time& l_dt)
 		m_currAnim = m_fallback;
 		m_fallback = nullptr;
 	}
+}
+
+void AnimationMgr::SetFacingRight(bool l_facingRight)
+{
+	m_facingRight = l_facingRight;
 }

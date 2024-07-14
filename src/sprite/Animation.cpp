@@ -113,7 +113,10 @@ void Animation::update(const sf::Time& l_dt)
 			animate();
 		}
 
+
 		m_spr->setTexture(*m_texture);
+		
+		
 		if (m_facingRight)
 		{
 			m_spr->setTextureRect(m_framesRight[m_currFrame]);

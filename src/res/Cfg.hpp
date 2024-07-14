@@ -38,7 +38,7 @@ struct Cfg
 	static ResourceManager<sf::SoundBuffer, int> sounds;
 
 	static ActionMap<int> playerInputs;
-
+	static float Gravity;
 private:
     // initalize the resources for the entire game
     static void initFonts();
