@@ -127,6 +127,7 @@
     <None Include="src\res\tpl\ResourceManager.tpl" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="assets\tex\enemies\BirdSheet110x148_3Rows_7_9_2.png" />
     <Image Include="assets\tex\megaman\idle120x136_3_60x76.png" />
     <Image Include="assets\tex\megaman\run136x140_10_68x70.png" />
     <Image Include="assets\tex\megaman\trans_run135x136_1_67pt5x72.png" />

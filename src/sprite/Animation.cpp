@@ -131,52 +131,97 @@ void Animation::update(const sf::Time& l_dt)
 
 void Animation::animate()
 {
-	if (m_currFrame == 0Ui64)
+	if (m_loopStartWait)
 	{
-		if (m_loopStartWait &&  m_loopStartWaitTimer.getElapsedTime().asSeconds() > m_loopStartWaitTime)
+		if (m_currFrame == 0Ui64)
 		{
-			if (m_numFrames > 1)
-				m_currFrame++;
+			if (m_loopStartWaitTimer.getElapsedTime().asSeconds() > m_loopStartWaitTime)
+			{
+				if (m_numFrames > 1)
+					m_currFrame++;
+			}
 		}
-	}
-
-
-	else if (m_currFrame + 1 < m_numFrames - 1)
-	{
-		m_currFrame++;
-		m_isOnLastFrame = false;
-
-	}
-	else if (m_currFrame + 1 == m_numFrames - 1)
-	{
-		m_currFrame++;
-		m_isOnLastFrame = true;
-		m_lingerTimer.restart();
-	}
-	else
-	{
-		if (m_looping)
+		else if (m_currFrame + 1 < m_numFrames - 1)
 		{
-			m_loopStartWaitTimer.restart();
-			m_currFrame = 0Ui64;
+			m_currFrame++;
 			m_isOnLastFrame = false;
+
+		}
+		else if (m_currFrame + 1 == m_numFrames - 1)
+		{
+			m_currFrame++;
+			m_isOnLastFrame = true;
+			m_lingerTimer.restart();
 		}
 		else
 		{
-			if (m_persistent)
+			if (m_looping)
 			{
-				m_currFrame = m_numFrames - 1;
-				m_isOnLastFrame = true;
-				m_popMe = false;
+				m_loopStartWaitTimer.restart();
+				m_currFrame = 0Ui64;
+				m_isOnLastFrame = false;
 			}
 			else
 			{
-				
-				m_currFrame = m_numFrames - 1;
-				m_isOnLastFrame = true;
-				if (m_lingerTimer.getElapsedTime() > m_lingerTime)
+				if (m_persistent)
 				{
-					m_popMe = true;
+					m_currFrame = m_numFrames - 1;
+					m_isOnLastFrame = true;
+					m_popMe = false;
+				}
+				else
+				{
+
+					m_currFrame = m_numFrames - 1;
+					m_isOnLastFrame = true;
+					if (m_lingerTimer.getElapsedTime() > m_lingerTime)
+					{
+						m_popMe = true;
+					}
+				}
+			}
+		}
+		
+	}
+	else
+	{
+		if (m_currFrame + 1 < m_numFrames - 1)
+		{
+			m_currFrame++;
+			m_isOnLastFrame = false;
+
+		}
+		else if (m_currFrame + 1 == m_numFrames - 1)
+		{
+			m_currFrame++;
+			m_isOnLastFrame = true;
+			m_lingerTimer.restart();
+		}
+		else
+		{
+			if (m_looping)
+			{
+				m_loopStartWaitTimer.restart();
+				m_currFrame = 0Ui64;
+				m_isOnLastFrame = false;
+			}
+			else
+			{
+				if (m_persistent)
+				{
+					m_currFrame = m_numFrames - 1;
+					m_isOnLastFrame = true;
+					m_popMe = false;
+				}
+				else
+				{
+
+					m_currFrame = m_numFrames - 1;
+					m_isOnLastFrame = true;
+					if (m_lingerTimer.getElapsedTime() > m_lingerTime)
+					{
+						m_popMe = true;
+					}
 				}
 			}
 		}

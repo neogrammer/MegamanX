@@ -112,6 +112,9 @@
     <Filter Include="Resource Files\assets\data\tileset">
       <UniqueIdentifier>{54e1217e-396b-4512-8a31-908f865efc71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\assets\tex\enemies">
+      <UniqueIdentifier>{748ca4b4-341a-489a-b185-3a50ff45b6d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -279,6 +282,9 @@
     </Image>
     <Image Include="assets\tex\megaman\idle120x136_3_60x76.png">
       <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\enemies\BirdSheet110x148_3Rows_7_9_2.png">
+      <Filter>Resource Files\assets\tex\enemies</Filter>
     </Image>
   </ItemGroup>
 </Project>

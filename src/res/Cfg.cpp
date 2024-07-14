@@ -39,6 +39,7 @@ void Cfg::initTextures()
 	textures.load((int)Textures::PlayerIdle, "assets/tex/megaman/idle120x136_3_60x76.png");
 	textures.load((int)Textures::PlayerRun, "assets/tex/megaman/run136x140_10_68x70.png");
 	textures.load((int)Textures::PlayerTransRun, "assets/tex/megaman/trans_run135x136_1_67pt5x72.png");
+	textures.load((int)Textures::BirdSheetWSaw, "assets/tex/enemies/BirdSheet110x148_3Rows_7_9_2.png");
 
 
 }

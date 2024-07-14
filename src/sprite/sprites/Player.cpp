@@ -12,10 +12,10 @@ Player::Player()
 		3Ui64, 1Ui64, 0.24f, 0.f, true, true, true, true, 5.f);
 
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerRun), AnimLayoutType::Horizontal, AnimType::Run, 10Ui64, { {0,0},{136,140} },
-		10Ui64, 1Ui64, 0.24f, 0.f, true, true, true);
+		10Ui64, 1Ui64, 0.075f, 0.f, true, true, true);
 
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerTransRun), AnimLayoutType::Horizontal, AnimType::TransRun, 1Ui64, { {0,0},{135,136} },
-		1Ui64, 1Ui64, 0.24f, 0.f, true, false, false);
+		1Ui64, 1Ui64, 0.14f, 0.f, true, false, false);
 
 	spr_.setOrigin({ 60.f, 68.f });
 	spr_.setPosition({ 600.f, 496.f - 68.f - 64.f });
@@ -75,16 +75,42 @@ void Player::update(const sf::Time& l_dt)
 	if (!movingLeft_ && !movingRight_)
 	{
 		vel_.x = 0.f;
+		// if (grounded_)
+		animMgr.SwitchAnimation(AnimType::Idle);
 	}
 	else
 	{
+		
 		if (movingLeft_)
 		{
 			vel_.x = -Player::MoveSpeed;
+			if (grounded_)
+			{
+				grounded_ = false;
+				Cfg::Gravity = 100.f;
+			}
+			else
+			{
+				Cfg::Gravity = 4200.f;
+			}
+			// if (grounded_)
+			animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
 		}
 		if (movingRight_)
 		{
 			vel_.x = Player::MoveSpeed;
+			if (grounded_)
+			{
+				grounded_ = false;
+				Cfg::Gravity = 100.f;
+			}
+			else
+			{
+				Cfg::Gravity = 4200.f;
+			}
+
+			// if (grounded_)
+			animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
 		}
 	}
 	animMgr.SetFacingRight(facingRight_);
@@ -109,6 +135,7 @@ void Player::bindActions()
 		{
 			movingRight_ = true;
 			facingRight_ = true;
+
 		}
 		});
 
@@ -121,6 +148,8 @@ void Player::bindActions()
 		{
 			movingLeft_ = true;
 			facingRight_ = false;
+			
+
 		}
 		});
 
@@ -132,6 +161,7 @@ void Player::bindActions()
 			grounded_ = false;
 			jumpLetGo_ = true;
 			vel_.y = Player::JumpForce;
+			Cfg::Gravity = 4200.f;
 		}
 		});
 }

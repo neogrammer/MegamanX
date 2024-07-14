@@ -13,33 +13,40 @@ void AnimationMgr::AddAnimation(sf::Sprite& l_spr, sf::Texture& l_tex, AnimLayou
 
 void AnimationMgr::SwitchAnimation(AnimType l_type, AnimType l_fallback)
 {
-	m_currAnim = &m_animMap[l_type];
-
-	if (l_fallback != AnimType::Count)
+	if (l_type != m_currAnim->m_type && l_fallback != m_currAnim->m_type)
 	{
-		m_fallback = &m_animMap[l_fallback];
+		m_currAnim = &m_animMap[l_type];
+
+		if (l_fallback != AnimType::Count)
+		{
+			m_fallback = &m_animMap[l_fallback];
+		}
 	}
 }
 
 void AnimationMgr::Update(const sf::Time& l_dt)
 {
+
 	if (!m_currAnim)
 	{
 		return;
 	}
-	m_currAnim->m_facingRight = m_facingRight;
-
-	m_currAnim->update(l_dt);
-	
-	if (m_currAnim->m_popMe)
+	if (m_currAnim->m_isOnLastFrame && m_currAnim->m_popMe && m_fallback != nullptr)
 	{
+		m_currAnim->m_facingRight = m_facingRight;
+
 		m_currAnim->m_popMe = false;
-		if (!m_fallback)
-		{
-			return;
-		}
-		m_currAnim = m_fallback;
+		m_currAnim->Reset();
+		m_currAnim = &m_animMap[m_fallback->m_type];
 		m_fallback = nullptr;
+		m_currAnim->Reset();
+		m_currAnim->Play();
+	}
+	else
+	{
+		m_currAnim->m_facingRight = m_facingRight;
+
+		m_currAnim->update(l_dt);
 	}
 }
 

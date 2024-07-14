@@ -1,5 +1,7 @@
 #include "CollisionMgr.hpp"
 #include <sprite/sprites/Bullet.hpp>
+
+#include <sprite/sprites/Player.hpp>
 #include <misc/globals.hpp>
 sf::FloatRect CollisionMgr::m_currOverlap = { { 0.f, 0.f }, { 0.f,0.f } };
 sf::FloatRect CollisionMgr::m_prevOverlap = { { 0.f, 0.f }, { 0.f,0.f } };
@@ -57,22 +59,49 @@ bool CollisionMgr::IsColliding(ASprite& l_sprA, ASprite& l_sprB)
 void CollisionMgr::ResolveActor(ASprite& l_spr)
 {
 	
-	if (m_prevOverlap.width < 0 && m_prevOverlap.height < 0)
+	if (m_prevOverlap.width <= 0 && m_prevOverlap.height <= 0)
 	{
-		l_spr.vel().x = 0.f;
-		l_spr().setPosition(l_spr().getPosition().x - m_currOverlap.width, l_spr().getPosition().y);
-	}
-	else if (m_prevOverlap.width < 0)
-	{
-		l_spr.vel().x = 0.f;
-		l_spr().setPosition(l_spr().getPosition().x - m_currOverlap.width, l_spr().getPosition().y);
+		if (m_currOverlap.width >= m_currOverlap.height)
+		{
+			l_spr.vel().y = 0.f;
+			l_spr().setPosition(l_spr().getPosition().x, l_spr().getPosition().y - m_currOverlap.height);
+			l_spr.SetGrounded(true);
+		}
+		else
+		{
+			l_spr.vel().x = 0.f;
+			l_spr().setPosition(l_spr().getPosition().x - m_currOverlap.width, l_spr().getPosition().y);
+		}
 	}
 	else
 	{
-		l_spr.vel().y = 0.f;
-		l_spr().setPosition(l_spr().getPosition().x, l_spr().getPosition().y - m_currOverlap.height);
-		l_spr.SetGrounded(true);
+		if (abs(m_currOverlap.height - m_prevOverlap.height) <= abs(m_currOverlap.width - m_prevOverlap.width))
+		{
+			l_spr.vel().y = 0.f;
+			l_spr().setPosition(l_spr().getPosition().x, l_spr().getPosition().y - (m_currOverlap.height - m_prevOverlap.height));
+			l_spr.SetGrounded(true);
+		}
+		else
+		{
+			l_spr.vel().x = 0.f;
+			l_spr().setPosition(l_spr().getPosition().x - m_currOverlap.width, l_spr().getPosition().y);
+		}
 	}
+	//else
+	//{
+	/*	if (m_prevOverlap.width <= 0 && m_prevOverlap.height > 0)
+		{
+			l_spr.vel().x = 0.f;
+			l_spr().setPosition(l_spr().getPosition().x - m_currOverlap.width, l_spr().getPosition().y);
+		}
+		else if (m_prevOverlap.height <= 0 && m_prevOverlap.width > 0)
+		{
+			l_spr.vel().y = 0.f;
+			l_spr().setPosition(l_spr().getPosition().x, l_spr().getPosition().y - m_currOverlap.height);
+			l_spr.SetGrounded(true);
+		}*/
+		
+	//}
 }
 
 void CollisionMgr::ResolveProjectile(ASprite& l_sprA, ASprite& l_sprB)
