@@ -115,6 +115,9 @@
     <Filter Include="Resource Files\assets\tex\enemies">
       <UniqueIdentifier>{748ca4b4-341a-489a-b185-3a50ff45b6d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\misc">
+      <UniqueIdentifier>{488af0c9-3e49-40dc-a996-9114a5a86453}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -174,6 +177,9 @@
     </ClCompile>
     <ClCompile Include="src\map\Tilemap.cpp">
       <Filter>Source Files\map</Filter>
+    </ClCompile>
+    <ClCompile Include="src\misc\aabb.cpp">
+      <Filter>Source Files\misc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -248,6 +254,9 @@
     </ClInclude>
     <ClInclude Include="src\map\Tilemap.hpp">
       <Filter>Header Files\map</Filter>
+    </ClInclude>
+    <ClInclude Include="src\misc\aabb.hpp">
+      <Filter>Header Files\misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -84,31 +84,14 @@ void Player::update(const sf::Time& l_dt)
 		if (movingLeft_)
 		{
 			vel_.x = -Player::MoveSpeed;
-			if (grounded_)
-			{
-				grounded_ = false;
-				Cfg::Gravity = 100.f;
-			}
-			else
-			{
-				Cfg::Gravity = 4200.f;
-			}
+		
 			// if (grounded_)
 			animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
 		}
 		if (movingRight_)
 		{
 			vel_.x = Player::MoveSpeed;
-			if (grounded_)
-			{
-				grounded_ = false;
-				Cfg::Gravity = 100.f;
-			}
-			else
-			{
-				Cfg::Gravity = 4200.f;
-			}
-
+		
 			// if (grounded_)
 			animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
 		}
@@ -161,7 +144,6 @@ void Player::bindActions()
 			grounded_ = false;
 			jumpLetGo_ = true;
 			vel_.y = Player::JumpForce;
-			Cfg::Gravity = 4200.f;
 		}
 		});
 }

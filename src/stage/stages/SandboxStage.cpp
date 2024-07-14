@@ -57,6 +57,8 @@ void SandboxStage::HandleEvent(const sf::Event& l_e)
 
 void SandboxStage::Update(const sf::Time& l_dt)
 {
+	
+
 	projectiles_.erase(std::remove_if(projectiles_.begin(), projectiles_.end(), [&](auto& p) ->bool { return !p->IsAlive(); }), projectiles_.end());
 
 
