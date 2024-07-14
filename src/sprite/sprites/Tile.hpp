@@ -7,6 +7,8 @@
 
 struct Tile : ASprite
 {
+	friend struct Tileset;
+	friend struct Tilemap;
 	Tile();
 	Tile(sf::Texture& l_tex);
 	~Tile() override = default;
@@ -22,6 +24,10 @@ struct Tile : ASprite
 
 	bool IsSolid();
 	bool IsAnimated();
+
+	void SetSolid(bool l_solid);
+	void SetAnimated(bool l_animated);
+
 
 private:
 	sf::Sprite m_spr{};

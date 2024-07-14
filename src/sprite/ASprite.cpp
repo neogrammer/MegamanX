@@ -75,6 +75,11 @@ sf::IntRect ASprite::GetRect()
     return this->spr_.getTextureRect();
 }
 
+void ASprite::SetGrounded(bool l_grounded)
+{
+	grounded_ = l_grounded;
+}
+
 void ASprite::processInputBase()
 {
 	processInput();

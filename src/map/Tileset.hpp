@@ -8,7 +8,9 @@
 #include <string>
 struct Tileset
 {
-	void setup(sf::Texture& l_tex, int l_numTiles, int l_numCols, int l_numRows, sf::Vector2i l_tileSize);
+	friend struct Tilemap;
+	friend struct Tile;
+	void setup(const std::string& l_tilesetfile, sf::Texture& l_tex, int l_numTiles, int l_numCols, int l_numRows, sf::Vector2i l_tileSize);
 
 	Tile copyTile(int tileID);
 	sf::IntRect GetRect(int tileID);

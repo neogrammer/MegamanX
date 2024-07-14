@@ -62,3 +62,13 @@ bool Tile::IsAnimated()
 	return m_animated;
 }
 
+void Tile::SetSolid(bool l_solid)
+{
+	m_solid = l_solid;
+}
+
+void Tile::SetAnimated(bool l_animated)
+{
+	m_animated = l_animated;
+}
+

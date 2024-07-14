@@ -11,11 +11,18 @@ Action::Action(const sf::Mouse::Button& button,int type) : _type(type)
     _event.type = sf::Event::EventType::MouseButtonPressed;
     _event.mouseButton.button = button;
 }
-Action::Action(const unsigned int& joyButtonNum, int type) : _type(type)
+
+Action::Action(const JoystickBtn& joyButtonNum, int type) : _type(type)
+{
+	_event.type = sf::Event::EventType::JoystickButtonPressed;
+	_event.joystickButton.button = static_cast<unsigned int>(joyButtonNum);
+}
+Action::Action(const unsigned int& joybuttonnum, int type) : _type(type)
 {
     _event.type = sf::Event::EventType::JoystickButtonPressed;
-    _event.joystickButton.button = joyButtonNum;
+    _event.joystickButton.button = joybuttonnum;
 }
+
 Action::Action(const sf::Joystick::Axis& axis, int type) : _type(type)
 {
     _event.type = sf::Event::EventType::JoystickMoved;

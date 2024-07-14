@@ -12,6 +12,7 @@
 template<typename T = int>
 struct ActionTarget
 {
+public:
     ActionTarget(const ActionTarget<T>&) = delete;
     ActionTarget<T>& operator=(const ActionTarget<T>&) = delete;
 
@@ -24,6 +25,7 @@ struct ActionTarget
 
     void bind(const T& key,const FuncType& callback);
     void unbind(const T& key);
+
 
 private:
     std::list<std::pair<T,FuncType>> _eventsRealTime;

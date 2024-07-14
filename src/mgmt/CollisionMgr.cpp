@@ -1,5 +1,5 @@
 #include "CollisionMgr.hpp"
-#include <sprite/ASprite.hpp>
+#include <sprite/sprites/Bullet.hpp>
 #include <misc/globals.hpp>
 sf::FloatRect CollisionMgr::m_currOverlap = { { 0.f, 0.f }, { 0.f,0.f } };
 sf::FloatRect CollisionMgr::m_prevOverlap = { { 0.f, 0.f }, { 0.f,0.f } };
@@ -57,38 +57,39 @@ bool CollisionMgr::IsColliding(ASprite& l_sprA, ASprite& l_sprB)
 void CollisionMgr::ResolveActor(ASprite& l_spr)
 {
 	
-	if (m_prevOverlap.width <= 0 && m_prevOverlap.height <= 0)
+	if (m_prevOverlap.width < 0 && m_prevOverlap.height < 0)
 	{
 		l_spr.vel().x = 0.f;
 		l_spr().setPosition(l_spr().getPosition().x - m_currOverlap.width, l_spr().getPosition().y);
 	}
-	else if (m_prevOverlap.width <= 0)
+	else if (m_prevOverlap.width < 0)
 	{
 		l_spr.vel().x = 0.f;
 		l_spr().setPosition(l_spr().getPosition().x - m_currOverlap.width, l_spr().getPosition().y);
 	}
 	else
 	{
-		l_spr.vel().x = 0.f;
+		l_spr.vel().y = 0.f;
 		l_spr().setPosition(l_spr().getPosition().x, l_spr().getPosition().y - m_currOverlap.height);
+		l_spr.SetGrounded(true);
 	}
 }
 
 void CollisionMgr::ResolveProjectile(ASprite& l_sprA, ASprite& l_sprB)
 {
-	if (m_prevOverlap.width <= 0 && m_prevOverlap.height <= 0)
+	if (m_prevOverlap.width < 0 && m_prevOverlap.height < 0)
 	{
 		l_sprA.vel().x = 0.f;
 		l_sprA().setPosition(l_sprA().getPosition().x - m_currOverlap.width, l_sprA().getPosition().y);
 	}
-	else if (m_prevOverlap.width <= 0)
+	else if (m_prevOverlap.width < 0)
 	{
 		l_sprA.vel().x = 0.f;
 		l_sprA().setPosition(l_sprA().getPosition().x - m_currOverlap.width, l_sprA().getPosition().y);
 	}
 	else
 	{
-		l_sprA.vel().x = 0.f;
+		l_sprA.vel().y = 0.f;
 		l_sprA().setPosition(l_sprA().getPosition().x, l_sprA().getPosition().y - m_currOverlap.height);
 	}
 	

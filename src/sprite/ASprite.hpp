@@ -29,12 +29,14 @@ struct ASprite
 	bool IsAlive();
 	void SetAlive(bool l_alive);
 	sf::IntRect GetRect();
+	void SetGrounded(bool l_grounded);
 	AnimationMgr animMgr;
 
 protected:
 	bool alive_{ true };
 	SpriteType type_{ SpriteType::Count };
-
+	bool grounded_{ false };
+	bool affectedByGravity_{ false };
 	sf::Sprite spr_;
 	sf::Vector2f vel_;
 	sf::Time gameTime_;

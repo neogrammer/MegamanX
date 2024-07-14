@@ -6,8 +6,9 @@ Bullet::Bullet()
 
 }
 
-Bullet::Bullet(sf::Texture& l_tex)
+Bullet::Bullet(sf::Texture& l_tex, bool l_friendly)
 	: ASprite{SpriteType::Projectile, l_tex}
+	, m_friendly{l_friendly}
 {
 	animMgr.AddAnimation(spr_, l_tex, AnimLayoutType::Horizontal, AnimType::Idle, 5Ui64, { {0,0},{24,16} },
 		5Ui64, 1Ui64, 0.003f, 0.f, false, true, true);
@@ -36,5 +37,10 @@ void Bullet::update(const sf::Time& l_dt)
 {
 	gameTime_ = l_dt;
 	animMgr.Update(l_dt);
+}
+
+bool Bullet::GetFriendly()
+{
+	return m_friendly;
 }
 

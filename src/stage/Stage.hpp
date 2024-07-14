@@ -32,8 +32,8 @@ protected:
 	StageType m_type;
 
 	std::vector<std::shared_ptr<ASprite>> projectiles_;
-	std::vector<std::shared_ptr<ASprite>> tiles_;
-	std::vector<Tilemap> tilemap_;
+	std::shared_ptr<Tilemap> tilemap_;
+	std::vector<std::shared_ptr<ASprite>> tilemapSolidTiles_;
 	std::shared_ptr<ASprite> player_;
 
 

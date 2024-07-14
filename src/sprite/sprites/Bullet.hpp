@@ -5,8 +5,9 @@
 
 struct Bullet : ASprite
 {
+
 	Bullet();
-	Bullet(sf::Texture& l_tex);
+	Bullet(sf::Texture& l_tex, bool l_friendly = true);
 	~Bullet() override = default;
 
 	Bullet(const Bullet&);
@@ -14,9 +15,9 @@ struct Bullet : ASprite
 
 	void processInput() override;
 	void update(const sf::Time& l_dt) override;
-
+	bool GetFriendly();
 private:
-
+	bool m_friendly{};
 };
 
 #endif

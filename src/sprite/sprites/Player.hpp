@@ -1,9 +1,10 @@
 #include <sprite/ASprite.hpp>
+#include <action/ActionTarget.hpp>
 
 #ifndef PLAYER_HPP__
 #define PLAYER_HPP__
 
-struct Player : ASprite
+struct Player : ASprite, ActionTarget<int>
 {
 	Player();
 	~Player() override = default;
@@ -15,7 +16,7 @@ struct Player : ASprite
 	void update(const sf::Time& l_dt) override;
 
 private:
-
+	void bindActions();
 };
 
 #endif

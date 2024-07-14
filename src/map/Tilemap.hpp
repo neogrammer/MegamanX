@@ -6,7 +6,7 @@
 #include "Tileset.hpp"
 struct Tilemap
 {
-	void Setup(sf::Texture& l_tex, std::string l_filename);
+	void Setup(const std::string& l_tilesetfile, sf::Texture& l_tex, std::string l_filename);
 	void Render(sf::RenderWindow& l_wnd);
 	void Update(const sf::Time& l_dt);
 	bool IsTileSolid(int l_col, int l_row);
@@ -15,6 +15,8 @@ struct Tilemap
 	std::shared_ptr<Tile> GetTile(int l_col, int l_row);
 	bool IsTileAnimated(int l_col, int l_row);
 	bool IsTileAnimated(int l_tileNum);
+
+	std::vector<std::shared_ptr<Tile>>& GetTiles();
 
 private:
 

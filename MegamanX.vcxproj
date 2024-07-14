@@ -60,7 +60,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>C:\Users\jlhar\source\repos\MegamanX\src;C:\sdks\sfml_64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -121,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\data\tilemap\tilemap1.dat" />
+    <None Include="assets\data\tileset\tileset1.dat" />
     <None Include="src\action\tpl\ActionMap.tpl" />
     <None Include="src\action\tpl\ActionTarget.tpl" />
     <None Include="src\res\tpl\ResourceManager.tpl" />

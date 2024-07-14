@@ -109,6 +109,9 @@
     <Filter Include="Resource Files\assets\data\tilemap">
       <UniqueIdentifier>{94946a18-ecc1-40c2-a712-16c1d2e96c10}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\assets\data\tileset">
+      <UniqueIdentifier>{54e1217e-396b-4512-8a31-908f865efc71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -256,6 +259,9 @@
     </None>
     <None Include="assets\data\tilemap\tilemap1.dat">
       <Filter>Resource Files\assets\data\tilemap</Filter>
+    </None>
+    <None Include="assets\data\tileset\tileset1.dat">
+      <Filter>Resource Files\assets\data\tileset</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
