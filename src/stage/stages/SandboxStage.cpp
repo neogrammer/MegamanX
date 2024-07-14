@@ -6,7 +6,11 @@
 SandboxStage::SandboxStage()
 	: Stage{ StageType::Sandbox }
 {
+
 	tiles_.reserve(2);
+
+
+
 	tiles_.emplace_back(std::make_shared<Tile>(Cfg::textures.get((int)Cfg::Textures::Tileset1)));
 	(*tiles_.back())().setTextureRect({{0, 0}, {64 , 64}});
 	(*tiles_.back())().setOrigin({ 32.f, 32.f });
@@ -16,6 +20,9 @@ SandboxStage::SandboxStage()
 	(*tiles_.back())().setTextureRect({ {0, 0}, {64 , 64} });
 	(*tiles_.back())().setOrigin({ 32.f, 32.f });
 	(*tiles_.back())().setPosition({ 32.f, 900.f - 32.f });
+
+	tilemap_.emplace_back(Tilemap{});
+	tilemap_.back().Setup(Cfg::textures.get((int)Cfg::Textures::Tileset1), "assets/data/tilemap/tilemap1.dat");
 
 	projectiles_.reserve(3);
 	projectiles_.emplace_back(std::make_shared<Bullet>(Cfg::textures.get((int)Cfg::Textures::Bullet1)));
@@ -68,6 +75,7 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	{
 		b->updateBase(l_dt);
 	}
+	tilemap_[0].Update(l_dt);
 	player_->updateBase(l_dt);
 	for (auto& p : projectiles_)
 	{
@@ -88,6 +96,8 @@ void SandboxStage::Update(const sf::Time& l_dt)
 
 void SandboxStage::Render(sf::RenderWindow& l_wnd)
 {
+	tilemap_[0].Render(l_wnd);
+
 	for (auto& t : tiles_)
 	{
 		t->render(l_wnd);

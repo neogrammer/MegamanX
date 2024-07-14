@@ -103,6 +103,12 @@
     <Filter Include="Resource Files\assets\tex\projectiles">
       <UniqueIdentifier>{aa32c9b4-7179-409a-9ed2-3a617e90d28a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\assets\data">
+      <UniqueIdentifier>{6e17bafe-609e-4298-89da-a777d7ffdcfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\assets\data\tilemap">
+      <UniqueIdentifier>{94946a18-ecc1-40c2-a712-16c1d2e96c10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -156,6 +162,12 @@
     </ClCompile>
     <ClCompile Include="src\sprite\sprites\Player.cpp">
       <Filter>Source Files\sprite\sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\map\Tileset.cpp">
+      <Filter>Source Files\map</Filter>
+    </ClCompile>
+    <ClCompile Include="src\map\Tilemap.cpp">
+      <Filter>Source Files\map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -225,6 +237,12 @@
     <ClInclude Include="src\sprite\sprites\Player.hpp">
       <Filter>Header Files\sprite\sprites</Filter>
     </ClInclude>
+    <ClInclude Include="src\map\Tileset.hpp">
+      <Filter>Header Files\map</Filter>
+    </ClInclude>
+    <ClInclude Include="src\map\Tilemap.hpp">
+      <Filter>Header Files\map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\res\tpl\ResourceManager.tpl">
@@ -235,6 +253,9 @@
     </None>
     <None Include="src\action\tpl\ActionTarget.tpl">
       <Filter>Header Files\action\tpl</Filter>
+    </None>
+    <None Include="assets\data\tilemap\tilemap1.dat">
+      <Filter>Resource Files\assets\data\tilemap</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

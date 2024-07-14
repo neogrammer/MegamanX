@@ -61,7 +61,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <LanguageStandard_C>stdclatest</LanguageStandard_C>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>C:\Users\jlhar\source\repos\MegamanX\src;C:\sdks\sfml_64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -78,6 +78,8 @@
     <ClCompile Include="src\app\Wndw.cpp" />
     <ClCompile Include="src\game_state\GameState.cpp" />
     <ClCompile Include="src\game_state\game_states\SandboxState.cpp" />
+    <ClCompile Include="src\map\Tilemap.cpp" />
+    <ClCompile Include="src\map\Tileset.cpp" />
     <ClCompile Include="src\mgmt\AnimationMgr.cpp" />
     <ClCompile Include="src\mgmt\CollisionMgr.cpp" />
     <ClCompile Include="src\mgmt\GameStateMgr.cpp" />
@@ -100,6 +102,8 @@
     <ClInclude Include="src\app\Wndw.hpp" />
     <ClInclude Include="src\game_state\GameState.hpp" />
     <ClInclude Include="src\game_state\game_states\SandboxState.hpp" />
+    <ClInclude Include="src\map\Tilemap.hpp" />
+    <ClInclude Include="src\map\Tileset.hpp" />
     <ClInclude Include="src\mgmt\AnimationMgr.hpp" />
     <ClInclude Include="src\mgmt\CollisionMgr.hpp" />
     <ClInclude Include="src\mgmt\GameStateMgr.hpp" />
@@ -116,6 +120,7 @@
     <ClInclude Include="src\stage\stages\SandboxStage.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\data\tilemap\tilemap1.dat" />
     <None Include="src\action\tpl\ActionMap.tpl" />
     <None Include="src\action\tpl\ActionTarget.tpl" />
     <None Include="src\res\tpl\ResourceManager.tpl" />

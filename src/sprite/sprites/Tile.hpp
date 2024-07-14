@@ -17,9 +17,20 @@ struct Tile : ASprite
 	void processInput() override;
 	void update(const sf::Time& l_dt) override;
 
-private:
-	sf::Sprite m_spr;
+	int getSetID();
+	int getTileID();
 
+	bool IsSolid();
+	bool IsAnimated();
+
+private:
+	sf::Sprite m_spr{};
+
+	int m_setID{ -1 };
+	int m_tileID{ -1 };
+
+	bool m_solid{ true };
+	bool m_animated{ false };
 
 	
 };

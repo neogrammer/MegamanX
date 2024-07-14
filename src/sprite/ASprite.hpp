@@ -28,7 +28,7 @@ struct ASprite
 	SpriteType getType();
 	bool IsAlive();
 	void SetAlive(bool l_alive);
-
+	sf::IntRect GetRect();
 	AnimationMgr animMgr;
 
 protected:

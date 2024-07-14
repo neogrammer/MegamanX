@@ -7,6 +7,7 @@
 #include <sprite/sprites/Bullet.hpp>
 #include <sprite/sprites/Tile.hpp>
 #include <sprite/sprites/Player.hpp>
+#include <map/Tilemap.hpp>
 
 struct Stage
 {
@@ -32,6 +33,7 @@ protected:
 
 	std::vector<std::shared_ptr<ASprite>> projectiles_;
 	std::vector<std::shared_ptr<ASprite>> tiles_;
+	std::vector<Tilemap> tilemap_;
 	std::shared_ptr<ASprite> player_;
 
 

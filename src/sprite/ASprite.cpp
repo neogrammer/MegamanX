@@ -70,6 +70,11 @@ void ASprite::SetAlive(bool l_alive)
 	alive_ = l_alive;
 }
 
+sf::IntRect ASprite::GetRect()
+{
+    return this->spr_.getTextureRect();
+}
+
 void ASprite::processInputBase()
 {
 	processInput();
