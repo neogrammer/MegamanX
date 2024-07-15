@@ -31,6 +31,8 @@ struct ASprite
 	sf::IntRect GetRect();
 	void SetGrounded(bool l_grounded);
 	AnimationMgr animMgr;
+	bool isSetExternal{ false };
+	void setFixedPosition(sf::Vector2f l_pos);
 
 protected:
 	bool alive_{ true };

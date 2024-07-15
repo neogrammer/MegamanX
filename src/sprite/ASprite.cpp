@@ -81,6 +81,12 @@ void ASprite::SetGrounded(bool l_grounded)
 	
 }
 
+void ASprite::setFixedPosition(sf::Vector2f l_pos)
+{
+	isSetExternal = true;
+	spr_.setPosition(l_pos);
+}
+
 void ASprite::processInputBase()
 {
 	processInput();
@@ -94,7 +100,8 @@ void ASprite::updateBase(const sf::Time& l_dt)
 
 void ASprite::updatePosition()
 {
-	spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
+	if (!isSetExternal)
+		spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
 }
 
 void ASprite::updateTexRect()

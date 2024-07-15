@@ -38,6 +38,11 @@ SandboxStage::SandboxStage()
 	player_ = std::make_shared<Player>();
 }
 
+SandboxStage::~SandboxStage()
+{
+	
+}
+
 void SandboxStage::ProcessInput()
 {
 	for (auto& s : tilemap_->GetTiles())
@@ -49,6 +54,7 @@ void SandboxStage::ProcessInput()
 		b->processInputBase();
 	}
 	player_->processInputBase();
+	
 }
 
 void SandboxStage::HandleEvent(const sf::Event& l_e)
@@ -57,8 +63,6 @@ void SandboxStage::HandleEvent(const sf::Event& l_e)
 
 void SandboxStage::Update(const sf::Time& l_dt)
 {
-	
-
 	projectiles_.erase(std::remove_if(projectiles_.begin(), projectiles_.end(), [&](auto& p) ->bool { return !p->IsAlive(); }), projectiles_.end());
 
 
@@ -66,7 +70,7 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	{
 		s->updateBase(l_dt);
 	}
-	
+
 
 	for (auto& b : projectiles_)
 	{
@@ -75,8 +79,8 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	player_->updateBase(l_dt);
 	for (auto& p : projectiles_)
 	{
-		
-		CollisionMgr::CheckCollisions(*p, tilemapSolidTiles_);
+
+		CollisionMgr::CheckCollisions(*p, tilemapSolidTiles_, l_dt);
 	}
 
 	std::vector<std::shared_ptr<ASprite>> tmp;
@@ -85,12 +89,11 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	{
 		if (!dynamic_cast<Bullet*>(p.get())->GetFriendly())
 		{
-			CollisionMgr::CheckCollisions(*p, tmp);
+			CollisionMgr::CheckCollisions(*p, tmp, l_dt);
 		}
 	}
 
-	CollisionMgr::CheckCollisions(*player_, tilemapSolidTiles_);
-
+	CollisionMgr::CheckCollisions(*player_, tilemapSolidTiles_, l_dt);
 }
 
 void SandboxStage::Render(sf::RenderWindow& l_wnd)

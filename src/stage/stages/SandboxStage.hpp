@@ -2,11 +2,13 @@
 #define SANDBOXSTAGE_HPP__
 
 #include <stage/Stage.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Graphics/Color.hpp>
 
 struct SandboxStage : Stage
 {
 	explicit SandboxStage();
-	~SandboxStage() override final = default;
+	~SandboxStage() override final;
 
 	SandboxStage(const SandboxStage&) = delete;
 	SandboxStage& operator=(const SandboxStage&) = delete;
@@ -18,7 +20,6 @@ struct SandboxStage : Stage
 	void Update(const sf::Time& l_dt) override final;
 	void Render(sf::RenderWindow& l_wnd) override final;
 private:
-
 };
 
 #endif

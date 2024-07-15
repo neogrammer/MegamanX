@@ -40,8 +40,8 @@ void rect::Reset()
 	}
 	else
 	{ 
-		pos = {(*spr)().getGlobalBounds().left - ((*spr)().getGlobalBounds().width / 2.f),  
-		(*spr)().getGlobalBounds().top - ((*spr)().getGlobalBounds().height / 2.f) };
+		pos = {(*spr)().getGlobalBounds().left - ((*spr)().getGlobalBounds().width / 2.f) + (*spr)().getOrigin().x,
+		(*spr)().getGlobalBounds().top - ((*spr)().getGlobalBounds().height / 2.f) + (*spr)().getOrigin().y };
 		size = { (*spr)().getGlobalBounds().getSize().x, (*spr)().getGlobalBounds().getSize().y };
 		vel = { spr->vel().x, spr->vel().y };
 	}
