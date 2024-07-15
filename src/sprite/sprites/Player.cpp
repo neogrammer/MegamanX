@@ -63,6 +63,12 @@ bool Player::IsMoving()
 	}
 }
 
+void Player::TakeHit(int l_damage)
+{
+	// NOT YET IMPLEMENTED
+	std::cout << "Player took " << l_damage << " damage" << std::endl;
+}
+
 void Player::update(const sf::Time& l_dt)
 {
 	// apply gravity

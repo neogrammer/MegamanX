@@ -17,6 +17,7 @@ struct Player : ASprite, ActionTarget<int>
 	static float JumpForce;
 	static float MoveSpeed;
 	bool IsMoving();
+	void TakeHit(int l_damage);
 private:
 	void bindActions();
 	bool jumpHeld_{ false };

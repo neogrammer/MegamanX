@@ -16,8 +16,10 @@ struct Bullet : ASprite
 	void processInput() override;
 	void update(const sf::Time& l_dt) override;
 	bool GetFriendly();
+	int GetDamage();
 private:
 	bool m_friendly{};
+	int m_damage{};
 };
 
 #endif

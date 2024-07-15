@@ -57,14 +57,20 @@ SandboxStage::~SandboxStage()
 
 void SandboxStage::ProcessInput()
 {
+	// not sure why i have this yet, but allow inputtable changes to the tiles on the map
+	// maybe for doors or chests?
 	for (auto& s : tilemap_->GetTiles())
 	{
 		s->processInputBase();
 	}
+	// bullets may be controllable
+	// handled here
 	for (auto& b : projectiles_)
 	{
 		b->processInputBase();
 	}
+
+	// handle user's input to affect the player
 	player_->processInputBase();
 	
 }
@@ -75,60 +81,52 @@ void SandboxStage::HandleEvent(const sf::Event& l_e)
 
 void SandboxStage::Update(const sf::Time& l_dt)
 {
-	projectiles_.erase(std::remove_if(projectiles_.begin(), projectiles_.end(), [&](auto& p) ->bool { return !p->IsAlive(); }), projectiles_.end());
-
-
-	for (auto& s : tilemap_->GetTiles())
-	{
-		s->updateBase(l_dt);
-	}
-
-
-	for (auto& b : projectiles_)
-	{
-		b->updateBase(l_dt);
-	}
-	
-
-	sf::Vector2f cp;
-	sf::Vector2f cn;
-	float t;
-
-	for (auto& p : projectiles_)
-	{
-
-		if (CollisionMgr::CheckCollisions(*p, tilemapSolidTiles_, cp, cn, t, l_dt))
-		{
-			std::cout << "Bullet collided with a tile" << std::endl;
-
-		}
-	}
-
+	// put player into a vector for collision checking
 	std::vector<std::shared_ptr<ASprite>> tmp;
 	tmp.push_back(player_);
-	for (auto& p : projectiles_)
-	{
+
+	// collision checking out param variables
+	sf::Vector2f cp, cn;
+	float t;
+
+	// control flags used to determine implementation details
+	bool collided = false;
+
+	// erase any dead bullets here from last frame
+	projectiles_.erase(std::remove_if(projectiles_.begin(), projectiles_.end(), [&](auto& p) ->bool { return !p->IsAlive(); }), projectiles_.end());
+
+	//update any animated tiles
+	for (auto& s : tilemap_->GetTiles()) { s->updateBase(l_dt); }
+
+	// update bullet animations and positions
+	for (auto& b : projectiles_) { b->updateBase(l_dt);	}
+	
+	// handle bullets to tiles collisions
+	for (auto& p : projectiles_) { if (CollisionMgr::CheckCollisions(*p, tilemapSolidTiles_, cp, cn, t, l_dt) && t <= 1.f) {int fillerJob = 0;} }
+
+	// handle bullets to player collisions
+	for (auto& p : projectiles_) 
+	{ 
+		// only if bullets arent the player's bullets
 		if (!dynamic_cast<Bullet*>(p.get())->GetFriendly())
 		{
-			if (CollisionMgr::CheckCollisions(*p, tmp, cp, cn, t, l_dt))
-			{
-				std::cout << "Unfriendly Bullet collided with Player" << std::endl;
-
-			}
+			if (CollisionMgr::CheckCollisions(*p, tmp, cp, cn, t, l_dt)) { int fillerJob = 0; }
 		}
 	}
 
-	bool collided = false;
+	// main handling of player adjustment for gravity and movement colliding against the map tiles
 	if (CollisionMgr::CheckCollisions(*player_, tilemapSolidTiles_, cp, cn, t, l_dt))
 	{
+		// these variables are for debugging
 		boundingBox_.setPosition((*player_)().getPosition());
 		pointOfContact_.setPosition(cp);
 		collided = true;
-		std::cout << "Player Bullet collided with a/some tile(s)" << std::endl;
 	}
-
+	// update the player after handling the collision checking
 	player_->updateBase(l_dt);
 
+	// after updating the player's position, if there was a collision, adjust further for gravity and running into walls
+	// hacky, leave as is
 	if (collided)
 	{
 		if ((*player_)().getPosition().y + (*player_)().getOrigin().y > cp.y && cn.x == 0.f)
@@ -139,22 +137,28 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	}
 	else
 	{
+		// if no collision occurred, player may be standing on ground, but if moving, set grounded to false to checks can be made again
+		// and the player doesn't float midair
 		if (dynamic_cast<Player*>(player_.get())->IsMoving())
 		{
 			player_->SetGrounded(false);
 		}
 	}
+
 }
 
 void SandboxStage::Render(sf::RenderWindow& l_wnd)
 {
+	// draw map
 	tilemap_->Render(l_wnd);
 
-	for (auto& b : projectiles_)
-	{
-		b->render(l_wnd);
-	}
+	// draw the player
 	player_->render(l_wnd);
-	l_wnd.draw(boundingBox_);
-	l_wnd.draw(pointOfContact_);
+
+	// draw bullets
+	for (auto& b : projectiles_) { b->render(l_wnd); }
+
+	// For debugging purposes
+	//l_wnd.draw(boundingBox_);
+	//l_wnd.draw(pointOfContact_);
 }
