@@ -51,6 +51,17 @@ void Player::processInput()
 	ActionTarget<int>::processEvents();
 }
 
+bool Player::IsMoving()
+{
+	if (movingRight_ || movingLeft_)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 void Player::update(const sf::Time& l_dt)
 {
@@ -85,8 +96,8 @@ void Player::update(const sf::Time& l_dt)
 		{
 			vel_.x = -Player::MoveSpeed;
 		
-			if (grounded_)
-				SetGrounded(false);
+			/*if (grounded_)
+				SetGrounded(false);*/
 
 			animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
 		}
@@ -94,8 +105,8 @@ void Player::update(const sf::Time& l_dt)
 		{
 			vel_.x = Player::MoveSpeed;
 		
-			if (grounded_)
-				SetGrounded(false);
+			/*if (grounded_)
+				SetGrounded(false);*/
 
 			animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
 		}

@@ -5,6 +5,8 @@
 #include <algorithm>
 SandboxStage::SandboxStage()
 	: Stage{ StageType::Sandbox }
+	, pointOfContact_{}
+	, boundingBox_{}
 {
 
 	tilemap_ = std::make_shared<Tilemap>();
@@ -36,6 +38,16 @@ SandboxStage::SandboxStage()
 	(*projectiles_.back())().setPosition({ 80.f, 896.f - 68.f - 64.f - 10.f });
 
 	player_ = std::make_shared<Player>();
+
+	pointOfContact_.setRadius(10.f);
+	pointOfContact_.setFillColor(sf::Color::Red);
+	pointOfContact_.setOrigin({ 5.0f,5.0f });
+	pointOfContact_.setPosition({-10.f,-10.f});
+
+	boundingBox_.setSize({ (sf::Vector2f)player_->GetRect().getSize() });
+	boundingBox_.setFillColor(sf::Color(255,0,0,110));
+	boundingBox_.setOrigin({ (*player_)().getOrigin() });
+	boundingBox_.setPosition({ -1.f * (*player_)().getOrigin().x, -1.f * (*player_)().getOrigin().y });
 }
 
 SandboxStage::~SandboxStage()
@@ -76,11 +88,20 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	{
 		b->updateBase(l_dt);
 	}
-	player_->updateBase(l_dt);
+	
+
+	sf::Vector2f cp;
+	sf::Vector2f cn;
+	float t;
+
 	for (auto& p : projectiles_)
 	{
 
-		CollisionMgr::CheckCollisions(*p, tilemapSolidTiles_, l_dt);
+		if (CollisionMgr::CheckCollisions(*p, tilemapSolidTiles_, cp, cn, t, l_dt))
+		{
+			std::cout << "Bullet collided with a tile" << std::endl;
+
+		}
 	}
 
 	std::vector<std::shared_ptr<ASprite>> tmp;
@@ -89,11 +110,40 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	{
 		if (!dynamic_cast<Bullet*>(p.get())->GetFriendly())
 		{
-			CollisionMgr::CheckCollisions(*p, tmp, l_dt);
+			if (CollisionMgr::CheckCollisions(*p, tmp, cp, cn, t, l_dt))
+			{
+				std::cout << "Unfriendly Bullet collided with Player" << std::endl;
+
+			}
 		}
 	}
 
-	CollisionMgr::CheckCollisions(*player_, tilemapSolidTiles_, l_dt);
+	bool collided = false;
+	if (CollisionMgr::CheckCollisions(*player_, tilemapSolidTiles_, cp, cn, t, l_dt))
+	{
+		boundingBox_.setPosition((*player_)().getPosition());
+		pointOfContact_.setPosition(cp);
+		collided = true;
+		std::cout << "Player Bullet collided with a/some tile(s)" << std::endl;
+	}
+
+	player_->updateBase(l_dt);
+
+	if (collided)
+	{
+		if ((*player_)().getPosition().y + (*player_)().getOrigin().y > cp.y && cn.x == 0.f)
+		{
+			(*player_)().setPosition((*player_)().getPosition().x, cp.y - (*player_)().getOrigin().y);
+			player_->SetGrounded(true);
+		}
+	}
+	else
+	{
+		if (dynamic_cast<Player*>(player_.get())->IsMoving())
+		{
+			player_->SetGrounded(false);
+		}
+	}
 }
 
 void SandboxStage::Render(sf::RenderWindow& l_wnd)
@@ -105,4 +155,6 @@ void SandboxStage::Render(sf::RenderWindow& l_wnd)
 		b->render(l_wnd);
 	}
 	player_->render(l_wnd);
+	l_wnd.draw(boundingBox_);
+	l_wnd.draw(pointOfContact_);
 }

@@ -17,7 +17,7 @@ struct CollisionMgr
 	CollisionMgr(const CollisionMgr&) = delete;
 	CollisionMgr& operator=(const CollisionMgr&) = delete;
 
-	static void CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<ASprite>> l_sprVec, const sf::Time& l_dt);
+	static bool CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<ASprite>> l_sprVec, sf::Vector2f& cp, sf::Vector2f& cn, float& t, const sf::Time& l_dt);
 	static bool IsColliding(ASprite& l_sprA, ASprite& l_sprB);
 	static void ResolveActor(ASprite& l_spr);
 	static void ResolveProjectile(ASprite& l_sprA, ASprite& l_sprB);

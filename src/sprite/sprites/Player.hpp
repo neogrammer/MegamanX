@@ -16,6 +16,7 @@ struct Player : ASprite, ActionTarget<int>
 	void update(const sf::Time& l_dt) override;
 	static float JumpForce;
 	static float MoveSpeed;
+	bool IsMoving();
 private:
 	void bindActions();
 	bool jumpHeld_{ false };

@@ -15,12 +15,11 @@ sf::FloatRect CollisionMgr::m_currOverlap = { { 0.f, 0.f }, { 0.f,0.f } };
 sf::FloatRect CollisionMgr::m_prevOverlap = { { 0.f, 0.f }, { 0.f,0.f } };
 
 
-void CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<ASprite>> l_sprVec, const sf::Time& l_dt)
+bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<ASprite>> l_sprVec, sf::Vector2f& cp, sf::Vector2f& cn, float& t, const sf::Time& l_dt)
 {
+	bool collisionOccurred = false;
 	std::vector<std::pair<std::shared_ptr<ASprite>, float>> z;
 	z.clear();
-	sf::Vector2f cp, cn;
-	float t;
 	// now check from lower bounds to upper bounds only as 
 	// this is the space the sprite is in before and after the movement
 	// assuming sprB is static, not moving
@@ -35,10 +34,11 @@ void CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 		{
 			if (DynamicRectVsRect(l_sprA, *s, cp, cn, t, l_dt))
 			{
+				collisionOccurred = true;
 				z.push_back({ s, t });
 				//l_sprA.vel().x = 0.f;
 				//l_sprA.vel().y = 0.f;
-				//l_sprA.SetGrounded(true);	
+				l_sprA.SetGrounded(true);	
 			}
 		}
 	}
@@ -48,21 +48,66 @@ void CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 			return a.second < b.second;
 		});
 
+	if (collisionOccurred)
+	{
+		if (l_sprA.vel().y > 80.f)
+		{
+			l_sprA.vel().y = 80.f;
+		}
+	}
+
+
+
 	for (auto j : z)
 	{
 			if (DynamicRectVsRect(l_sprA, *j.first, cp, cn, t, l_dt))
 			{
+				
 				auto tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
 				l_sprA.vel().x += (cn.x * tmp.x * (1.f - t));
 				l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));
-				if (cn.y == -1.f)
+			
+				if (cn.y != 0.f)
 				{
-					l_sprA.SetGrounded(true);
+					l_sprA().move(0.f, l_sprA.vel().y * l_dt.asSeconds());
+				}
+				if (cn.x != 0.f)
+				{
+					l_sprA().move(l_sprA.vel().x * l_dt.asSeconds(), 0.f);
+				}
+
+				if (l_sprA().getPosition().y + l_sprA().getOrigin().y > cp.y && cn.y == -1.f)
+				{
+					l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
+					l_sprA.vel().y = 0.f;
+
+				}
+				if (l_sprA().getPosition().y - l_sprA().getOrigin().y < cp.y && cn.y == 1.f)
+				{
+					l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
+					l_sprA.vel().y = 0.f;
+
+				}
+				if (l_sprA().getPosition().x + l_sprA().getOrigin().x > cp.x && cn.x == -1.f)
+				{
+					l_sprA().setPosition(cp.x - l_sprA().getOrigin().x, l_sprA().getPosition().y);
+					l_sprA.vel().x = 0.f;
+
+				}
+				if (l_sprA().getPosition().x - l_sprA().getOrigin().x < cp.x && cn.x == 1.f)
+				{
+
+					l_sprA().setPosition(cp.x + l_sprA().getOrigin().x, l_sprA().getPosition().y);
+					l_sprA.vel().x = 0.f;
+
 				}
 
 				std::cout << "Collided with a tile" << std::endl;
 			}
-	}
+	}	
+
+
+	return collisionOccurred;
 }
 
 
