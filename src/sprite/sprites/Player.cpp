@@ -85,14 +85,18 @@ void Player::update(const sf::Time& l_dt)
 		{
 			vel_.x = -Player::MoveSpeed;
 		
-			// if (grounded_)
+			if (grounded_)
+				SetGrounded(false);
+
 			animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
 		}
 		if (movingRight_)
 		{
 			vel_.x = Player::MoveSpeed;
 		
-			// if (grounded_)
+			if (grounded_)
+				SetGrounded(false);
+
 			animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
 		}
 	}
@@ -118,7 +122,6 @@ void Player::bindActions()
 		{
 			movingRight_ = true;
 			facingRight_ = true;
-
 		}
 		});
 
@@ -131,7 +134,7 @@ void Player::bindActions()
 		{
 			movingLeft_ = true;
 			facingRight_ = false;
-			
+
 
 		}
 		});
