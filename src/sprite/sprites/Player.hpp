@@ -1,5 +1,6 @@
 #include <sprite/ASprite.hpp>
 #include <action/ActionTarget.hpp>
+#include <FSM/FSM_Player.hpp>
 
 #ifndef PLAYER_HPP__
 #define PLAYER_HPP__
@@ -18,10 +19,14 @@ struct Player : ASprite, ActionTarget<int>
 	static float MoveSpeed;
 	bool IsMoving();
 	void TakeHit(int l_damage);
+
+	AnimType SyncFSM();
 private:
 	void bindActions();
 	bool jumpHeld_{ false };
 	bool jumpLetGo_{ true };
+
+	FSM_Player fsm{};
 
 };
 

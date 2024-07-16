@@ -118,6 +118,9 @@
     <Filter Include="Source Files\misc">
       <UniqueIdentifier>{488af0c9-3e49-40dc-a996-9114a5a86453}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\FSM">
+      <UniqueIdentifier>{dc0a53ca-75da-41ec-826b-97bf5674ea3b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -257,6 +260,24 @@
     </ClInclude>
     <ClInclude Include="src\misc\aabb.hpp">
       <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FSM\FSM.hpp">
+      <Filter>Header Files\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FSM\fsm_events.hpp">
+      <Filter>Header Files\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FSM\FSM_Player.hpp">
+      <Filter>Header Files\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FSM\fsm_states.hpp">
+      <Filter>Header Files\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="src\misc\Noncopyable.hpp">
+      <Filter>Header Files\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FSM\duck_fold.hpp">
+      <Filter>Header Files\FSM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

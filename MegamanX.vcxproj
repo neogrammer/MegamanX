@@ -101,6 +101,11 @@
     <ClInclude Include="src\action\ActionTarget.hpp" />
     <ClInclude Include="src\app\Game.hpp" />
     <ClInclude Include="src\app\Wndw.hpp" />
+    <ClInclude Include="src\FSM\duck_fold.hpp" />
+    <ClInclude Include="src\FSM\FSM.hpp" />
+    <ClInclude Include="src\FSM\fsm_events.hpp" />
+    <ClInclude Include="src\FSM\FSM_Player.hpp" />
+    <ClInclude Include="src\FSM\fsm_states.hpp" />
     <ClInclude Include="src\game_state\GameState.hpp" />
     <ClInclude Include="src\game_state\game_states\SandboxState.hpp" />
     <ClInclude Include="src\map\Tilemap.hpp" />
@@ -111,6 +116,7 @@
     <ClInclude Include="src\mgmt\StageMgr.hpp" />
     <ClInclude Include="src\misc\aabb.hpp" />
     <ClInclude Include="src\misc\globals.hpp" />
+    <ClInclude Include="src\misc\Noncopyable.hpp" />
     <ClInclude Include="src\res\Cfg.hpp" />
     <ClInclude Include="src\res\ResourceManager.hpp" />
     <ClInclude Include="src\sprite\Animation.hpp" />

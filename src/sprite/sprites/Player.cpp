@@ -1,6 +1,7 @@
 #include "Player.hpp"
 #include <res/Cfg.hpp>
 #include <iostream>
+#include <FSM/duck_fold.hpp>
 
 float Player::JumpForce = -1600.f;
 float Player::MoveSpeed = 600.f;
@@ -26,6 +27,8 @@ Player::Player()
 	
 
 	bindActions();
+
+	dispatch(fsm, AnimType::Idle);
 }
 
 
@@ -69,6 +72,12 @@ void Player::TakeHit(int l_damage)
 	std::cout << "Player took " << l_damage << " damage" << std::endl;
 }
 
+AnimType Player::SyncFSM()
+{
+	fsm.moving = IsMoving();
+	return getAnimType(fsm);
+}
+
 void Player::update(const sf::Time& l_dt)
 {
 	// apply gravity
@@ -93,7 +102,8 @@ void Player::update(const sf::Time& l_dt)
 	{
 		vel_.x = 0.f;
 		// if (grounded_)
-		animMgr.SwitchAnimation(AnimType::Idle);
+		//animMgr.SwitchAnimation(AnimType::Idle);
+		dispatch(fsm, evt_StoppedMoving{});
 	}
 	else
 	{
@@ -105,7 +115,8 @@ void Player::update(const sf::Time& l_dt)
 			/*if (grounded_)
 				SetGrounded(false);*/
 
-			animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
+			//animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
+			dispatch(fsm, evt_StartedMoving{});
 		}
 		if (movingRight_)
 		{
@@ -114,12 +125,31 @@ void Player::update(const sf::Time& l_dt)
 			/*if (grounded_)
 				SetGrounded(false);*/
 
-			animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
+			//animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
+			dispatch(fsm, evt_StartedMoving{});
 		}
 	}
 	animMgr.SetFacingRight(facingRight_);
 
 	gameTime_ = l_dt;
+
+	// must be in a valid animatable state, thus a always is not Count
+	AnimType a = SyncFSM();
+
+	switch (a)
+	{
+	case AnimType::Idle:
+	case AnimType::Run:
+	case AnimType::Jump:
+		animMgr.SwitchAnimation(a);
+		break;
+	case AnimType::TransRun:
+		animMgr.SwitchAnimation(a, AnimType::Run);
+		break;
+	default:
+		break;
+	}
+
 	animMgr.Update(l_dt);
 }
 
