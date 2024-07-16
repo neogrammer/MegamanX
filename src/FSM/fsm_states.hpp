@@ -3,15 +3,18 @@
 
 #include <variant>
 #include <misc/globals.hpp>
-struct state_Standing { AnimType type_{ AnimType::Idle }; AnimType getType() { return type_; } };
-struct state_Running { AnimType type_{ AnimType::Run }; AnimType getType() { return type_; } };
-struct state_Rising { AnimType type_{ AnimType::Jump }; AnimType getType() { return type_; } };
-struct state_Falling { AnimType type_{ AnimType::Jump }; AnimType getType() { return type_; } };
-struct state_ShootingWhileStanding { AnimType type_{ AnimType::Idle }; AnimType getType() { return type_; } };
-struct state_ShootingWhileRunning { AnimType type_{ AnimType::Idle }; AnimType getType() { return type_; } };
-struct state_ShootingWhileRising { AnimType type_{ AnimType::Jump }; AnimType getType() { return type_; } };
-struct state_ShootingWhileFalling { AnimType type_{ AnimType::Jump }; AnimType getType() { return type_; } };
+struct state_Standing { };
+struct state_Running { };
+struct state_Rising { };
+struct state_Falling { };
+struct state_ShootingWhileStanding { };
+struct state_ShootingWhileRunning {  };
+struct state_ShootingWhileRising { };
+struct state_ShootingWhileFalling { };
+struct state_TransToRun {};
 
-using PlayerStateVar = std::variant<state_Standing, state_Running, state_Rising, state_Falling>;
+using PlayerStateVar = std::variant<state_Standing, state_Running, state_Rising, state_Falling
+								, state_ShootingWhileStanding, state_ShootingWhileRunning
+								, state_ShootingWhileRising, state_ShootingWhileFalling, state_TransToRun>;
 
 #endif

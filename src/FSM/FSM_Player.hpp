@@ -5,6 +5,8 @@
 #include "fsm_events.hpp"
 #include <optional>
 #include <misc/globals.hpp>
+#include <iostream>
+#include <type_traits>
 class FSM_Player : public FSM<FSM_Player, PlayerStateVar>
 {
 
@@ -14,7 +16,15 @@ public:
 
 	std::optional<PlayerStateVar> On_Event(state_Standing& s, const evt_StartedMoving& e)
 	{
+		return state_TransToRun{};
+	}
+	std::optional<PlayerStateVar> On_Event(state_TransToRun& s, const evt_StartedMoving& e)
+	{
 		return state_Running{};
+	}
+	std::optional<PlayerStateVar> On_Event(state_TransToRun& s, const evt_StoppedMoving& e)
+	{
+		return state_Standing{};
 	}
 
 	std::optional<PlayerStateVar> On_Event(state_Running& s, const evt_StoppedMoving& e)
@@ -70,19 +80,30 @@ public:
 
 	AnimType getType(state_Standing& s)
 	{
-		return s.getType();
+		return AnimType::Idle;
 	}
 	AnimType getType(state_Rising& s)
 	{
-		return s.getType();
+		return  AnimType::Jump;
 	}
 	AnimType getType(state_Falling& s)
 	{
-		return s.getType();
+		return  AnimType::Jump;
 	}
 	AnimType getType(state_Running& s)
 	{
-		return s.getType();
+		return  AnimType::Run;
+	}
+	AnimType getType(state_TransToRun& s)
+	{
+		return  AnimType::TransRun;
+	}
+
+	template <typename State>
+	AnimType getType(State& s)
+	{
+		std::cout << "animation not added to this state yet! STATE: " << typeid(s).name() << std::endl;
+		return AnimType::Count;
 	}
 };
 
