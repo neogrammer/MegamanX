@@ -101,15 +101,6 @@ AABB BoundingBoxDB::getAABB(ASprite& l_spr)
 	return bbdbMap[key];
 }
 
-//bool SpriteKey::operator==(const SpriteKey& rhs)
-//{
-//	if (animType == rhs.animType
-//		&& name == rhs.name
-//		&& type == rhs.type)
-//		return true;
-//	else
-//		return false;
-//}
 
 void BoundingBoxDB::addToMap(ASprite& l_spr, sf::Vector2f l_localCenter, sf::Vector2f l_size)
 {
