@@ -36,9 +36,16 @@ void Cfg::initTextures()
 {
 	textures.load((int)Textures::Bullet1, "assets/tex/projectiles/bustershot_normal.png");
 	textures.load((int)Textures::Tileset1, "assets/tex/tilesets/tileset1.png");
-	textures.load((int)Textures::PlayerIdle, "assets/tex/megaman/idle120x136_3_60x76.png");
-	textures.load((int)Textures::PlayerRun, "assets/tex/megaman/run136x140_10_68x70.png");
-	textures.load((int)Textures::PlayerTransRun, "assets/tex/megaman/trans_run135x136_1_67pt5x72.png");
+	textures.load((int)Textures::PlayerIdle, "assets/tex/megaman/idle120x136_3.png");
+	textures.load((int)Textures::PlayerRun, "assets/tex/megaman/run136x140_10.png");
+	textures.load((int)Textures::PlayerTransRun, "assets/tex/megaman/trans_run135x136.png");
+	textures.load((int)Textures::PlayerShootStand, "assets/tex/megaman/shoot_stand120x136_2.png");
+	textures.load((int)Textures::PlayerTransJump, "assets/tex/megaman/trans_jump120x184_2.png");
+	textures.load((int)Textures::PlayerRise, "assets/tex/megaman/rise120x184_1.png");
+	textures.load((int)Textures::PlayerTransFall, "assets/tex/megaman/trans_fall120x184_1.png");
+	textures.load((int)Textures::PlayerFall, "assets/tex/megaman/fall120x184_1.png");
+	textures.load((int)Textures::PlayerLand, "assets/tex/megaman/land120x184_2.png");
+
 	textures.load((int)Textures::BirdSheetWSaw, "assets/tex/enemies/BirdSheet110x148_3Rows_7_9_2.png");
 
 

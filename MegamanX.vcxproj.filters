@@ -298,23 +298,41 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="assets\tex\megaman\run136x140_10_68x70.png">
-      <Filter>Resource Files\assets\tex\megaman</Filter>
-    </Image>
-    <Image Include="assets\tex\megaman\trans_run135x136_1_67pt5x72.png">
-      <Filter>Resource Files\assets\tex\megaman</Filter>
-    </Image>
     <Image Include="assets\tex\tilesets\tileset1.png">
       <Filter>Resource Files\assets\tex\tilesets</Filter>
     </Image>
     <Image Include="assets\tex\projectiles\bustershot_normal.png">
       <Filter>Resource Files\assets\tex\projectiles</Filter>
     </Image>
-    <Image Include="assets\tex\megaman\idle120x136_3_60x76.png">
-      <Filter>Resource Files\assets\tex\megaman</Filter>
-    </Image>
     <Image Include="assets\tex\enemies\BirdSheet110x148_3Rows_7_9_2.png">
       <Filter>Resource Files\assets\tex\enemies</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\idle120x136_3.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\trans_run135x136.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\run136x140_10.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\shoot_stand120x136_2.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\fall120x184_1.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\land120x184_2.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\rise120x184_1.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\trans_fall120x184_1.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\trans_jump120x184_2.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
     </Image>
   </ItemGroup>
 </Project>

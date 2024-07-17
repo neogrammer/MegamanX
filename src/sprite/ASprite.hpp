@@ -34,6 +34,9 @@ struct ASprite
 	bool isSetExternal{ false };
 	void setFixedPosition(sf::Vector2f l_pos);
 
+	static void SyncSpriteToAnim(ASprite& l_spr);
+	float oldHeight{ 0.f };
+
 protected:
 	bool alive_{ true };
 	SpriteType type_{ SpriteType::Count };
@@ -42,6 +45,7 @@ protected:
 	bool movingRight_{ false };
 	bool movingLeft_{ false };
 	bool facingRight_{ true };
+	bool shooting_{ false };
 
 	sf::Sprite spr_;
 	sf::Vector2f vel_;

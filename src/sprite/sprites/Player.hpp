@@ -18,15 +18,17 @@ struct Player : ASprite, ActionTarget<int>
 	static float JumpForce;
 	static float MoveSpeed;
 	bool IsMoving();
+	bool IsShooting();
 	void TakeHit(int l_damage);
 
 	AnimType SyncFSM();
+
+	FSM_Player fsm{};
 private:
 	void bindActions();
 	bool jumpHeld_{ false };
 	bool jumpLetGo_{ true };
 
-	FSM_Player fsm{};
 
 };
 

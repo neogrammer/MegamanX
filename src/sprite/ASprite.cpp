@@ -89,6 +89,33 @@ void ASprite::setFixedPosition(sf::Vector2f l_pos)
 	spr_.setPosition(l_pos);
 }
 
+void ASprite::SyncSpriteToAnim(ASprite& l_spr)
+{
+
+	float currOriginX = l_spr().getOrigin().x;
+	float currOriginY = l_spr().getOrigin().y;
+
+	float newOriginX = l_spr().getTextureRect().width / 2.f;
+	float newOriginY = l_spr().getTextureRect().height / 2.f;
+
+	float yOriginDiff = abs(newOriginY - currOriginY);
+
+	l_spr().setOrigin({ newOriginX, newOriginY });
+
+	float newHeight = (float)l_spr.GetRect().height;
+
+	float newYOffset = abs(newHeight - l_spr.oldHeight);
+
+	if (l_spr.oldHeight < newHeight)
+	{
+		l_spr().setPosition({ l_spr().getPosition().x, l_spr().getPosition().y + (-1.f * newYOffset) + yOriginDiff});
+	}
+	else if (l_spr.oldHeight > newHeight)
+	{
+		l_spr().setPosition({ l_spr().getPosition().x, l_spr().getPosition().y + newYOffset - yOriginDiff });
+	}
+}
+
 void ASprite::processInputBase()
 {
 	processInput();
@@ -109,4 +136,5 @@ void ASprite::updatePosition()
 void ASprite::updateTexRect()
 {
 	// not implemented
+	oldHeight = (float)GetRect().height;
 }

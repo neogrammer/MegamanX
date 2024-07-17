@@ -72,7 +72,7 @@ void Animation::loadHStrip()
 		m_framesLeft.reserve(m_numFrames);
 		for (uint32_t x = 0; x < m_cols; x++)
 		{
-			m_framesLeft.emplace_back(sf::IntRect{ {(int)(m_startPos.x + ((x+1) * m_frameSize.x) - 1),m_startPos.y},{-1 * m_frameSize.x,m_frameSize.y} });
+			m_framesLeft.emplace_back(sf::IntRect{ {(int)(m_startPos.x + (x * m_frameSize.x)),m_startPos.y + m_frameSize.y},{m_frameSize.x,m_frameSize.y} });
 		}
 	}
 }
@@ -226,6 +226,11 @@ void Animation::animate()
 			}
 		}
 	}
+}
+
+AnimType Animation::GetType()
+{
+	return m_type;
 }
 
 void Animation::Play()

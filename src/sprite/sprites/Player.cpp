@@ -18,8 +18,28 @@ Player::Player()
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerTransRun), AnimLayoutType::Horizontal, AnimType::TransRun, 1Ui64, { {0,0},{135,136} },
 		1Ui64, 1Ui64, 0.14f, 0.f, true, false, false);
 
-	spr_.setOrigin({ 60.f, 68.f });
-	spr_.setPosition({ 600.f, 496.f - 68.f - 64.f });
+
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerShootStand), AnimLayoutType::Horizontal, AnimType::ShootStand, 2Ui64, { {0,0},{120,136} },
+		2Ui64, 1Ui64, 0.24f, 0.4f, true, true, true);
+
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerTransJump), AnimLayoutType::Horizontal, AnimType::TransJump, 2Ui64, { {0,0},{120,184} },
+		2Ui64, 1Ui64, 0.14f, 0.f, true, false, false);
+
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerRise), AnimLayoutType::Horizontal, AnimType::Rise, 1Ui64, { {0,0},{120,184} },
+		1Ui64, 1Ui64, 0.14f, 0.f, true, false, true);
+
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerTransFall), AnimLayoutType::Horizontal, AnimType::TransFall, 1Ui64, { {0,0},{120,184} },
+		1Ui64, 1Ui64, 0.14f, 0.f, true, false, false);
+
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerFall), AnimLayoutType::Horizontal, AnimType::Fall, 1Ui64, { {0,0},{120,184} },
+		1Ui64, 1Ui64, 0.14f, 0.f, true, false, true);
+
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerLand), AnimLayoutType::Horizontal, AnimType::Land, 2Ui64, { {0,0},{120,184} },
+		2Ui64, 1Ui64, 0.14f, 0.f, true, false, false);
+
+
+	spr_.setOrigin({ 60.f, 92.f });
+	spr_.setPosition({ 600.f, 496.f - 92.f - 64.f });
 
 	affectedByGravity_ = true;
 	grounded_ = false;
@@ -28,7 +48,8 @@ Player::Player()
 
 	bindActions();
 
-	dispatch(fsm, AnimType::Idle);
+	
+
 }
 
 
@@ -66,6 +87,11 @@ bool Player::IsMoving()
 	}
 }
 
+bool Player::IsShooting()
+{
+	return shooting_;
+}
+
 void Player::TakeHit(int l_damage)
 {
 	// NOT YET IMPLEMENTED
@@ -80,6 +106,9 @@ AnimType Player::SyncFSM()
 
 void Player::update(const sf::Time& l_dt)
 {
+
+	gameTime_ = l_dt;
+
 	// apply gravity
 	if (affectedByGravity_)
 	{
@@ -91,8 +120,23 @@ void Player::update(const sf::Time& l_dt)
 				jumpLetGo_ = false;
 			}
 
+			
+
+			if (vel_.y > 0.f && fsm.getAnimType() != AnimType::TransFall && fsm.getAnimType() != AnimType::Fall)
+			{
+				dispatch(fsm, evt_ReachedJumpPeak{});
+			}
+
 			vel_.y += Cfg::Gravity * l_dt.asSeconds();
 		}
+		else
+		{
+			if (fsm.getAnimType() == AnimType::Rise || fsm.getAnimType() == AnimType::Fall || fsm.getAnimType() == AnimType::TransJump || fsm.getAnimType() == AnimType::TransFall)
+			{
+				dispatch(fsm, evt_ReachedJumpPeak{}, evt_Landed{});
+			}
+		}
+
 
 
 
@@ -131,7 +175,7 @@ void Player::update(const sf::Time& l_dt)
 	}
 	animMgr.SetFacingRight(facingRight_);
 
-	gameTime_ = l_dt;
+
 
 	// must be in a valid animatable state, thus a always is not Count
 	AnimType a = SyncFSM();
@@ -140,17 +184,45 @@ void Player::update(const sf::Time& l_dt)
 	{
 	case AnimType::Idle:
 	case AnimType::Run:
-	case AnimType::Jump:
+	case AnimType::Rise:
+	case AnimType::Fall:
+	case AnimType::ShootStand:
 		animMgr.SwitchAnimation(a);
 		break;
 	case AnimType::TransRun:
 		animMgr.SwitchAnimation(a, AnimType::Run);
 		break;
+	case AnimType::TransJump:
+		animMgr.SwitchAnimation(a, AnimType::Rise);
+		break;
+	case AnimType::TransFall:
+		animMgr.SwitchAnimation(a, AnimType::Fall);
+		break;
+	case AnimType::Land:
+		animMgr.SwitchAnimation(a, AnimType::Idle);
+		break;
 	default:
 		break;
 	}
 
+	if (animMgr.currentIsOnLastFrame() && animMgr.currIsReadyToPop() && animMgr.currFallback() != nullptr)
+	{
+		if (animMgr.currFallback()->GetType() == AnimType::Rise)
+		{
+			dispatch(fsm, evt_TransToRiseCompleted{});
+		}
+		else if (animMgr.currFallback()->GetType() == AnimType::Fall)
+		{
+			dispatch(fsm, evt_TransToFallingCompleted{});
+		}
+		else if (animMgr.currFallback()->GetType() == AnimType::Idle)
+		{
+			dispatch(fsm, evt_LandingTransCompleted{});
+		}
+	}
+
 	animMgr.Update(l_dt);
+	ASprite::SyncSpriteToAnim(*this);
 }
 
 void Player::bindActions()
@@ -194,6 +266,7 @@ void Player::bindActions()
 			grounded_ = false;
 			jumpLetGo_ = true;
 			vel_.y = Player::JumpForce;
+			dispatch(fsm, evt_Jumped{});
 		}
 		});
 }

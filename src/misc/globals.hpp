@@ -35,8 +35,13 @@ enum class AnimType
 {
 	Idle,
 	Run,
-	Jump,
 	TransRun,
+	TransJump,
+	Rise,
+	TransFall,
+	Fall,
+	Land,
+	ShootStand,
 	Count
 };
 

@@ -3,6 +3,8 @@
 #include <res/Cfg.hpp>
 #include <mgmt/CollisionMgr.hpp>
 #include <algorithm>
+#include <FSM/duck_fold.hpp>
+
 SandboxStage::SandboxStage()
 	: Stage{ StageType::Sandbox }
 	, pointOfContact_{}
@@ -81,9 +83,15 @@ void SandboxStage::HandleEvent(const sf::Event& l_e)
 
 void SandboxStage::Update(const sf::Time& l_dt)
 {
+
+	// update the player's bounding box size for the collision checks
+	//ASprite::SyncSpriteToAnim(*player_);
+
 	// put player into a vector for collision checking
-	std::vector<std::shared_ptr<ASprite>> tmp;
+	std::vector<std::shared_ptr<ASprite>> tmp{};
+	tmp.clear();
 	tmp.push_back(player_);
+
 
 	// collision checking out param variables
 	sf::Vector2f cp, cn;
@@ -117,22 +125,27 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	// main handling of player adjustment for gravity and movement colliding against the map tiles
 	if (CollisionMgr::CheckCollisions(*player_, tilemapSolidTiles_, cp, cn, t, l_dt))
 	{
-		// these variables are for debugging
-		boundingBox_.setPosition((*player_)().getPosition());
 		pointOfContact_.setPosition(cp);
 		collided = true;
+
 	}
 	// update the player after handling the collision checking
 	player_->updateBase(l_dt);
+	
 
 	// after updating the player's position, if there was a collision, adjust further for gravity and running into walls
 	// hacky, leave as is
 	if (collided)
 	{
-		if ((*player_)().getPosition().y + (*player_)().getOrigin().y > cp.y && cn.x == 0.f)
+		if ((*player_)().getPosition().y + (*player_)().getOrigin().y >= cp.y)
 		{
 			(*player_)().setPosition((*player_)().getPosition().x, cp.y - (*player_)().getOrigin().y);
 			player_->SetGrounded(true);
+			dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Landed{});
+		}
+		else
+		{
+			player_->SetGrounded(false);
 		}
 	}
 	else
@@ -142,9 +155,20 @@ void SandboxStage::Update(const sf::Time& l_dt)
 		if (dynamic_cast<Player*>(player_.get())->IsMoving())
 		{
 			player_->SetGrounded(false);
+
+			dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Fell{});
 		}
 	}
+	//if (collided)
+		//(*player_)().setPosition({ (*player_)().getPosition().x, cp.y - (*player_)().getOrigin().y });
 
+	// these variables are for debugging
+	boundingBox_.setPosition((*player_)().getPosition());
+	boundingBox_.setSize((sf::Vector2f)(*player_)().getTextureRect().getSize());
+	boundingBox_.setOrigin((*player_)().getOrigin());
+
+	
+	
 }
 
 void SandboxStage::Render(sf::RenderWindow& l_wnd)

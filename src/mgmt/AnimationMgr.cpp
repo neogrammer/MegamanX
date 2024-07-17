@@ -41,6 +41,9 @@ void AnimationMgr::Update(const sf::Time& l_dt)
 		m_fallback = nullptr;
 		m_currAnim->Reset();
 		m_currAnim->Play();
+
+
+
 	}
 	else
 	{
@@ -53,4 +56,24 @@ void AnimationMgr::Update(const sf::Time& l_dt)
 void AnimationMgr::SetFacingRight(bool l_facingRight)
 {
 	m_facingRight = l_facingRight;
+}
+
+bool AnimationMgr::IsFacingRight()
+{
+	return m_facingRight;
+}
+
+bool AnimationMgr::currentIsOnLastFrame()
+{
+	return m_currAnim->m_isOnLastFrame;
+}
+
+bool AnimationMgr::currIsReadyToPop()
+{
+	return m_currAnim->m_popMe;
+}
+
+Animation* AnimationMgr::currFallback()
+{
+	return m_fallback;
 }

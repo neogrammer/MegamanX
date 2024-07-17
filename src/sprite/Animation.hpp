@@ -24,6 +24,7 @@ struct Animation
 	Animation(Animation&&) = delete;
 	Animation& operator=(Animation&&) = delete;
 
+	AnimType GetType();
 	void Play();
 	void Stop();
 	void Pause();

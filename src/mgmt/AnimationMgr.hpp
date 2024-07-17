@@ -9,6 +9,12 @@ struct AnimationMgr
 	void SwitchAnimation(AnimType l_type, AnimType l_fallback = AnimType::Count);
 	void Update(const sf::Time& l_dt);
 	void SetFacingRight(bool l_facingRight);
+	bool IsFacingRight();
+
+	bool currentIsOnLastFrame();
+	bool currIsReadyToPop();
+	Animation* currFallback();
+
 private:
 	std::unordered_map<AnimType, Animation> m_animMap = {};
 	Animation* m_currAnim{ nullptr };
