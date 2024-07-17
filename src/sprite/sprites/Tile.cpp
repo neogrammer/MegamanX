@@ -1,4 +1,5 @@
 #include "Tile.hpp"
+#include <res/Cfg.hpp>
 
 Tile::Tile()
 	: ASprite{}
@@ -7,7 +8,7 @@ Tile::Tile()
 }
 
 Tile::Tile(sf::Texture& l_tex)
-	: ASprite{ SpriteType::Tile, l_tex }
+	: ASprite{ SpriteType::Tile, SpriteName::NormalTile, l_tex}
 {
 
 }

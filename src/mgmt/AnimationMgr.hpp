@@ -14,6 +14,7 @@ struct AnimationMgr
 	bool currentIsOnLastFrame();
 	bool currIsReadyToPop();
 	Animation* currFallback();
+	AnimType getCurrType();
 
 private:
 	std::unordered_map<AnimType, Animation> m_animMap = {};

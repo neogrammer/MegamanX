@@ -5,8 +5,9 @@
 
 
 
-ASprite::ASprite(SpriteType l_type, sf::Texture& l_tex)
+ASprite::ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex)
 	: type_{l_type}
+	, name_{l_name}
 	, spr_{}
 	, vel_{}
 	, gameTime_{g::FPS60}
@@ -50,6 +51,11 @@ void ASprite::render(sf::RenderWindow& l_wnd)
 	// adjust position by velocity
 	updatePosition();
 	l_wnd.draw(spr_);
+
+	if (movingRight_)
+		wasFacingRight_ = true;
+	if (movingLeft_)
+		wasFacingRight_ = false;
 }
 
 sf::Vector2f& ASprite::vel()
@@ -60,6 +66,11 @@ sf::Vector2f& ASprite::vel()
 SpriteType ASprite::getType()
 {
 	return type_;
+}
+
+SpriteName ASprite::getName()
+{
+	return name_;
 }
 
 bool ASprite::IsAlive()

@@ -8,12 +8,13 @@
 #include <misc/globals.hpp>
 #include <mgmt/AnimationMgr.hpp>
 
+
 struct ASprite
 {
 	
 
 	ASprite() = default;
-	ASprite(SpriteType l_type, sf::Texture& l_tex);
+	ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex);
 	virtual ~ASprite() = default;
 
 	ASprite(const ASprite&);
@@ -26,6 +27,7 @@ struct ASprite
 	void render(sf::RenderWindow& l_wnd);
 	sf::Vector2f& vel();
 	SpriteType getType();
+	SpriteName getName();
 	bool IsAlive();
 	void SetAlive(bool l_alive);
 	sf::IntRect GetRect();
@@ -40,11 +42,13 @@ struct ASprite
 protected:
 	bool alive_{ true };
 	SpriteType type_{ SpriteType::Count };
+	SpriteName name_{ SpriteName::Count };
 	bool grounded_{ false };
 	bool affectedByGravity_{ false };
 	bool movingRight_{ false };
 	bool movingLeft_{ false };
 	bool facingRight_{ true };
+	bool wasFacingRight_{ true };
 	bool shooting_{ false };
 	bool invincible_{ false };
 	sf::Time invincibleTime_ = sf::Time::Zero;

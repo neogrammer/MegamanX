@@ -77,3 +77,8 @@ Animation* AnimationMgr::currFallback()
 {
 	return m_fallback;
 }
+
+AnimType AnimationMgr::getCurrType()
+{
+    return m_currAnim->GetType();
+}

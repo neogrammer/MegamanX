@@ -4,7 +4,7 @@
 //#include <FSM/duck_fold.hpp>
 
 
-BuzzBird::BuzzBird() : ASprite{ SpriteType::Enemy, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw) }
+BuzzBird::BuzzBird() : ASprite{ SpriteType::Enemy, SpriteName::BuzzBird, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw) }
 {
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw), AnimLayoutType::Horizontal, AnimType::Idle, 7Ui64, { {0,0},{220,296} },
 		7Ui64, 1Ui64, 0.16f, 0.f, false, true, true, true, 4.f);

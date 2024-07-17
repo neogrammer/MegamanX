@@ -15,12 +15,22 @@ namespace g
 
 
 
-enum class SpriteType
+enum class SpriteType : int
 {
 	Actor,
 	Enemy,
 	Projectile,
 	Tile,
+	Count
+};
+
+enum class SpriteName : int
+{
+	Player,
+	BuzzBird,
+	NormalTile,
+	BusterBullet,
+	BuzzSaw,
 	Count
 };
 
@@ -32,7 +42,7 @@ enum class AnimLayoutType
 	Count
 };
 
-enum class AnimType
+enum class AnimType : int
 {
 	Idle,
 	Run,

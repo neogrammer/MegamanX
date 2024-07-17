@@ -6,7 +6,7 @@
 float Player::JumpForce = -1600.f;
 float Player::MoveSpeed = 600.f;
 Player::Player()
-	: ASprite{ SpriteType::Actor, Cfg::textures.get((int)Cfg::Textures::PlayerIdle) }
+	: ASprite{ SpriteType::Actor, SpriteName::Player, Cfg::textures.get((int)Cfg::Textures::PlayerIdle) }
 	, ActionTarget<int>{Cfg::playerInputs}
 {
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerIdle), AnimLayoutType::Horizontal, AnimType::Idle, 3Ui64, { {0,0},{120,136} },
@@ -69,10 +69,28 @@ Player& Player::operator=(const Player& other)
 
 void Player::processInput()
 {
+	pressingLeft_ = false;
+	pressingRight_ = false;
 	movingRight_ = false;
 	movingLeft_ = false;
 	jumpHeld_ = false;
 	ActionTarget<int>::processEvents();
+
+	if (pressingRight_ == true && pressingLeft_ == true)
+	{
+		movingRight_ = false;
+		movingLeft_ = false;
+
+		if (wasFacingRight_)
+		{
+			facingRight_ = true;
+		}
+		else
+		{
+			facingRight_ = false;
+		}
+	}
+
 }
 
 bool Player::IsMoving()
@@ -233,29 +251,74 @@ void Player::bindActions()
 		});
 
 	bind(Cfg::PlayerInputs::Right, [this](const sf::Event&) {
-		if (movingLeft_)
-		{
-			movingLeft_ = false;
-		}
-		else
-		{
-			movingRight_ = true;
-			facingRight_ = true;
-		}
+			if (wasFacingRight_)
+			{
+				movingRight_ = true;
+				movingLeft_ = false;
+				facingRight_ = true;
+			}
+			else if (movingLeft_ && !wasFacingRight_)
+			{
+				if (!pressingLeft_)
+				{
+					facingRight_ = true;
+					movingLeft_ = false;
+					movingRight_ = true;
+				}
+				else
+				{
+					facingRight_ = false;
+					movingLeft_ = false;
+					movingRight_ = false;
+				}
+			}
+			else
+			{
+				facingRight_ = false;
+				movingLeft_ = false;
+				movingRight_ = true;
+				//wasFacingRight_ = true;
+			}
+		
+			pressingRight_ = true;
 		});
 
 	bind(Cfg::PlayerInputs::Left, [this](const sf::Event&) {
-		if (movingRight_)
-		{
-			movingRight_ = false;
-		}
-		else
-		{
-			movingLeft_ = true;
-			facingRight_ = false;
 
+			if (!wasFacingRight_)
+			{
+				movingLeft_ = true;
+				movingRight_ = false;
+				facingRight_ = false;
+			}
+			else if (movingRight_ && wasFacingRight_)
+			{
+				if (!pressingLeft_)
+				{
+					facingRight_ = false;
+					movingLeft_ = true;
+					movingRight_ = false;
+				}
+				else
+				{
+					facingRight_ = false;
+					movingLeft_ = false;
+					movingRight_ = false;
+				}
+			}
+			else
+			{
+				facingRight_ = true;
+				movingLeft_ = true;
+				movingRight_ = false;
+				wasFacingRight_ = false;
+			}
 
-		}
+			if (!pressingRight_)
+				facingRight_ = false;
+
+			pressingLeft_ = true;
+		
 		});
 
 	bind(Cfg::PlayerInputs::B, [this](const sf::Event&) {

@@ -12,6 +12,8 @@ ActionMap<int> Cfg::playerInputs = {};
 
 float Cfg::Gravity = 4200.f;
 
+BoundingBoxDB bboxDB = {};
+
 void Cfg::Initialize()
 {
     initTextures();

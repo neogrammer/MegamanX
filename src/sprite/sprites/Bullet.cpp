@@ -1,4 +1,5 @@
 #include "Bullet.hpp"
+#include <res/Cfg.hpp>
 
 Bullet::Bullet()
 	: ASprite{}
@@ -7,7 +8,7 @@ Bullet::Bullet()
 }
 
 Bullet::Bullet(sf::Texture& l_tex, bool l_friendly)
-	: ASprite{SpriteType::Projectile, l_tex}
+	: ASprite{SpriteType::Projectile, SpriteName::BusterBullet, l_tex}
 	, m_friendly{l_friendly}
 	, m_damage{ 1 }
 {

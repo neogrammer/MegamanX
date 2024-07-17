@@ -5,6 +5,7 @@
 #include "ResourceManager.hpp"
 #include <action/ActionMap.hpp>
 #include <vector>
+#include <misc/aabb.hpp>
 
 struct Cfg
 {
@@ -42,6 +43,8 @@ struct Cfg
 
 	static ActionMap<int> playerInputs;
 	static float Gravity;
+
+	static BoundingBoxDB bboxDB;
 private:
     // initalize the resources for the entire game
     static void initFonts();

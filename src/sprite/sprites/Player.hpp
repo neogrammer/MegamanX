@@ -28,6 +28,8 @@ private:
 	void bindActions();
 	bool jumpHeld_{ false };
 	bool jumpLetGo_{ true };
+	bool pressingRight_{ false };
+	bool pressingLeft_{ false };
 
 
 };
