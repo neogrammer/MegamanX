@@ -3,9 +3,11 @@
 
 #include <sprite/sprites/Player.hpp>
 #include <sprite/sprites/Tile.hpp>
+#include <sprite/sprites/BuzzBird.hpp>
 
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+
 
 #include <misc/globals.hpp>
 #include <iostream>
@@ -56,6 +58,21 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 				return true;
 			}
 			
+		}
+
+		// for bullet to enemies
+		if (l_sprA.getType() == SpriteType::Projectile && (*s).getType() == SpriteType::Enemy)
+		{
+			if (RectVsRect(l_sprA, *s))
+			{
+				if (dynamic_cast<Bullet*>(&l_sprA)->GetFriendly())
+				{
+					dynamic_cast<BuzzBird*>(s.get())->TakeHit(dynamic_cast<Bullet*>(&l_sprA)->GetDamage());
+					l_sprA.SetAlive(false);
+					return true;
+				}
+			}
+
 		}
 
 		// for bullet to player

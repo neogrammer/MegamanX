@@ -5,10 +5,12 @@ Stage::Stage(StageType l_type)
 	, projectiles_{}
 	, player_{}
 	, tilemap_{}
+	, enemies_{}
 	, tilemapSolidTiles_{}
 {
 	projectiles_.clear();
 	tilemapSolidTiles_.clear();
+	enemies_.clear();
 }
 
 StageType Stage::getType()

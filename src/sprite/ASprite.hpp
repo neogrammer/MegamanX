@@ -46,6 +46,8 @@ protected:
 	bool movingLeft_{ false };
 	bool facingRight_{ true };
 	bool shooting_{ false };
+	bool invincible_{ false };
+	sf::Time invincibleTime_ = sf::Time::Zero;
 
 	sf::Sprite spr_;
 	sf::Vector2f vel_;

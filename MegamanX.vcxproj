@@ -89,6 +89,7 @@
     <ClCompile Include="src\sprite\Animation.cpp" />
     <ClCompile Include="src\sprite\ASprite.cpp" />
     <ClCompile Include="src\sprite\sprites\Bullet.cpp" />
+    <ClCompile Include="src\sprite\sprites\BuzzBird.cpp" />
     <ClCompile Include="src\sprite\sprites\Player.cpp" />
     <ClCompile Include="src\sprite\sprites\Tile.cpp" />
     <ClCompile Include="src\stage\Stage.cpp" />
@@ -122,6 +123,7 @@
     <ClInclude Include="src\sprite\Animation.hpp" />
     <ClInclude Include="src\sprite\ASprite.hpp" />
     <ClInclude Include="src\sprite\sprites\Bullet.hpp" />
+    <ClInclude Include="src\sprite\sprites\BuzzBird.hpp" />
     <ClInclude Include="src\sprite\sprites\Player.hpp" />
     <ClInclude Include="src\sprite\sprites\Tile.hpp" />
     <ClInclude Include="src\stage\Stage.hpp" />

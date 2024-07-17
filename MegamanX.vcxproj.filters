@@ -184,6 +184,9 @@
     <ClCompile Include="src\misc\aabb.cpp">
       <Filter>Source Files\misc</Filter>
     </ClCompile>
+    <ClCompile Include="src\sprite\sprites\BuzzBird.cpp">
+      <Filter>Source Files\sprite\sprites</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app\Game.hpp">
@@ -278,6 +281,9 @@
     </ClInclude>
     <ClInclude Include="src\FSM\duck_fold.hpp">
       <Filter>Header Files\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sprite\sprites\BuzzBird.hpp">
+      <Filter>Header Files\sprite\sprites</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

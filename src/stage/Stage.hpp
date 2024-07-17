@@ -7,6 +7,7 @@
 #include <sprite/sprites/Bullet.hpp>
 #include <sprite/sprites/Tile.hpp>
 #include <sprite/sprites/Player.hpp>
+#include <sprite/sprites/BuzzBird.hpp>
 #include <map/Tilemap.hpp>
 
 struct Stage
@@ -35,6 +36,7 @@ protected:
 	std::shared_ptr<Tilemap> tilemap_;
 	std::vector<std::shared_ptr<ASprite>> tilemapSolidTiles_;
 	std::shared_ptr<ASprite> player_;
+	std::vector<std::shared_ptr<ASprite>> enemies_;
 
 
 };

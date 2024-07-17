@@ -50,6 +50,8 @@ SandboxStage::SandboxStage()
 	boundingBox_.setFillColor(sf::Color(255,0,0,110));
 	boundingBox_.setOrigin({ (*player_)().getOrigin() });
 	boundingBox_.setPosition({ -1.f * (*player_)().getOrigin().x, -1.f * (*player_)().getOrigin().y });
+
+	enemies_.emplace_back(std::make_shared<BuzzBird>());
 }
 
 SandboxStage::~SandboxStage()
@@ -102,6 +104,7 @@ void SandboxStage::Update(const sf::Time& l_dt)
 
 	// erase any dead bullets here from last frame
 	projectiles_.erase(std::remove_if(projectiles_.begin(), projectiles_.end(), [&](auto& p) ->bool { return !p->IsAlive(); }), projectiles_.end());
+	enemies_.erase(std::remove_if(enemies_.begin(), enemies_.end(), [&](auto& e) ->bool { return !e->IsAlive(); }), enemies_.end());
 
 	//update any animated tiles
 	for (auto& s : tilemap_->GetTiles()) { s->updateBase(l_dt); }
@@ -112,6 +115,12 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	// handle bullets to tiles collisions
 	for (auto& p : projectiles_) { if (CollisionMgr::CheckCollisions(*p, tilemapSolidTiles_, cp, cn, t, l_dt) && t <= 1.f) {int fillerJob = 0;} }
 
+	// handle bullets to enemy collisions
+	for (auto& p : projectiles_) { if (CollisionMgr::CheckCollisions(*p, enemies_, cp, cn, t, l_dt) && t <= 1.f) { int fillerJob = 0; } }
+
+	// enemies
+	for (auto& e : enemies_) { e->updateBase(l_dt); }
+
 	// handle bullets to player collisions
 	for (auto& p : projectiles_) 
 	{ 
@@ -121,6 +130,9 @@ void SandboxStage::Update(const sf::Time& l_dt)
 			if (CollisionMgr::CheckCollisions(*p, tmp, cp, cn, t, l_dt)) { int fillerJob = 0; }
 		}
 	}
+
+	// enemies
+
 
 	// main handling of player adjustment for gravity and movement colliding against the map tiles
 	if (CollisionMgr::CheckCollisions(*player_, tilemapSolidTiles_, cp, cn, t, l_dt))
@@ -176,8 +188,13 @@ void SandboxStage::Render(sf::RenderWindow& l_wnd)
 	// draw map
 	tilemap_->Render(l_wnd);
 
+	// draw enemies
+	for (auto& e : enemies_) { e->render(l_wnd); }
+
 	// draw the player
 	player_->render(l_wnd);
+
+
 
 	// draw bullets
 	for (auto& b : projectiles_) { b->render(l_wnd); }

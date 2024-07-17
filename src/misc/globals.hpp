@@ -18,6 +18,7 @@ namespace g
 enum class SpriteType
 {
 	Actor,
+	Enemy,
 	Projectile,
 	Tile,
 	Count
