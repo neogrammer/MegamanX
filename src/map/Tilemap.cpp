@@ -30,10 +30,14 @@ void Tilemap::Setup(const std::string& l_tilesetfile, sf::Texture& l_tex, std::s
 		{
 			int tileSheetTileNum;
 			iFile >> tileSheetTileNum;
-			m_tiles.emplace_back(std::make_shared<Tile>(m_tilesets.at(0)->copyTile(tileSheetTileNum)));
-			(*m_tiles.back())().setTextureRect(m_tilesets.at(0)->GetRect(tileSheetTileNum));
-			(*m_tiles.back())().setOrigin({ tileW / 2.f, tileH / 2.f });
-			(*m_tiles.back())().setPosition({ (float)(x * tileW) + (*m_tiles.back())().getOrigin().x, (float)(y * tileH) + (*m_tiles.back())().getOrigin().y });
+			if (m_tilesets.at(0)->m_tiles.at(tileSheetTileNum)->IsSolid())
+			{
+				m_tiles.emplace_back(std::make_shared<Tile>(m_tilesets.at(0)->copyTile(tileSheetTileNum)));
+				(*m_tiles.back())().setTextureRect(m_tilesets.at(0)->GetRect(tileSheetTileNum));
+				(*m_tiles.back())().setOrigin({ tileW / 2.f, tileH / 2.f });
+				(*m_tiles.back())().setPosition({ (float)(x * tileW) + (*m_tiles.back())().getOrigin().x, (float)(y * tileH) + (*m_tiles.back())().getOrigin().y });
+			}
+			m_tiles.shrink_to_fit();
 		}
 	}
 

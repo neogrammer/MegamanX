@@ -171,8 +171,55 @@ void ASprite::Shoot()
 void ASprite::updatePosition()
 {
 	if (!isSetExternal)
-		spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
+	{
+		if (this->type_ == SpriteType::Actor)
+		{
+			if (facingRight_ && this->spr_.getPosition().x + vel_.x * gameTime_.asSeconds() > dynamic_cast<Player*>(this)->GetView().getCenter().x)
+			{
+				auto diff = ((this->spr_.getPosition().x + vel_.x * gameTime_.asSeconds()) - dynamic_cast<Player*>(this)->GetView().getCenter().x);
+				spr_.setPosition(dynamic_cast<Player*>(this)->GetView().getCenter().x, spr_.getPosition().y + vel_.y * gameTime_.asSeconds());
+				dynamic_cast<Player*>(this)->GetView().move({ diff, 0.f });
+			}
+			else if (!facingRight_ && this->spr_.getPosition().x + vel_.x * gameTime_.asSeconds() < dynamic_cast<Player*>(this)->GetView().getCenter().x)		
+			{
+				auto diff = (dynamic_cast<Player*>(this)->GetView().getCenter().x - (this->spr_.getPosition().x + vel_.x * gameTime_.asSeconds()));
+				if (dynamic_cast<Player*>(this)->GetView().getCenter().x - 800.f - diff >= 0.f)
+				{
+					spr_.setPosition(dynamic_cast<Player*>(this)->GetView().getCenter().x, spr_.getPosition().y + vel_.y * gameTime_.asSeconds());
+					dynamic_cast<Player*>(this)->GetView().move({ -diff, 0.f });
+				}
+				else
+				{
+					if (spr_.getPosition().x - spr_.getOrigin().x + vel_.x * gameTime_.asSeconds() > 32.f)
+						spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
+
+				}
+			}
+			else
+			{
+				if (!facingRight_)
+				{
+					if (spr_.getPosition().x - spr_.getOrigin().x + vel_.x * gameTime_.asSeconds() >= abs(vel_.x * gameTime_.asSeconds()) + 32.f)
+					{
+						spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
+					}
+				
+				
+				}
+				else
+				{
+					spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
+				}
+		
+			}
+		}
+		else
+		{
+			spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
+		}
+	}
 }
+
 
 void ASprite::updateTexRect()
 {

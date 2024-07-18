@@ -40,6 +40,8 @@ protected:
 	std::shared_ptr<ASprite> player_;
 	std::vector<std::shared_ptr<ASprite>> enemies_;
 
+	sf::View worldSpace_;
+
 
 };
 

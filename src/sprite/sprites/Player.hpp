@@ -7,11 +7,13 @@
 
 struct Player : ASprite, ActionTarget<int>
 {
-	Player();
+	Player() = delete;
+	Player(sf::View& l_worldSpace);
 	~Player() override = default;
 
-	Player(const Player&);
-	Player& operator=(const Player&);
+	Player(const Player&) = delete;
+	Player& operator=(const Player&) = delete;
+
 
 	void processInput() override;
 	void update(const sf::Time& l_dt) override;
@@ -23,7 +25,7 @@ struct Player : ASprite, ActionTarget<int>
 	void TakeHit(int l_damage);
 
 	AnimType SyncFSM();
-
+	sf::View& GetView();
 	FSM_Player fsm{};
 private:
 	void bindActions();
@@ -32,6 +34,8 @@ private:
 	bool pressingRight_{ false };
 	bool pressingLeft_{ false };
 	bool pressingShoot_{ false };
+
+	sf::View& worldView_;
 
 
 

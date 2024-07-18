@@ -48,6 +48,8 @@ void Cfg::initTextures()
 	textures.load((int)Textures::PlayerTransFall, "assets/tex/megaman/trans_fall120x184_1.png");
 	textures.load((int)Textures::PlayerFall, "assets/tex/megaman/fall120x184_1.png");
 	textures.load((int)Textures::PlayerLand, "assets/tex/megaman/land120x184_2.png");
+	textures.load((int)Textures::BGSpace, "assets/tex/backgrounds/space/BG1_0_4800x2700.png");
+
 
 	textures.load((int)Textures::BirdSheetWSaw, "assets/tex/enemies/BirdSheet220x296_3Rows_7_9_2.png");
 

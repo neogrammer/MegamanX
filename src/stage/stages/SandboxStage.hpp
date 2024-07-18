@@ -23,6 +23,8 @@ struct SandboxStage : Stage
 private:
 	sf::RectangleShape boundingBox_;
 	sf::CircleShape pointOfContact_;
+
+	float bgOffset{ 0.f };
 };
 
 #endif

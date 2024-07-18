@@ -10,7 +10,9 @@ Stage::Stage(StageType l_type)
 	, tilemap_{}
 	, enemies_{}
 	, tilemapSolidTiles_{}
+	, worldSpace_{}
 {
+	worldSpace_ = sf::View({ 800.f, 450.f }, { 1600.f,900.f });
 	projectiles_.clear();
 	tilemapSolidTiles_.clear();
 	enemies_.clear();

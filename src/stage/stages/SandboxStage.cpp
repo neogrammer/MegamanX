@@ -21,7 +21,7 @@ SandboxStage::SandboxStage()
 			tilemapSolidTiles_.push_back(tilemap_->GetTile(i));
 	}
 	
-	player_ = std::make_shared<Player>();
+	player_ = std::make_shared<Player>(worldSpace_);
 
 	pointOfContact_.setRadius(10.f);
 	pointOfContact_.setFillColor(sf::Color::Red);
@@ -104,7 +104,7 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	enemies_.erase(std::remove_if(enemies_.begin(), enemies_.end(), [&](auto& e) ->bool { return !e->IsAlive(); }), enemies_.end());
 
 	//update any animated tiles
-	for (auto& s : tilemap_->GetTiles()) { s->updateBase(l_dt); }
+	//for (auto& s : tilemap_->GetTiles()) { s->updateBase(l_dt); }
 
 	// update bullet animations and positions
 	for (auto& b : projectiles_) {
@@ -178,12 +178,45 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	boundingBox_.setSize((sf::Vector2f)(*player_)().getTextureRect().getSize());
 	boundingBox_.setOrigin((*player_)().getOrigin());
 
-	
+	bgOffset += 10.f * l_dt.asSeconds();
 	
 }
 
 void SandboxStage::Render(sf::RenderWindow& l_wnd)
 {
+	l_wnd.setView(worldSpace_);
+
+	sf::Sprite bg{};
+	bg.setTexture(Cfg::textures.get((int)Cfg::Textures::BGSpace));
+	bg.move({ bgOffset,0.f });
+
+	auto currLeft = worldSpace_.getCenter().x - 800.f;
+	if (bgOffset >= currLeft)
+	{
+		//create another background size.x to the left of the bgOffset
+		sf::Sprite bgLeft{};
+		bgLeft.setTexture(Cfg::textures.get((int)Cfg::Textures::BGSpace));
+		bgLeft.setPosition({ bgOffset - bgLeft.getTexture()->getSize().x, 0.f });
+
+		l_wnd.draw(bgLeft);
+		if (bgLeft.getPosition().x >= currLeft)
+		{
+			sf::Sprite bgLeftLeft{};
+			bgLeftLeft.setTexture(Cfg::textures.get((int)Cfg::Textures::BGSpace));
+			bgLeftLeft.setPosition({ bgLeft.getPosition().x - bgLeft.getTexture()->getSize().x, 0.0f });
+			l_wnd.draw(bgLeftLeft);
+			if (bgLeftLeft.getPosition().x >= currLeft)
+			{
+				bgOffset = 0.0f;
+				bg.setPosition({ currLeft, 0.f });
+
+			}
+
+		}
+	}
+
+	l_wnd.draw(bg);
+
 	// draw map
 	tilemap_->Render(l_wnd);
 
@@ -199,8 +232,8 @@ void SandboxStage::Render(sf::RenderWindow& l_wnd)
 	for (auto& b : projectiles_) { b->render(l_wnd); }
 
 	// For debugging purposes
-	//l_wnd.draw(boundingBox_);
-	//l_wnd.draw(pointOfContact_);
+	l_wnd.draw(boundingBox_);
+	l_wnd.draw(pointOfContact_);
 }
 
 

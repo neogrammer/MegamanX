@@ -133,6 +133,12 @@
     <Filter Include="Source Files\sprite\sprites\projectiles">
       <UniqueIdentifier>{6dde7cd8-5dc7-494b-bdc4-9b3953f4f0d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\assets\tex\backgrounds">
+      <UniqueIdentifier>{e84d2d3b-d945-438a-9132-8c78208b5716}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\assets\tex\backgrounds\space">
+      <UniqueIdentifier>{542056d8-9639-425a-9518-e610fa8cf23d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -369,6 +375,9 @@
     </Image>
     <Image Include="assets\tex\enemies\BirdSheet220x296_3Rows_7_9_2.png">
       <Filter>Resource Files\assets\tex\enemies</Filter>
+    </Image>
+    <Image Include="assets\tex\backgrounds\space\BG1_0_4800x2700.png">
+      <Filter>Resource Files\assets\tex\backgrounds\space</Filter>
     </Image>
   </ItemGroup>
 </Project>

@@ -5,9 +5,10 @@
 
 float Player::JumpForce = -1600.f;
 float Player::MoveSpeed = 600.f;
-Player::Player()
+Player::Player(sf::View& l_worldSpace)
 	: ASprite{ SpriteType::Actor, SpriteName::Player, Cfg::textures.get((int)Cfg::Textures::PlayerIdle) }
 	, ActionTarget<int>{Cfg::playerInputs}
+	, worldView_{l_worldSpace}
 {
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerIdle), AnimLayoutType::Horizontal, AnimType::Idle, 3Ui64, { {0,0},{120,136} },
 		3Ui64, 1Ui64, 0.24f, 0.f, true, true, true, true, 5.f);
@@ -20,7 +21,7 @@ Player::Player()
 
 
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerShootStand), AnimLayoutType::Horizontal, AnimType::ShootStand, 2Ui64, { {0,0},{120,136} },
-		2Ui64, 1Ui64, 0.14f, 0.04f, true, true, true, true, 0.04);
+		2Ui64, 1Ui64, 0.14f, 0.04f, true, true, true, true, 0.04f);
 
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerTransJump), AnimLayoutType::Horizontal, AnimType::TransJump, 2Ui64, { {0,0},{120,184} },
 		2Ui64, 1Ui64, 0.14f, 0.f, true, false, false);
@@ -52,20 +53,21 @@ Player::Player()
 
 }
 
-
-Player::Player(const Player& other)
-	: ASprite(other)
-	, ActionTarget<int>{Cfg::playerInputs}
-{
-	bindActions();
-}
-
-Player& Player::operator=(const Player& other)
-{
-	this->spr_ = other.spr_;
-	this->spr_.setTexture(*const_cast<sf::Texture*>(other.spr_.getTexture()));
-	return *this;
-}
+//
+//Player::Player(const Player& other)
+//	: ASprite(other)
+//	, ActionTarget<int>{Cfg::playerInputs}
+//	
+//{
+//	bindActions();
+//}
+//
+//Player& Player::operator=(const Player& other)
+//{
+//	this->spr_ = other.spr_;
+//	this->spr_.setTexture(*const_cast<sf::Texture*>(other.spr_.getTexture()));
+//	return *this;
+//}
 
 void Player::processInput()
 {
@@ -146,6 +148,11 @@ AnimType Player::SyncFSM()
 {
 	fsm.moving = IsMoving();
 	return getAnimType(fsm);
+}
+
+sf::View& Player::GetView()
+{
+	return worldView_;
 }
 
 void Player::update(const sf::Time& l_dt)

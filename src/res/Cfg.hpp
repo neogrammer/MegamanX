@@ -16,7 +16,7 @@ struct Cfg
 	static void Initialize();
 
 	// Resource Enums 
-	enum class Textures : int { Tileset1, Bullet1, BirdSheetWSaw, 
+	enum class Textures : int { Tileset1, BGSpace, Bullet1, BirdSheetWSaw, 
 		PlayerIdle, PlayerRun, PlayerTransRun, PlayerShootStand, 
 		PlayerTransJump, PlayerRise, PlayerTransFall, PlayerFall, PlayerLand,
 		Count };
