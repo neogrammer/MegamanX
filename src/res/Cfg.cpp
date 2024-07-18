@@ -2,6 +2,7 @@
 #include "ResourceManager.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <sprite/sprites/Bullet.hpp>
 
 ResourceManager<sf::Texture, int> Cfg::textures = {};
 ResourceManager<sf::Font, int> Cfg::fonts = {};
@@ -59,7 +60,7 @@ void Cfg::initPlayerInputs()
 
 	// Keyboard pressed commands
 	playerInputs.map(Cfg::PlayerInputs::X, Action(sf::Keyboard::Num9));
-	playerInputs.map(Cfg::PlayerInputs::Y, Action(sf::Keyboard::Num5));
+	playerInputs.map(Cfg::PlayerInputs::Y, Action(sf::Keyboard::X));
 	playerInputs.map(Cfg::PlayerInputs::A, Action(sf::Keyboard::Num0));
 	playerInputs.map(Cfg::PlayerInputs::B, Action(sf::Keyboard::Space));
 	playerInputs.map(Cfg::PlayerInputs::L1, Action(sf::Keyboard::Num7));
@@ -91,6 +92,11 @@ void Cfg::initPlayerInputs()
 	playerInputs.map(Cfg::PlayerInputs::JoySelect, Action(JoystickBtn::Select, Action::Type::RealTime | Action::Type::Pressed));
 
 }
+
+
+
+
+
 
 void Cfg::initFonts()
 {

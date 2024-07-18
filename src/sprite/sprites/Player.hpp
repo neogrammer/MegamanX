@@ -18,7 +18,8 @@ struct Player : ASprite, ActionTarget<int>
 	static float JumpForce;
 	static float MoveSpeed;
 	bool IsMoving();
-	bool IsShooting();
+	bool IsShooting() override;
+	void Shoot() override;
 	void TakeHit(int l_damage);
 
 	AnimType SyncFSM();
@@ -30,6 +31,8 @@ private:
 	bool jumpLetGo_{ true };
 	bool pressingRight_{ false };
 	bool pressingLeft_{ false };
+	
+
 
 
 };

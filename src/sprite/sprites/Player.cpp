@@ -110,6 +110,26 @@ bool Player::IsShooting()
 	return shooting_;
 }
 
+void Player::Shoot()
+{
+
+	if (!shooting_ && numBullets_ < maxBullets_)
+	{
+		shooting_ = true;
+		shootElapsed_ = sf::Time::Zero;
+		needsStageToShoot_ = true;
+		numBullets_++;
+	}
+	else
+	{
+		shootElapsed_ += gameTime_;
+		if (shootElapsed_ > shootDelay_)
+		{
+			shooting_ = false;
+		}
+	}
+}
+
 void Player::TakeHit(int l_damage)
 {
 	// NOT YET IMPLEMENTED
@@ -331,6 +351,11 @@ void Player::bindActions()
 			vel_.y = Player::JumpForce;
 			dispatch(fsm, evt_Jumped{});
 		}
+		});
+
+
+	bind(Cfg::PlayerInputs::Y, [this](const sf::Event&) {
+		Shoot();
 		});
 }
 

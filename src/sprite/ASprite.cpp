@@ -20,6 +20,11 @@ sf::Sprite& ASprite::operator()()
 	return spr_;
 }
 
+bool ASprite::IsFacingRight()
+{
+    return facingRight_;
+}
+
 
 ASprite::ASprite(const ASprite& other)
 {
@@ -127,6 +132,22 @@ void ASprite::SyncSpriteToAnim(ASprite& l_spr)
 	}
 }
 
+bool ASprite::NeedsStageToShoot()
+{
+	return needsStageToShoot_;
+}
+
+void ASprite::BulletWasShot()
+{
+	needsStageToShoot_ = false;
+}
+
+void ASprite::BulletWasDestroyed()
+{
+	if (numBullets_ > 0)
+		numBullets_--;
+}
+
 void ASprite::processInputBase()
 {
 	processInput();
@@ -136,6 +157,15 @@ void ASprite::updateBase(const sf::Time& l_dt)
 {
 	//gameTime_ = l_dt;
 	update(l_dt);
+}
+
+bool ASprite::IsShooting()
+{
+    return false;
+}
+
+void ASprite::Shoot()
+{
 }
 
 void ASprite::updatePosition()

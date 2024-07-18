@@ -27,7 +27,7 @@ struct Stage
 	virtual void HandleEvent(const sf::Event& l_e) = 0;
 	virtual void Update(const sf::Time& l_dt) = 0;
 	virtual void Render(sf::RenderWindow& l_wnd) = 0;
-
+	void CreateFriendlyBullet(ASprite& l_spr, SpriteName l_name);
 	StageType getType();
 
 protected:

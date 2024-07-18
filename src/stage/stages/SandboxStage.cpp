@@ -20,25 +20,7 @@ SandboxStage::SandboxStage()
 		if (tilemap_->IsTileSolid(i))
 			tilemapSolidTiles_.push_back(tilemap_->GetTile(i));
 	}
-	projectiles_.reserve(3);
-	projectiles_.emplace_back(std::make_shared<Bullet>(Cfg::textures.get((int)Cfg::Textures::Bullet1)));
-	(*projectiles_.back())().setTextureRect({ { 0, 0 }, { 18 , 18 } });
-	(*projectiles_.back())().setOrigin({ 9.f, 9.f });
-	(*projectiles_.back()).vel() = { 600.f, 0.f };
-	(*projectiles_.back())().setPosition({ 0.f, 896.f - 68.f - 64.f - 10.f - 80.f});
-
-	projectiles_.emplace_back(std::make_shared<Bullet>(Cfg::textures.get((int)Cfg::Textures::Bullet1)));
-	(*projectiles_.back())().setTextureRect({ { 0, 0 }, { 18 , 18 } });
-	(*projectiles_.back())().setOrigin({ 9.f, 9.f });
-	(*projectiles_.back()).vel() = { 600.f, 0.f };
-	(*projectiles_.back())().setPosition({ 40.f, 896.f - 68.f - 64.f - 10.f - 80.f });
 	
-	projectiles_.emplace_back(std::make_shared<Bullet>(Cfg::textures.get((int)Cfg::Textures::Bullet1)));
-	(*projectiles_.back())().setTextureRect({ { 0, 0 }, { 18 , 18 } });
-	(*projectiles_.back())().setOrigin({ 9.f, 9.f });
-	(*projectiles_.back()).vel() = { 600.f, 0.f };
-	(*projectiles_.back())().setPosition({ 80.f, 896.f - 68.f - 64.f - 10.f - 80.f });
-
 	player_ = std::make_shared<Player>();
 
 	pointOfContact_.setRadius(10.f);
@@ -86,6 +68,12 @@ void SandboxStage::HandleEvent(const sf::Event& l_e)
 void SandboxStage::Update(const sf::Time& l_dt)
 {
 
+	if (player_->NeedsStageToShoot())
+	{
+		CreateFriendlyBullet(*player_, SpriteName::BusterBullet);
+		player_->BulletWasShot();
+	}
+
 	// update the player's bounding box size for the collision checks
 	//ASprite::SyncSpriteToAnim(*player_);
 
@@ -103,14 +91,25 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	bool collided = false;
 
 	// erase any dead bullets here from last frame
-	projectiles_.erase(std::remove_if(projectiles_.begin(), projectiles_.end(), [&](auto& p) ->bool { return !p->IsAlive(); }), projectiles_.end());
+	projectiles_.erase(std::remove_if(projectiles_.begin(), projectiles_.end(), [&](auto& p) ->bool 
+		{
+			if (!p->IsAlive())
+			{
+				if (dynamic_cast<Projectile*>(p.get())->GetFriendly())
+					player_->BulletWasDestroyed();
+			}
+			return !p->IsAlive(); })
+		, projectiles_.end());
+
 	enemies_.erase(std::remove_if(enemies_.begin(), enemies_.end(), [&](auto& e) ->bool { return !e->IsAlive(); }), enemies_.end());
 
 	//update any animated tiles
 	for (auto& s : tilemap_->GetTiles()) { s->updateBase(l_dt); }
 
 	// update bullet animations and positions
-	for (auto& b : projectiles_) { b->updateBase(l_dt);	}
+	for (auto& b : projectiles_) {
+		b->updateBase(l_dt); if ((*b)().getPosition().x > 1600.f || (*b)().getPosition().x < 0.f) { b->SetAlive(false); }
+	}
 	
 	// handle bullets to tiles collisions
 	for (auto& p : projectiles_) { if (CollisionMgr::CheckCollisions(*p, tilemapSolidTiles_, cp, cn, t, l_dt) && t <= 1.f) {int fillerJob = 0;} }
@@ -203,3 +202,5 @@ void SandboxStage::Render(sf::RenderWindow& l_wnd)
 	//l_wnd.draw(boundingBox_);
 	//l_wnd.draw(pointOfContact_);
 }
+
+
