@@ -18,8 +18,15 @@ BuzzBird::BuzzBird() : ASprite{ SpriteType::Enemy, SpriteName::BuzzBird, Cfg::te
 
 	animMgr.SwitchAnimation(AnimType::Idle);
 
-	Cfg::bboxDB.addToMap(*this, AnimType::Idle, { 112.f, 100.f }, { 24.f, 174.f });
-	Cfg::bboxDB.addToMap(*this, AnimType::ShootStand, { 112.f, 100.f }, { 24.f, 174.f });
+	for (int i = 0; i < 7; i++)
+	{
+		Cfg::bboxDB.addToMap(*this, AnimType::Idle, i, { 112.f, 100.f }, { 24.f, 174.f });
+	}
+
+	for (int i = 0; i < 9; i++)
+	{
+		Cfg::bboxDB.addToMap(*this, AnimType::ShootStand, i, { 112.f, 100.f }, { 24.f, 174.f });
+	}
 
 }
 

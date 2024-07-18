@@ -15,6 +15,7 @@ struct AnimationMgr
 	bool currIsReadyToPop();
 	Animation* currFallback();
 	AnimType getCurrType();
+	uint32_t getCurrFrameIdx();
 
 private:
 	std::unordered_map<AnimType, Animation> m_animMap = {};

@@ -187,6 +187,12 @@
     <ClCompile Include="src\sprite\sprites\BuzzBird.cpp">
       <Filter>Source Files\sprite\sprites</Filter>
     </ClCompile>
+    <ClCompile Include="src\sprite\sprites\BuzzSaw.cpp">
+      <Filter>Source Files\sprite\sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sprite\sprites\Projectile.cpp">
+      <Filter>Source Files\sprite\sprites</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app\Game.hpp">
@@ -283,6 +289,9 @@
       <Filter>Header Files\FSM</Filter>
     </ClInclude>
     <ClInclude Include="src\sprite\sprites\BuzzBird.hpp">
+      <Filter>Header Files\sprite\sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sprite\sprites\Projectile.hpp">
       <Filter>Header Files\sprite\sprites</Filter>
     </ClInclude>
   </ItemGroup>

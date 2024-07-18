@@ -3,6 +3,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <map>
 #include "globals.hpp"
+#include <vector>
 #include <compare>
 struct ASprite;
 struct vf2d
@@ -104,15 +105,15 @@ struct BoundingBoxDB
 
 
 	AABB getAABB(ASprite& l_spr);
-	AABB getAABB(ASprite& l_spr, AnimType l_aType);
+	AABB getAABB(ASprite& l_spr, AnimType l_aType, uint32_t l_frameIndex);
 
 
-	void addToMap(ASprite& l_spr, AnimType l_aType, sf::Vector2f l_localCenter, sf::Vector2f l_size);
+	void addToMap(ASprite& l_spr, AnimType l_aType, uint32_t l_frameIndex, sf::Vector2f l_localCenter, sf::Vector2f l_size);
 
 	
 
 private:
-	std::map<SpriteKey, AABB> bbdbMap{};
+	std::map<SpriteKey, std::vector<AABB>> bbdbMap{};
 };
 
 

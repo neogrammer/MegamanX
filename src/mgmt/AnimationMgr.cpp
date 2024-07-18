@@ -86,3 +86,12 @@ AnimType AnimationMgr::getCurrType()
 	}
     return m_currAnim->GetType();
 }
+
+uint32_t AnimationMgr::getCurrFrameIdx()
+{
+	if (!m_currAnim)
+	{
+		return 0Ui64;
+	}
+    return m_currAnim->m_currFrame;
+}

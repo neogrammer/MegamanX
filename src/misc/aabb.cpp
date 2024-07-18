@@ -45,7 +45,7 @@ void rect::Reset()
 	}
 	else
 	{ 
-		AABB bbox = Cfg::bboxDB.getAABB(*spr, spr->animMgr.getCurrType());
+		AABB bbox = Cfg::bboxDB.getAABB(*spr, spr->animMgr.getCurrType(), spr->animMgr.getCurrFrameIdx());
 		if (bbox.IsNone())
 		{
 			pos = { (*spr)().getGlobalBounds().left - ((*spr)().getGlobalBounds().width / 2.f) + (*spr)().getOrigin().x,
@@ -109,14 +109,33 @@ AABB BoundingBoxDB::getAABB(ASprite& l_spr)
 
 	SpriteKey key = {l_sType, l_sName, l_aType};
 
+
 	if (bbdbMap.find(key) == bbdbMap.end())
-	{
+	{	
+		// if one not added, return nothing to let outside code know
 		return AABB{ {0.f,0.f},{0.f,0.f} };
 	}
-	return bbdbMap[key];
+	else
+	{
+		// if the AABB for this frame dont exist but the first one does, 
+		// fill the ones that do not exist with the first aabb rect
+		if (l_spr.animMgr.getCurrFrameIdx() > bbdbMap[key].size())
+		{
+			int i = (int)bbdbMap[key].size() - 1;
+			auto tmp = bbdbMap[key].at(0);
+			bbdbMap[key].reserve(l_spr.animMgr.getCurrFrameIdx() + 1);
+			while (i < (int)l_spr.animMgr.getCurrFrameIdx())
+			{
+				bbdbMap[key].push_back(tmp);
+				i++;
+			}
+		}
+	}
+	// exists now
+	return bbdbMap[key].at(l_spr.animMgr.getCurrFrameIdx());
 }
 
-AABB BoundingBoxDB::getAABB(ASprite& l_spr, AnimType l_aType)
+AABB BoundingBoxDB::getAABB(ASprite& l_spr, AnimType l_aType, uint32_t l_frameIdx)
 {
 
 	SpriteType l_sType = l_spr.getType();
@@ -128,17 +147,51 @@ AABB BoundingBoxDB::getAABB(ASprite& l_spr, AnimType l_aType)
 	{
 		return AABB{ {0.f,0.f},{0.f,0.f} };
 	}
-	return bbdbMap[key];
+	else
+	{
+		// if improper frame index but exists, return last aabb in the set
+		if (l_frameIdx > bbdbMap[key].size())
+		{
+			return bbdbMap[key].at(bbdbMap[key].size() - 1);
+		}
+		else
+		{
+			return bbdbMap[key].at(l_frameIdx);
+		}
+	}
 }
 
 
-void BoundingBoxDB::addToMap(ASprite& l_spr, AnimType l_aType, sf::Vector2f l_localCenter, sf::Vector2f l_size)
+void BoundingBoxDB::addToMap(ASprite& l_spr, AnimType l_aType, uint32_t l_frameIdx, sf::Vector2f l_localCenter, sf::Vector2f l_size)
 {
 	
 	SpriteType l_sType = l_spr.getType();
 	SpriteName l_sName = l_spr.getName();
 	SpriteKey key = { l_sType, l_sName, l_aType };
 
-	bbdbMap[key] = AABB(l_localCenter, l_size);
+	if (l_frameIdx < 0)
+	{
+		std::cout << "Frame index for bbdbMap[key] is less than zero.  Not added" << std::endl;
+		return;
+	}
+	if (l_frameIdx == 0)
+	{
+		bbdbMap[key] = std::vector<AABB>{};
+		bbdbMap[key].clear();
+		bbdbMap[key].emplace_back(AABB{ l_localCenter, l_size });
+		return;
+	}
+	else if (l_frameIdx == bbdbMap[key].size())
+	{
+		bbdbMap[key].reserve(bbdbMap[key].size() + 1);
+		bbdbMap[key].emplace_back(AABB{ l_localCenter, l_size });
+		return;
+	}
+	else
+	{
+		std::cout << "Frame index for bbdbMap[key] is greater than the size, maybe out of order?  Not added" << std::endl;
+		return;
+	}
+	
 }
 
