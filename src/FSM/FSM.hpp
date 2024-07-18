@@ -21,8 +21,17 @@ public:
 		{
 			state_ = *std::move(new_state);
 		}
+		currType_ = std::visit(
+			[&](auto& s) -> AnimType
+			{
+				return child.getType(s);
+			}, state_);
 	}
 
+	AnimType getCurrType()
+	{
+		return currType_;
+	}
 	
 	AnimType getAnimType()
 	{
@@ -33,7 +42,8 @@ public:
 				return child.getType(s);
 			}, state_);
 		currType_ = new_type;
-		return currType_;
+		return new_type;
+		
 	}
 };
 

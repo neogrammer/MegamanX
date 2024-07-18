@@ -20,7 +20,7 @@ Player::Player()
 
 
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerShootStand), AnimLayoutType::Horizontal, AnimType::ShootStand, 2Ui64, { {0,0},{120,136} },
-		2Ui64, 1Ui64, 0.24f, 0.4f, true, true, true);
+		2Ui64, 1Ui64, 0.14f, 0.04f, true, true, true, true, 0.04);
 
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerTransJump), AnimLayoutType::Horizontal, AnimType::TransJump, 2Ui64, { {0,0},{120,184} },
 		2Ui64, 1Ui64, 0.14f, 0.f, true, false, false);
@@ -70,11 +70,17 @@ Player& Player::operator=(const Player& other)
 void Player::processInput()
 {
 	pressingLeft_ = false;
+	pressingShoot_ = false;
 	pressingRight_ = false;
 	movingRight_ = false;
 	movingLeft_ = false;
 	jumpHeld_ = false;
 	ActionTarget<int>::processEvents();
+
+	if (pressingShoot_ == false)
+	{
+		dispatch(fsm, evt_StoppedShooting{});
+	}
 
 	if (pressingRight_ == true && pressingLeft_ == true)
 	{
@@ -218,6 +224,8 @@ void Player::update(const sf::Time& l_dt)
 	// must be in a valid animatable state, thus a always is not Count
 	AnimType a = SyncFSM();
 
+	
+
 	switch (a)
 	{
 	case AnimType::Idle:
@@ -243,6 +251,8 @@ void Player::update(const sf::Time& l_dt)
 		break;
 	}
 
+	
+
 	if (animMgr.currentIsOnLastFrame() && animMgr.currIsReadyToPop() && animMgr.currFallback() != nullptr)
 	{
 		if (animMgr.currFallback()->GetType() == AnimType::Rise)
@@ -260,6 +270,22 @@ void Player::update(const sf::Time& l_dt)
 	}
 
 	animMgr.Update(l_dt);
+
+	if (animMgr.getCurrType() != fsm.getAnimType() && animMgr.getCurrType() != AnimType::Count)
+	{
+		if (fsm.getAnimType() == AnimType::ShootStand)
+		{
+			dispatch(fsm, evt_StoppedShooting{});
+		}
+	}
+	if (animMgr.getCurrType() != fsm.getAnimType())
+	{
+		if (fsm.getAnimType() == AnimType::Land)
+		{
+			dispatch(fsm, evt_Landed{});
+		}
+	}
+
 	ASprite::SyncSpriteToAnim(*this);
 }
 
@@ -355,7 +381,13 @@ void Player::bindActions()
 
 
 	bind(Cfg::PlayerInputs::Y, [this](const sf::Event&) {
+		
 		Shoot();
+		pressingShoot_ = true;
+		//if (shooting_ == true && shootElapsed_ == sf::Time::Zero)
+		//{
+			dispatch(fsm, evt_StartedShooting{});
+		//}
 		});
 }
 

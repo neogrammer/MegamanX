@@ -31,7 +31,7 @@ private:
 	bool jumpLetGo_{ true };
 	bool pressingRight_{ false };
 	bool pressingLeft_{ false };
-	
+	bool pressingShoot_{ false };
 
 
 

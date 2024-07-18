@@ -13,7 +13,7 @@ void AnimationMgr::AddAnimation(sf::Sprite& l_spr, sf::Texture& l_tex, AnimLayou
 
 void AnimationMgr::SwitchAnimation(AnimType l_type, AnimType l_fallback)
 {
-	if (l_type != m_currAnim->m_type && l_fallback != m_currAnim->m_type)
+	if (l_type != m_currAnim->m_type)
 	{
 		m_currAnim = &m_animMap[l_type];
 

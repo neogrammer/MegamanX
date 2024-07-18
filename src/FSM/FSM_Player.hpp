@@ -61,6 +61,10 @@ public:
 	{
 		return state_TransToRun{};
 	}
+	std::optional<PlayerStateVar> On_Event(state_Landing& s, const evt_Landed& e)
+	{
+		return state_Standing{};
+	}
 
 	std::optional<PlayerStateVar> On_Event(state_Standing& s, const evt_StartedShooting& e)
 	{

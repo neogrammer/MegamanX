@@ -22,7 +22,7 @@ StageType Stage::getType()
 }
 void Stage::CreateFriendlyBullet(ASprite& l_spr, SpriteName l_name)
 {
-	sf::Vector2f pos = { (!l_spr.IsFacingRight()) ? l_spr().getPosition().x - l_spr().getOrigin().x + 40.f : l_spr().getPosition().x + l_spr().getOrigin().x - 40.f, l_spr().getPosition().y - l_spr().getOrigin().y + ((float)l_spr().getTextureRect().height / 5.f) };
+	sf::Vector2f pos = { (!l_spr.IsFacingRight()) ? l_spr().getPosition().x - l_spr().getOrigin().x + 10.f : l_spr().getPosition().x + l_spr().getOrigin().x - 10.f, l_spr().getPosition().y - l_spr().getOrigin().y + ((float)l_spr().getTextureRect().height / 3.f) + 18.f };
 
 	switch (l_name)
 	{
