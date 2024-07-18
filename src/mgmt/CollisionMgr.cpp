@@ -8,11 +8,12 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
-
+#include <res/Cfg.hpp>
 #include <misc/globals.hpp>
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <FSM/duck_fold.hpp>
 sf::FloatRect CollisionMgr::m_currOverlap = { { 0.f, 0.f }, { 0.f,0.f } };
 sf::FloatRect CollisionMgr::m_prevOverlap = { { 0.f, 0.f }, { 0.f,0.f } };
 
@@ -26,6 +27,8 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 	// now check from lower bounds to upper bounds only as 
 	// this is the space the sprite is in before and after the movement
 	// assuming sprB is static, not moving
+
+
 	for (auto& s : l_sprVec)
 	{
 		// if same , try again
@@ -38,14 +41,204 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 		// for player to tiles
 		if (l_sprA.getType() == SpriteType::Actor && (*s).getType() == SpriteType::Tile && dynamic_cast<Player*>(&l_sprA) != nullptr)
 		{
+			//playerCollidedType = SpriteType::Tile;
+			//if (DynamicRectVsRect2(l_sprA, *s, cp, cn, t, l_dt))
+			//{
+			//	collisionOccurredPlayerOnTile = true;
+			//	z.push_back({ s, t });
+			//	//l_sprA.vel().x = 0.f;
+			//	//l_sprA.vel().y = 0.f;
+			//	l_sprA.SetGrounded(true);	
+			//}
 			playerCollidedType = SpriteType::Tile;
-			if (DynamicRectVsRect(l_sprA, *s, cp, cn, t, l_dt))
+
+			if (l_sprA.vel().y != 0.f)
 			{
+				auto tmp = l_sprA.vel().x;
+				l_sprA.vel().x = 0.f;
+				if (DynamicRectVsRect2(l_sprA, *s, cp, cn, t, l_dt) && fabs(t) <= 1.f )
+				{
+					if (cn.y != 0.f)
+					{
+						if (cn.y == -1.f)
+						{
+
+							l_sprA.vel().y = 0;
+							if (l_sprA().getPosition().y + l_sprA().getOrigin().y >= cp.y)
+							{
+								/*if (l_sprA().getPosition().x - cp.x == 0.f)
+								{
+									l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y - 1.f);
+									l_sprA.SetGrounded(true);
+									dispatch(dynamic_cast<Player*>(&l_sprA)->fsm, evt_Landed {});
+								}*/
+
+
+								//push up
+								l_sprA.vel().y = 0.f;
+
+								auto diff = (l_sprA().getPosition().y - l_sprA().getOrigin().y) - cp.y;
+								l_sprA().move({ 0.f, (l_sprA.GetRect().height + diff) });
+								l_sprA.SetGrounded(true);
+								dispatch(dynamic_cast<Player*>(&l_sprA)->fsm, evt_Landed {});
+								/*if (l_sprA().getPosition().x - l_sprA().getOrigin().x - cp.x == 0.f)
+								{
+									auto diff = cp.y - (l_sprA().getPosition().y + l_sprA().getOrigin().y);
+									l_sprA().move({ 0.f, -diff });
+								}*/
+
+
+
+
+								//l_sprA.vel().y = 0.f;
+							}
+							else
+							{
+								// push down
+
+								l_sprA.vel().y = 0.f;
+
+								auto diff = (l_sprA().getPosition().y - l_sprA().getOrigin().y) - cp.y;
+								l_sprA().move({ 0.f, (l_sprA.GetRect().height + diff)});
+								l_sprA.SetGrounded(true);
+								dispatch(dynamic_cast<Player*>(&l_sprA)->fsm, evt_Landed {});
+							}
+							/*tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
+							l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));*/
+
+						}
+					}
+				}
+				l_sprA.vel().x = tmp;
+
+			}
+			
+			if (DynamicRectVsRect2(l_sprA, *s, cp, cn, t, l_dt))
+			{
+				auto tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
 				collisionOccurredPlayerOnTile = true;
-				z.push_back({ s, t });
-				//l_sprA.vel().x = 0.f;
-				//l_sprA.vel().y = 0.f;
-				l_sprA.SetGrounded(true);	
+				//l_sprA.vel().x += (cn.x * tmp.x * (1.f - t));
+				if (cn.x != 0.0f)
+				{
+					if (cn.x == 1.f)
+					{
+						// push left
+						/*auto diff = (l_sprA().getPosition().x - l_sprA().getOrigin().x) - cp.x;
+						l_sprA().move({ diff, 0.f });*/
+
+						if (l_sprA().getPosition().x - l_sprA().getOrigin().x < cp.x)
+						{
+							//push up
+							l_sprA.vel().x = 0.f;
+
+							auto diff = cp.x - (l_sprA().getPosition().x + l_sprA().getOrigin().x);
+							l_sprA().move({ (l_sprA.GetRect().width + diff), 0.f });
+						}
+						else
+						{
+
+							//push up
+							l_sprA.vel().x = 0.f;
+
+							auto diff = cp.x - (l_sprA().getPosition().x + l_sprA().getOrigin().x);
+							l_sprA().move({ (l_sprA.GetRect().width + diff), 0.f });
+						}
+					}
+					else
+					{
+						// push right
+						/*auto diff = cp.x - (l_sprA().getPosition().x + l_sprA().getOrigin().x);
+						l_sprA().move({ -diff, 0.f });*/
+						if (l_sprA().getPosition().x + l_sprA().getOrigin().x >= cp.x)
+						{
+							//push left
+							l_sprA.vel().x = 0.f;
+
+							auto diff = (l_sprA().getPosition().x - l_sprA().getOrigin().x) - cp.x;
+							l_sprA().move({-1.f*(l_sprA.GetRect().width + diff), 0.f });
+						}
+						else
+						{
+
+							//push up
+							l_sprA.vel().x = 0.f;
+
+							auto diff = (l_sprA().getPosition().x - l_sprA().getOrigin().x) - cp.x;
+							l_sprA().move({-1.f*(l_sprA.GetRect().width + diff), 0.f });
+						}
+					}
+					//if (l_sprA().getPosition().x - l_sprA().getOrigin().x - cp.x == 0.f)
+					//{
+					
+					//}
+					//l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));
+					//l_sprA.vel().x += (cn.x * tmp.x * (1.f - t));
+					//l_sprA.vel().x = 0.f;
+					
+					
+				}
+
+				//if (cn.y != 0.f)
+				//{
+				//	if (cn.y == -1.f)
+				//	{
+
+				//		l_sprA.vel().y = 0;
+				//		if (l_sprA().getPosition().y + l_sprA().getOrigin().y >= cp.y)
+				//		{
+				//			if (l_sprA().getPosition().x - cp.x == 0.f)
+				//			{
+				//				l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
+				//				l_sprA.SetGrounded(true);
+				//				dispatch(dynamic_cast<Player*>(&l_sprA)->fsm, evt_Landed {});
+				//			}
+
+				//		}
+
+				//		//push down
+				//		if (l_sprA().getPosition().x - l_sprA().getOrigin().x - cp.x == 0.f)
+				//		{
+				//			auto diff = cp.y - (l_sprA().getPosition().y + l_sprA().getOrigin().y);
+				//			l_sprA().move({ 0.f, diff });
+				//		}
+
+
+
+
+				//		//l_sprA.vel().y = 0.f;
+				//	}
+				//	else
+				//	{
+				//		// push up
+
+				//		l_sprA.vel().y = 0.f;
+
+				//		auto diff = (l_sprA().getPosition().y - l_sprA().getOrigin().y) - cp.y;
+				//		l_sprA().move({ 0.f, -diff });
+				//	}
+				//	/*tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
+				//	l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));*/
+
+				//}
+
+
+
+
+				
+				
+				
+
+			
+				
+				//collisionOccurredPlayerOnTile = true;
+				//return true;
+				
+				/*if (cn.y == -1.f)
+				{
+					l_sprA.SetGrounded(true);
+					collisionOccurredPlayerOnTile;
+				}
+				z.push_back({ s, t });*/
 			}
 		}
 
@@ -92,66 +285,68 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 
 	}
 
-	std::sort(z.begin(), z.end(), [](const std::pair<std::shared_ptr<ASprite>, float>& a, const std::pair<std::shared_ptr<ASprite>, float>& b)
+	/*std::sort(z.begin(), z.end(), [](const std::pair<std::shared_ptr<ASprite>, float>& a, const std::pair<std::shared_ptr<ASprite>, float>& b)
 		{
 			return a.second < b.second;
-		});
+		});*/
 
 	
 	// these only happen below for player to tile collision testing
-	if (collisionOccurredPlayerOnTile)
+	/*if (collisionOccurredPlayerOnTile)
 	{
 		if (l_sprA.vel().y > 80.f)
 		{
 			l_sprA.vel().y = 80.f;
 		}
-	}
-	for (auto j : z)
-	{
-			if (DynamicRectVsRect(l_sprA, *j.first, cp, cn, t, l_dt))
-			{
+	}*/
 
-						auto tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
-						l_sprA.vel().x += (cn.x * tmp.x * (1.f - t));
-						l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));
 
-						if (cn.y != 0.f)
-						{
-							l_sprA().move(0.f, l_sprA.vel().y * l_dt.asSeconds());
-						}
-						if (cn.x != 0.f)
-						{
-							l_sprA().move(l_sprA.vel().x * l_dt.asSeconds(), 0.f);
-						}
-						if (l_sprA().getPosition().y + l_sprA().getOrigin().y > cp.y && cn.y == -1.f)
-						{
-							l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
-							l_sprA.vel().y = 0.f;
-						}
-						if (l_sprA().getPosition().y - l_sprA().getOrigin().y < cp.y && cn.y == 1.f)
-						{
-							l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
-							l_sprA.vel().y = 0.f;
-						}
-						if (l_sprA().getPosition().x + l_sprA().getOrigin().x > cp.x && cn.x == -1.f)
-						{
-							l_sprA().setPosition(cp.x - l_sprA().getOrigin().x, l_sprA().getPosition().y);
-							l_sprA.vel().x = 0.f;
-						}
-						if (l_sprA().getPosition().x - l_sprA().getOrigin().x < cp.x && cn.x == 1.f)
-						{
-							l_sprA().setPosition(cp.x + l_sprA().getOrigin().x, l_sprA().getPosition().y);
-							l_sprA.vel().x = 0.f;
-						}
-					
-				}
+	//for (auto j : z)
+	//{
+	//		if (DynamicRectVsRect2(l_sprA, *j.first, cp, cn, t, l_dt))
+	//		{
+
+	//					auto tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
+	//					l_sprA.vel().x += (cn.x * tmp.x * (1.f - t));
+	//					l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));
+
+	//					/*if (cn.y != 0.f)
+	//					{
+	//						l_sprA().move(0.f, l_sprA.vel().y * l_dt.asSeconds());
+	//					}
+	//					if (cn.x != 0.f)
+	//					{
+	//						l_sprA().move(l_sprA.vel().x * l_dt.asSeconds(), 0.f);
+	//					}
+	//					if (l_sprA().getPosition().y + l_sprA().getOrigin().y > cp.y && cn.y == -1.f)
+	//					{
+	//						l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
+	//						l_sprA.vel().y = 0.f;
+	//					}
+	//					if (l_sprA().getPosition().y - l_sprA().getOrigin().y < cp.y && cn.y == 1.f)
+	//					{
+	//						l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
+	//						l_sprA.vel().y = 0.f;
+	//					}
+	//					if (l_sprA().getPosition().x + l_sprA().getOrigin().x > cp.x && cn.x == -1.f)
+	//					{
+	//						l_sprA().setPosition(cp.x - l_sprA().getOrigin().x, l_sprA().getPosition().y);
+	//						l_sprA.vel().x = 0.f;
+	//					}
+	//					if (l_sprA().getPosition().x - l_sprA().getOrigin().x < cp.x && cn.x == 1.f)
+	//					{
+	//						l_sprA().setPosition(cp.x + l_sprA().getOrigin().x, l_sprA().getPosition().y);
+	//						l_sprA.vel().x = 0.f;
+	//					}*/
+	//				
+	//			}
 		
 
-			
-	}	
-	if (l_sprA.getType() == SpriteType::Actor && l_sprA.getName() == SpriteName::Player && playerCollidedType == SpriteType::Tile)
+	return collisionOccurredPlayerOnTile;
+	
+	if (l_sprA.getType() == SpriteType::Actor && l_sprA.getName() == SpriteName::Player && playerCollidedType == SpriteType::Tile && (collisionOccurredPlayerOnTile || cn.x != 0.f) && t <= 1.0f && t > 0.f)
 	{
-		return collisionOccurredPlayerOnTile;
+		return true;
 	}
 	// end of player resolution
 
@@ -427,6 +622,36 @@ bool CollisionMgr::DynamicRectVsRect(ASprite& l_in, ASprite& l_target, sf::Vecto
 		}	
 	}
 	delete spr;
+	return false;
+}
+
+bool CollisionMgr::DynamicRectVsRect2(ASprite& l_in, ASprite& l_target, sf::Vector2f& l_contact_point, sf::Vector2f& l_contact_normal, float& l_contact_time, const sf::Time& fElapsedTime)
+{
+	rect in(&l_in);
+	in.Reset();
+	rect target(&l_target);
+	target.Reset();
+
+	if (in.vel.x == 0 && in.vel.y == 0)
+	{
+		return false;
+	}
+	sf::Vector2f velDir = l_in.vel();
+	float lengthOfVel = sqrtf((float)pow(l_in.vel().x, 2) + (float)pow(l_in.vel().y, 2));
+	velDir.x /= lengthOfVel;
+	velDir.y /= lengthOfVel;
+
+	sf::Vector2f startPoint{ l_in().getPosition().x + (velDir.x * l_in().getOrigin().x),  l_in().getPosition().y + (velDir.y * l_in().getOrigin().y)};
+	sf::Vector2f end_point = { startPoint.x + (l_in.vel().x * fElapsedTime.asSeconds()), startPoint.y + (l_in.vel().y * fElapsedTime.asSeconds())};
+	sf::Vector2f dir = { end_point.x - startPoint.x, end_point.y - startPoint.y};
+
+	if (RayVsRect(startPoint, dir, target, l_contact_point, l_contact_normal, l_contact_time))
+	{
+		if (l_contact_time <= 1.0f)
+		{
+			return true;
+		}
+	}
 	return false;
 }
 

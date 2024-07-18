@@ -132,23 +132,29 @@ void SandboxStage::Update(const sf::Time& l_dt)
 
 	// enemies
 
+	// update the player after handling the collision checking
+	player_->updateBase(l_dt);
+
+	if (!player_->GetGrounded())
+		player_->vel().y += Cfg::Gravity * l_dt.asSeconds();
 
 	// main handling of player adjustment for gravity and movement colliding against the map tiles
 	if (CollisionMgr::CheckCollisions(*player_, tilemapSolidTiles_, cp, cn, t, l_dt))
 	{
 		pointOfContact_.setPosition(cp);
 		collided = true;
+		
+		
 
 	}
-	// update the player after handling the collision checking
-	player_->updateBase(l_dt);
+	
 	
 
 	// after updating the player's position, if there was a collision, adjust further for gravity and running into walls
 	// hacky, leave as is
-	if (collided)
+	/*if (collided)
 	{
-		if ((*player_)().getPosition().y + (*player_)().getOrigin().y >= cp.y)
+		if ((*player_)().getPosition().y + (*player_)().getOrigin().y > cp.y)
 		{
 			(*player_)().setPosition((*player_)().getPosition().x, cp.y - (*player_)().getOrigin().y);
 			player_->SetGrounded(true);
@@ -160,7 +166,7 @@ void SandboxStage::Update(const sf::Time& l_dt)
 		}
 	}
 	else
-	{
+	{*/
 		// if no collision occurred, player may be standing on ground, but if moving, set grounded to false to checks can be made again
 		// and the player doesn't float midair
 		if (dynamic_cast<Player*>(player_.get())->IsMoving())
@@ -169,7 +175,7 @@ void SandboxStage::Update(const sf::Time& l_dt)
 
 			dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Fell{});
 		}
-	}
+	//}
 	//if (collided)
 		//(*player_)().setPosition({ (*player_)().getPosition().x, cp.y - (*player_)().getOrigin().y });
 

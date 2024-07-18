@@ -99,6 +99,11 @@ void ASprite::SetGrounded(bool l_grounded)
 	
 }
 
+bool ASprite::GetGrounded()
+{
+	return grounded_;
+}
+
 void ASprite::setFixedPosition(sf::Vector2f l_pos)
 {
 	isSetExternal = true;
@@ -217,6 +222,7 @@ void ASprite::updatePosition()
 		{
 			spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
 		}
+		//spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
 	}
 }
 

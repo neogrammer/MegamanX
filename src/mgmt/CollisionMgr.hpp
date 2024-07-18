@@ -26,7 +26,8 @@ struct CollisionMgr
 	static bool RectVsRect(ASprite& l_spr1, ASprite& l_spr2);
 	static bool RayVsRect(const sf::Vector2f& l_ray_origin, const sf::Vector2f& l_ray_dir, rect& target, sf::Vector2f& l_contact_point, sf::Vector2f& l_contact_normal, float& t_hit_near);
 	static bool DynamicRectVsRect(ASprite& l_in, ASprite& l_target, sf::Vector2f& l_contact_point, sf::Vector2f& l_contact_normal, float& l_contact_time, const sf::Time& fElapsedTime);
-	
+	static bool DynamicRectVsRect2(ASprite& l_in, ASprite& l_target, sf::Vector2f& l_contact_point, sf::Vector2f& l_contact_normal, float& l_contact_time, const sf::Time& fElapsedTime);
+
 private:
 	static sf::FloatRect m_currOverlap;
 	static sf::FloatRect m_prevOverlap;

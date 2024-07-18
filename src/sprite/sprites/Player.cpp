@@ -178,7 +178,9 @@ void Player::update(const sf::Time& l_dt)
 				dispatch(fsm, evt_ReachedJumpPeak{});
 			}
 
-			vel_.y += Cfg::Gravity * l_dt.asSeconds();
+			prevVelY_ = vel_.y;
+			//vel_.y += Cfg::Gravity * l_dt.asSeconds();
+
 		}
 		else
 		{
@@ -216,8 +218,8 @@ void Player::update(const sf::Time& l_dt)
 		if (movingRight_)
 		{
 			vel_.x = Player::MoveSpeed;
-		
-			/*if (grounded_)
+		/*
+			if (grounded_)
 				SetGrounded(false);*/
 
 			//animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);

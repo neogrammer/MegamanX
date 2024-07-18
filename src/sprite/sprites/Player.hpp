@@ -27,6 +27,7 @@ struct Player : ASprite, ActionTarget<int>
 	AnimType SyncFSM();
 	sf::View& GetView();
 	FSM_Player fsm{};
+	float prevVelY_{ 0.f };
 private:
 	void bindActions();
 	bool jumpHeld_{ false };
