@@ -91,6 +91,7 @@
     <ClCompile Include="src\sprite\sprites\Bullet.cpp" />
     <ClCompile Include="src\sprite\sprites\BuzzBird.cpp" />
     <ClCompile Include="src\sprite\sprites\BuzzSaw.cpp" />
+    <ClCompile Include="src\sprite\sprites\Enemy.cpp" />
     <ClCompile Include="src\sprite\sprites\Player.cpp" />
     <ClCompile Include="src\sprite\sprites\Projectile.cpp" />
     <ClCompile Include="src\sprite\sprites\Tile.cpp" />
@@ -126,6 +127,7 @@
     <ClInclude Include="src\sprite\ASprite.hpp" />
     <ClInclude Include="src\sprite\sprites\Bullet.hpp" />
     <ClInclude Include="src\sprite\sprites\BuzzBird.hpp" />
+    <ClInclude Include="src\sprite\sprites\Enemy.hpp" />
     <ClInclude Include="src\sprite\sprites\Player.hpp" />
     <ClInclude Include="src\sprite\sprites\Projectile.hpp" />
     <ClInclude Include="src\sprite\sprites\Tile.hpp" />

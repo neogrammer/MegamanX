@@ -1,10 +1,9 @@
 #include "BuzzBird.hpp"
 #include <res/Cfg.hpp>
 #include <iostream>
-//#include <FSM/duck_fold.hpp>
 
 
-BuzzBird::BuzzBird() : ASprite{ SpriteType::Enemy, SpriteName::BuzzBird, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw) }
+BuzzBird::BuzzBird() : Enemy{ SpriteName::BuzzBird, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw) }
 {
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw), AnimLayoutType::Horizontal, AnimType::Idle, 7Ui64, { {0,0},{220,296} },
 		7Ui64, 1Ui64, 0.16f, 0.f, false, true, true, true, 4.f);
@@ -30,14 +29,46 @@ BuzzBird::BuzzBird() : ASprite{ SpriteType::Enemy, SpriteName::BuzzBird, Cfg::te
 
 }
 
-BuzzBird::BuzzBird(const BuzzBird&)
+BuzzBird::BuzzBird(const BuzzBird& other)
+	: Enemy{ SpriteName::BuzzBird, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw) }
 {
+	this->spr_ = other.spr_;
+	this->spr_.setTexture(*const_cast<sf::Texture*>(other.spr_.getTexture()));
+
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw), AnimLayoutType::Horizontal, AnimType::Idle, 7Ui64, { {0,0},{220,296} },
+		7Ui64, 1Ui64, 0.16f, 0.f, false, true, true, true, 4.f);
+
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw), AnimLayoutType::Horizontal, AnimType::ShootStand, 9Ui64, { {0,296},{220,296} },
+		9Ui64, 1Ui64, 0.075f, 0.f, false, false, false);
+
+	spr_.setOrigin({ 110.f, 148.f });
+	spr_.setPosition(other.spr_.getPosition());
+	affectedByGravity_ = false;
+
+	animMgr.SwitchAnimation(AnimType::Idle);
+
+
 }
 
 BuzzBird& BuzzBird::operator=(const BuzzBird& other)
 {
 	this->spr_ = other.spr_;
 	this->spr_.setTexture(*const_cast<sf::Texture*>(other.spr_.getTexture()));
+
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw), AnimLayoutType::Horizontal, AnimType::Idle, 7Ui64, { {0,0},{220,296} },
+		7Ui64, 1Ui64, 0.16f, 0.f, false, true, true, true, 4.f);
+
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw), AnimLayoutType::Horizontal, AnimType::ShootStand, 9Ui64, { {0,296},{220,296} },
+		9Ui64, 1Ui64, 0.075f, 0.f, false, false, false);
+
+	spr_.setOrigin({ 110.f, 148.f });
+	spr_.setPosition(other.spr_.getPosition());
+	affectedByGravity_ = false;
+
+	animMgr.SwitchAnimation(AnimType::Idle);
+
+
+
 	return *this;
 }
 
@@ -67,37 +98,4 @@ void BuzzBird::update(const sf::Time& l_dt)
 	}
 
 	animMgr.Update(l_dt);
-}
-
-bool BuzzBird::IsShooting()
-{
-	return m_isShooting;
-}
-
-void BuzzBird::TakeHit(int l_damage)
-{
-	
-
-		m_hp -= l_damage;
-
-		std::cout << "Enemy took " << l_damage << " damage" << std::endl;
-
-
-		if (m_hp <= 0)
-		{
-			m_hp = 0;
-			std::cout << "Enemy died" << std::endl;
-			alive_ = false;
-		}
-	
-}
-
-void BuzzBird::Shoot()
-{
-	if (!m_isShooting)
-	{
-		animMgr.SwitchAnimation(AnimType::ShootStand, AnimType::Idle);
-		m_isShooting = false;
-		m_shootTimer.restart();
-	}
 }

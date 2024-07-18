@@ -61,13 +61,13 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 		}
 
 		// for bullet to enemies
-		if (l_sprA.getType() == SpriteType::Projectile && (*s).getType() == SpriteType::Enemy && (*s).getName() == SpriteName::BuzzBird)
+		if (l_sprA.getType() == SpriteType::Projectile && (*s).getType() == SpriteType::Enemy)
 		{
 			if (dynamic_cast<Projectile*>(&l_sprA)->GetFriendly())
 			{
 				if (RectVsRect(l_sprA, *s))
 				{
-					dynamic_cast<BuzzBird*>(s.get())->TakeHit(dynamic_cast<Projectile*>(&l_sprA)->GetDamage());
+					dynamic_cast<Enemy*>(s.get())->TakeHit(dynamic_cast<Projectile*>(&l_sprA)->GetDamage());
 					l_sprA.SetAlive(false);
 					return true;
 				}

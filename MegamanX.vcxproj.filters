@@ -121,6 +121,18 @@
     <Filter Include="Header Files\FSM">
       <UniqueIdentifier>{dc0a53ca-75da-41ec-826b-97bf5674ea3b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\sprite\sprites\enemies">
+      <UniqueIdentifier>{51d1743a-3cb6-43d9-a8a3-0d4ccb18d792}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\sprite\sprites\projectiles">
+      <UniqueIdentifier>{369666f6-8b05-48c5-b8b5-810afba474d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sprite\sprites\enemies">
+      <UniqueIdentifier>{e506777e-3bbe-4dea-9323-00898c06e354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\sprite\sprites\projectiles">
+      <UniqueIdentifier>{6dde7cd8-5dc7-494b-bdc4-9b3953f4f0d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -191,6 +203,9 @@
       <Filter>Source Files\sprite\sprites</Filter>
     </ClCompile>
     <ClCompile Include="src\sprite\sprites\Projectile.cpp">
+      <Filter>Source Files\sprite\sprites</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sprite\sprites\Enemy.cpp">
       <Filter>Source Files\sprite\sprites</Filter>
     </ClCompile>
   </ItemGroup>
@@ -292,6 +307,9 @@
       <Filter>Header Files\sprite\sprites</Filter>
     </ClInclude>
     <ClInclude Include="src\sprite\sprites\Projectile.hpp">
+      <Filter>Header Files\sprite\sprites</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sprite\sprites\Enemy.hpp">
       <Filter>Header Files\sprite\sprites</Filter>
     </ClInclude>
   </ItemGroup>
