@@ -1,5 +1,6 @@
 #include "Stage.hpp"
 
+
 Stage::Stage(StageType l_type)
 	: m_type{ l_type }
 	, projectiles_{}

@@ -61,25 +61,31 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 		}
 
 		// for bullet to enemies
-		if (l_sprA.getType() == SpriteType::Projectile && l_sprA.getName() == SpriteName::BusterBullet && (*s).getType() == SpriteType::Enemy && (*s).getName() == SpriteName::BuzzBird)
+		if (l_sprA.getType() == SpriteType::Projectile && (*s).getType() == SpriteType::Enemy && (*s).getName() == SpriteName::BuzzBird)
 		{
-			if (RectVsRect(l_sprA, *s))
+			if (dynamic_cast<Projectile*>(&l_sprA)->GetFriendly())
 			{
-				dynamic_cast<BuzzBird*>(s.get())->TakeHit(dynamic_cast<Bullet*>(&l_sprA)->GetDamage());
-				l_sprA.SetAlive(false);
-				return true;
+				if (RectVsRect(l_sprA, *s))
+				{
+					dynamic_cast<BuzzBird*>(s.get())->TakeHit(dynamic_cast<Projectile*>(&l_sprA)->GetDamage());
+					l_sprA.SetAlive(false);
+					return true;
+				}
 			}
 
 		}
 
 		// for bullet to player
-		if (l_sprA.getType() == SpriteType::Projectile && l_sprA.getName() != SpriteName::BusterBullet && (*s).getType() == SpriteType::Actor && (*s).getName() == SpriteName::Player && dynamic_cast<Player*>(s.get()) != nullptr)
+		if (l_sprA.getType() == SpriteType::Projectile && (*s).getType() == SpriteType::Actor && (*s).getName() == SpriteName::Player && dynamic_cast<Player*>(s.get()) != nullptr)
 		{
-			if (RectVsRect(l_sprA, *s))
+			if (!dynamic_cast<Projectile*>(&l_sprA)->GetFriendly())
 			{
-				dynamic_cast<Player*>(s.get())->TakeHit(dynamic_cast<Bullet*>(&l_sprA)->GetDamage());
-				l_sprA.SetAlive(false);
-				return true;
+				if (RectVsRect(l_sprA, *s))
+				{
+					dynamic_cast<Player*>(s.get())->TakeHit(dynamic_cast<Projectile*>(&l_sprA)->GetDamage());
+					l_sprA.SetAlive(false);
+					return true;
+				}
 			}
 		}
 

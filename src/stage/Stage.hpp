@@ -4,11 +4,13 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <misc/globals.hpp>
 #include <vector>
+
 #include <sprite/sprites/Bullet.hpp>
 #include <sprite/sprites/Tile.hpp>
 #include <sprite/sprites/Player.hpp>
 #include <sprite/sprites/BuzzBird.hpp>
 #include <map/Tilemap.hpp>
+
 
 struct Stage
 {

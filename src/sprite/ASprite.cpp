@@ -1,5 +1,5 @@
 #include <misc/globals.hpp>
-#include <sprite/sprites/Bullet.hpp>
+#include <sprite/sprites/Projectile.hpp>
 #include <sprite/sprites/Tile.hpp>
 #include <sprite/sprites/Player.hpp>
 

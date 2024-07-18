@@ -125,7 +125,7 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	for (auto& p : projectiles_) 
 	{ 
 		// only if bullets arent the player's bullets
-		if (!dynamic_cast<Bullet*>(p.get())->GetFriendly())
+		if (!dynamic_cast<Projectile*>(p.get())->GetFriendly())
 		{
 			if (CollisionMgr::CheckCollisions(*p, tmp, cp, cn, t, l_dt)) { int fillerJob = 0; }
 		}
