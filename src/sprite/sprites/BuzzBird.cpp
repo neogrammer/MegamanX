@@ -18,6 +18,9 @@ BuzzBird::BuzzBird() : ASprite{ SpriteType::Enemy, SpriteName::BuzzBird, Cfg::te
 
 	animMgr.SwitchAnimation(AnimType::Idle);
 
+	Cfg::bboxDB.addToMap(*this, AnimType::Idle, { 112.f, 100.f }, { 24.f, 174.f });
+	Cfg::bboxDB.addToMap(*this, AnimType::ShootStand, { 112.f, 100.f }, { 24.f, 174.f });
+
 }
 
 BuzzBird::BuzzBird(const BuzzBird&)

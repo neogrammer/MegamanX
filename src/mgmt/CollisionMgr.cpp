@@ -104,39 +104,44 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 	{
 			if (DynamicRectVsRect(l_sprA, *j.first, cp, cn, t, l_dt))
 			{
-				auto tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
-				l_sprA.vel().x += (cn.x * tmp.x * (1.f - t));
-				l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));
+
+						auto tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
+						l_sprA.vel().x += (cn.x * tmp.x * (1.f - t));
+						l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));
+
+						if (cn.y != 0.f)
+						{
+							l_sprA().move(0.f, l_sprA.vel().y * l_dt.asSeconds());
+						}
+						if (cn.x != 0.f)
+						{
+							l_sprA().move(l_sprA.vel().x * l_dt.asSeconds(), 0.f);
+						}
+						if (l_sprA().getPosition().y + l_sprA().getOrigin().y > cp.y && cn.y == -1.f)
+						{
+							l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
+							l_sprA.vel().y = 0.f;
+						}
+						if (l_sprA().getPosition().y - l_sprA().getOrigin().y < cp.y && cn.y == 1.f)
+						{
+							l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
+							l_sprA.vel().y = 0.f;
+						}
+						if (l_sprA().getPosition().x + l_sprA().getOrigin().x > cp.x && cn.x == -1.f)
+						{
+							l_sprA().setPosition(cp.x - l_sprA().getOrigin().x, l_sprA().getPosition().y);
+							l_sprA.vel().x = 0.f;
+						}
+						if (l_sprA().getPosition().x - l_sprA().getOrigin().x < cp.x && cn.x == 1.f)
+						{
+							l_sprA().setPosition(cp.x + l_sprA().getOrigin().x, l_sprA().getPosition().y);
+							l_sprA.vel().x = 0.f;
+						}
+					
+				}
+		
+
 			
-				if (cn.y != 0.f)
-				{
-					l_sprA().move(0.f, l_sprA.vel().y * l_dt.asSeconds());
-				}
-				if (cn.x != 0.f)
-				{
-					l_sprA().move(l_sprA.vel().x * l_dt.asSeconds(), 0.f);
-				}
-				if (l_sprA().getPosition().y + l_sprA().getOrigin().y > cp.y && cn.y == -1.f)
-				{
-					l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
-					l_sprA.vel().y = 0.f;
-				}
-				if (l_sprA().getPosition().y - l_sprA().getOrigin().y < cp.y && cn.y == 1.f)
-				{
-					l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
-					l_sprA.vel().y = 0.f;
-				}
-				if (l_sprA().getPosition().x + l_sprA().getOrigin().x > cp.x && cn.x == -1.f)
-				{
-					l_sprA().setPosition(cp.x - l_sprA().getOrigin().x, l_sprA().getPosition().y);
-					l_sprA.vel().x = 0.f;
-				}
-				if (l_sprA().getPosition().x - l_sprA().getOrigin().x < cp.x && cn.x == 1.f)
-				{
-					l_sprA().setPosition(cp.x + l_sprA().getOrigin().x, l_sprA().getPosition().y);
-					l_sprA.vel().x = 0.f;
-				}
-			}
 	}	
 	if (l_sprA.getType() == SpriteType::Actor && l_sprA.getName() == SpriteName::Player && playerCollidedType == SpriteType::Tile)
 	{

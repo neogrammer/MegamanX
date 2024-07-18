@@ -29,10 +29,10 @@ public:
 		return state_TransToFall{};
 	}
 
-	std::optional<PlayerStateVar> On_Event(state_TransToRun& s, const evt_Fell& e)
-	{
-		return state_TransToFall{};
-	}
+	//std::optional<PlayerStateVar> On_Event(state_TransToRun& s, const evt_Fell& e)
+	//{
+	//	return state_Falling{};
+	//}
 
 	std::optional<PlayerStateVar> On_Event(state_Rising& s, const evt_ReachedJumpPeak& e)
 	{

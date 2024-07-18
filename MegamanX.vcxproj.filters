@@ -340,5 +340,8 @@
     <Image Include="assets\tex\megaman\trans_jump120x184_2.png">
       <Filter>Resource Files\assets\tex\megaman</Filter>
     </Image>
+    <Image Include="assets\tex\enemies\BirdSheet220x296_3Rows_7_9_2.png">
+      <Filter>Resource Files\assets\tex\enemies</Filter>
+    </Image>
   </ItemGroup>
 </Project>

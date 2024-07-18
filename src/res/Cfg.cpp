@@ -12,7 +12,7 @@ ActionMap<int> Cfg::playerInputs = {};
 
 float Cfg::Gravity = 4200.f;
 
-BoundingBoxDB bboxDB = {};
+BoundingBoxDB Cfg::bboxDB = {};
 
 void Cfg::Initialize()
 {

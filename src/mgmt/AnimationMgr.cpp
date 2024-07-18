@@ -80,5 +80,9 @@ Animation* AnimationMgr::currFallback()
 
 AnimType AnimationMgr::getCurrType()
 {
+	if (!m_currAnim)
+	{
+		return AnimType::Count;
+	}
     return m_currAnim->GetType();
 }

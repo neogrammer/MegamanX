@@ -53,6 +53,7 @@ struct AABB
 	vf2d LocalCenter();
 	vf2d GetSize();
 	vf2d GetHalfSize();
+	bool IsNone();
 
 private:
 	vf2d halfSize;
@@ -103,8 +104,10 @@ struct BoundingBoxDB
 
 
 	AABB getAABB(ASprite& l_spr);
+	AABB getAABB(ASprite& l_spr, AnimType l_aType);
 
-	void addToMap(ASprite& l_spr, sf::Vector2f l_localCenter, sf::Vector2f l_size);
+
+	void addToMap(ASprite& l_spr, AnimType l_aType, sf::Vector2f l_localCenter, sf::Vector2f l_size);
 
 	
 

@@ -25,19 +25,19 @@ SandboxStage::SandboxStage()
 	(*projectiles_.back())().setTextureRect({ { 0, 0 }, { 18 , 18 } });
 	(*projectiles_.back())().setOrigin({ 9.f, 9.f });
 	(*projectiles_.back()).vel() = { 600.f, 0.f };
-	(*projectiles_.back())().setPosition({ 0.f, 896.f - 68.f - 64.f - 10.f});
+	(*projectiles_.back())().setPosition({ 0.f, 896.f - 68.f - 64.f - 10.f - 80.f});
 
 	projectiles_.emplace_back(std::make_shared<Bullet>(Cfg::textures.get((int)Cfg::Textures::Bullet1)));
 	(*projectiles_.back())().setTextureRect({ { 0, 0 }, { 18 , 18 } });
 	(*projectiles_.back())().setOrigin({ 9.f, 9.f });
 	(*projectiles_.back()).vel() = { 600.f, 0.f };
-	(*projectiles_.back())().setPosition({ 40.f, 896.f - 68.f - 64.f - 10.f });
+	(*projectiles_.back())().setPosition({ 40.f, 896.f - 68.f - 64.f - 10.f - 80.f });
 	
 	projectiles_.emplace_back(std::make_shared<Bullet>(Cfg::textures.get((int)Cfg::Textures::Bullet1)));
 	(*projectiles_.back())().setTextureRect({ { 0, 0 }, { 18 , 18 } });
 	(*projectiles_.back())().setOrigin({ 9.f, 9.f });
 	(*projectiles_.back()).vel() = { 600.f, 0.f };
-	(*projectiles_.back())().setPosition({ 80.f, 896.f - 68.f - 64.f - 10.f });
+	(*projectiles_.back())().setPosition({ 80.f, 896.f - 68.f - 64.f - 10.f - 80.f });
 
 	player_ = std::make_shared<Player>();
 

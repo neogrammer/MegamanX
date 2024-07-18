@@ -45,11 +45,21 @@ void rect::Reset()
 	}
 	else
 	{ 
-
-		pos = {(*spr)().getGlobalBounds().left - ((*spr)().getGlobalBounds().width / 2.f) + (*spr)().getOrigin().x,
-		(*spr)().getGlobalBounds().top - ((*spr)().getGlobalBounds().height / 2.f) + (*spr)().getOrigin().y };
-		size = { (float)(*spr)().getTextureRect().width, (float)(*spr)().getTextureRect().height};
-		vel = { spr->vel().x, spr->vel().y };
+		AABB bbox = Cfg::bboxDB.getAABB(*spr, spr->animMgr.getCurrType());
+		if (bbox.IsNone())
+		{
+			pos = { (*spr)().getGlobalBounds().left - ((*spr)().getGlobalBounds().width / 2.f) + (*spr)().getOrigin().x,
+			(*spr)().getGlobalBounds().top - ((*spr)().getGlobalBounds().height / 2.f) + (*spr)().getOrigin().y };
+			size = { (float)(*spr)().getTextureRect().width, (float)(*spr)().getTextureRect().height };
+			vel = { spr->vel().x, spr->vel().y };
+		}
+		else
+		{
+			pos = { (*spr)().getGlobalBounds().left - ((*spr)().getGlobalBounds().width / 2.f) + (*spr)().getOrigin().x + bbox.TopLeftFromCenter().x,
+			(*spr)().getGlobalBounds().top - ((*spr)().getGlobalBounds().height / 2.f) + (*spr)().getOrigin().y + bbox.TopLeftFromCenter().y };
+			size = { bbox.GetSize() };
+			vel = { spr->vel().x, spr->vel().y };
+		}
 	}
 }
 
@@ -83,6 +93,11 @@ vf2d AABB::GetHalfSize()
     return halfSize;
 }
 
+bool AABB::IsNone()
+{
+	return (localCenter.x == 0.f && localCenter.y == 0.f && halfSize.x == 0.f && halfSize.y == 0.f);
+}
+
 
 
 AABB BoundingBoxDB::getAABB(ASprite& l_spr)
@@ -101,13 +116,27 @@ AABB BoundingBoxDB::getAABB(ASprite& l_spr)
 	return bbdbMap[key];
 }
 
+AABB BoundingBoxDB::getAABB(ASprite& l_spr, AnimType l_aType)
+{
 
-void BoundingBoxDB::addToMap(ASprite& l_spr, sf::Vector2f l_localCenter, sf::Vector2f l_size)
+	SpriteType l_sType = l_spr.getType();
+	SpriteName l_sName = l_spr.getName();
+
+	SpriteKey key = { l_sType, l_sName, l_aType };
+
+	if (bbdbMap.find(key) == bbdbMap.end())
+	{
+		return AABB{ {0.f,0.f},{0.f,0.f} };
+	}
+	return bbdbMap[key];
+}
+
+
+void BoundingBoxDB::addToMap(ASprite& l_spr, AnimType l_aType, sf::Vector2f l_localCenter, sf::Vector2f l_size)
 {
 	
 	SpriteType l_sType = l_spr.getType();
 	SpriteName l_sName = l_spr.getName();
-	AnimType l_aType = l_spr.animMgr.getCurrType();
 	SpriteKey key = { l_sType, l_sName, l_aType };
 
 	bbdbMap[key] = AABB(l_localCenter, l_size);
