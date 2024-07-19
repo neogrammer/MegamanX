@@ -17,7 +17,8 @@ enum class CollisionStrategy
 {
 	Bounce,
 	Slide,
-	Push
+	Push,
+	Count
 };
 
 enum class SpriteType : int

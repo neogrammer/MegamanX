@@ -27,7 +27,6 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 	// this is the space the sprite is in before and after the movement
 	// assuming sprB is static, not moving
 
-
 	for (auto& s : l_sprVec)
 	{
 		// if same , try again
@@ -40,9 +39,10 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 		// for player to tiles
 		if (l_sprA.getType() == SpriteType::Actor && (*s).getType() == SpriteType::Tile && dynamic_cast<Player*>(&l_sprA) != nullptr)
 		{
-			if (CheckCollisionAndResolve(l_sprA, *s, CollisionStrategy::Push, l_dt.asSeconds()))
+			if (CheckCollisionAndResolve(l_sprA, *s, CollisionStrategy::Count, l_dt.asSeconds(), cp, cn, t))
 			{
 				collisionOccurred = true;
+				z.push_back({ s, t });
 
 			}
 		}
@@ -202,53 +202,96 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 			}
 
 	}
-		///////////////////
-		/* ///////////////std::sort(z.begin(), z.end(), [](const std::pair<std::shared_ptr<ASprite>, float>& a, const std::pair<std::shared_ptr<ASprite>, float>& b)
-		////////	{
-		///////		return a.second < b.second;
-		/////// 	});*/
-		//////////////
 
-		///////////////for (auto j : z)
-		////////////////{
-		////////////////		if (DynamicRectVsRect2(l_sprA, *j.first, cp, cn, t, l_dt))
-		////////////////		{
+	std::sort(z.begin(), z.end(), [](const std::pair<std::shared_ptr<ASprite>, float>& a, const std::pair<std::shared_ptr<ASprite>, float>& b)
+		{
+			return a.second < b.second;
+		});
+
+
+	for (auto j : z)
+	{
+		if (CheckCollisionAndResolve(l_sprA, *j.first, CollisionStrategy::Bounce, l_dt.asSeconds(), cp, cn, t))
+		{
+			collisionOccurred = true;
+			/*auto tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
+			l_sprA.vel().x += (cn.x * tmp.x * (1.f - t));
+			l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));
+
+			if (cn.y != 0.f)
+			{
+				l_sprA().move(0.f, l_sprA.vel().y * l_dt.asSeconds());
+			}
+			if (cn.x != 0.f)
+			{
+				l_sprA().move(l_sprA.vel().x * l_dt.asSeconds(), 0.f);
+			}
+			if (l_sprA().getPosition().y + l_sprA().getOrigin().y > cp.y && cn.y == -1.f)
+			{
+				l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
+				l_sprA.vel().y = 0.f;
+			}
+			if (l_sprA().getPosition().y - l_sprA().getOrigin().y < cp.y && cn.y == 1.f)
+			{
+				l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
+				l_sprA.vel().y = 0.f;
+			}
+			if (l_sprA().getPosition().x + l_sprA().getOrigin().x > cp.x && cn.x == -1.f)
+			{
+				l_sprA().setPosition(cp.x - l_sprA().getOrigin().x, l_sprA().getPosition().y);
+				l_sprA.vel().x = 0.f;
+			}
+			if (l_sprA().getPosition().x - l_sprA().getOrigin().x < cp.x && cn.x == 1.f)
+			{
+				l_sprA().setPosition(cp.x + l_sprA().getOrigin().x, l_sprA().getPosition().y);
+				l_sprA.vel().x = 0.f;
+			}*/
+		}
+	}
+
+	
+	
+
+		/////////////// 
+		////////////////
+		////////////////
+		////////////////
 		//////////////
-		////////////////					auto tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
-		////////////////					l_sprA.vel().x += (cn.x * tmp.x * (1.f - t));
-		////////////////					l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));
+		////////////////
+		////////////////
+		////////////////
 		//////////////
-		////////////////					/*if (cn.y != 0.f)
-		////////////////					{
-		////////////////						l_sprA().move(0.f, l_sprA.vel().y * l_dt.asSeconds());
-		////////////////					}
-		////////////////					if (cn.x != 0.f)
-		////////////////					{
-		////////////////						l_sprA().move(l_sprA.vel().x * l_dt.asSeconds(), 0.f);
-		////////////////					}
-		////////////////					if (l_sprA().getPosition().y + l_sprA().getOrigin().y > cp.y && cn.y == -1.f)
-		////////////////					{
-		////////////////						l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
-		////////////////						l_sprA.vel().y = 0.f;
-		////////////////					}
-		////////////////					if (l_sprA().getPosition().y - l_sprA().getOrigin().y < cp.y && cn.y == 1.f)
-		////////////////					{
-		////////////////						l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
-		////////////////						l_sprA.vel().y = 0.f;
-		////////////////					}
-		////////////////					if (l_sprA().getPosition().x + l_sprA().getOrigin().x > cp.x && cn.x == -1.f)
-		////////////////					{
-		////////////////						l_sprA().setPosition(cp.x - l_sprA().getOrigin().x, l_sprA().getPosition().y);
-		////////////////						l_sprA.vel().x = 0.f;
-		////////////////					}
-		////////////////					if (l_sprA().getPosition().x - l_sprA().getOrigin().x < cp.x && cn.x == 1.f)
-		////////////////					{
-		////////////////						l_sprA().setPosition(cp.x + l_sprA().getOrigin().x, l_sprA().getPosition().y);
-		////////////////						l_sprA.vel().x = 0.f;
-		////////////////					}*/
-		////////////////				
-		////////////////			}
-		///////////////    }
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		////////////////
+		/////////////// 
 
 		return collisionOccurred;
 }
@@ -551,7 +594,7 @@ bool CollisionMgr::DynamicRectVsRect2(ASprite& l_in, ASprite& l_target, sf::Vect
 }
 
 
-bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_staticSpr, CollisionStrategy l_collideStrat, float l_dt)
+bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_staticSpr, CollisionStrategy l_collideStrat, float l_dt, sf::Vector2f& contact_point, sf::Vector2f& contact_normal, float& contact_time)
 {
 	Box box{};
 	Box::SetupBox(box, l_dynamicSpr);
@@ -564,8 +607,11 @@ bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_st
 	{
 		if (Box::BroadphaseCheck(*broadphasebox, block))
 		{
-			float normalx, normaly;
-			float collisiontime = Box::SweptAABB(box, block, normalx, normaly);
+			sf::Vector2f& normal = contact_normal;
+			float& normalx = normal.x;
+			float& normaly = normal.y;
+			float& collisiontime = contact_time;
+			collisiontime = Box::SweptAABB(box, block, normalx, normaly);
 			if (collisiontime > 0.f && collisiontime <= 1.f)
 			{
 				float remainingtime = 1.0f - collisiontime;
@@ -586,7 +632,7 @@ bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_st
 					{
 						dynamic_cast<Player*>(&l_dynamicSpr)->SetMoving(false,(normalx == -1.f) ? true : false);
 					}
-					int i = 0;
+				
 				}
 				if (normaly == -1.f)
 				{
@@ -604,7 +650,7 @@ bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_st
 
 
 				// resolution Strategy
-				switch (l_collideStrat)
+				/*switch (l_collideStrat)
 				{
 				case CollisionStrategy::Bounce:
 				{
@@ -623,12 +669,36 @@ bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_st
 				break;
 				default:
 					break;
-				}
+				}*/
 
 				//Box::MoveBox(box, {box.vx, box.vy}, 1.f);
 			
-				Box::SetSpriteVelocity(box, { box.vx, box.vy });
+				//Box::SetSpriteVelocity(box, { box.vx, box.vy });
+				if (l_collideStrat != CollisionStrategy::Count)
+				{
+					switch (l_collideStrat)
+					{
+					case CollisionStrategy::Bounce:
+					{
+						Box::Bounce(box, remainingtime, normalx, normaly);
+					}
+					break;
+					case CollisionStrategy::Slide:
+					{
+						Box::Slide(box, remainingtime, normalx, normaly);
+					}
+					break;
+					case CollisionStrategy::Push:
+					{
+						Box::Push(box, remainingtime, normalx, normaly);
+					}
+					break;
+					default:
+						break;
+					}
 
+					Box::SetSpriteVelocity(box, { box.vx, box.vy });
+				}
 				return true;
 			}
 
