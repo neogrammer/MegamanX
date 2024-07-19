@@ -42,7 +42,7 @@ struct Box
 	static void MoveSprite(Box& abox, sf::Vector2f l_offset, float l_dt);
 
 	static float SweptAABB(Box& b1, Box& b2, float& normalx, float& normaly);
-	static std::unique_ptr<Box> GetSweptBroadphaseBox(Box& b);
+	static std::unique_ptr<Box> GetSweptBroadphaseBox(Box& b, float l_dt);
 	static bool BroadphaseCheck(Box& b1, Box& b2);
 	static void Bounce(Box& b1, float l_remTime, float& normalx, float& normaly);
 	static void Slide(Box& box, float l_remTime, float& normalx, float& normaly);

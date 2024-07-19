@@ -265,20 +265,33 @@ float Box::SweptAABB(Box& b1, Box& b2, float& normalx, float& normaly)
 		yExit = yInvExit / b1.vy;
 	}
 
-	// find the earliest/latest times of collisionfloat 
+	//if (yEntry > 1.0f) yEntry = -std::numeric_limits<float>::infinity();
+	//if (xEntry > 1.0f) xEntry = -std::numeric_limits<float>::infinity();
+	// Find the earliest/latest times of collision.
 	float entryTime = std::max(xEntry, yEntry);
 	float exitTime = std::min(xExit, yExit);
 
+	if (entryTime > exitTime) return 1.0f; // This check was correct.
+	if (xEntry < 0.0f && yEntry < 0.0f) return 1.0f;
+	if (xEntry < 0.0f) {
+		// Check that the bounding box started overlapped or not.
+		if ( b1.x + b1.w < b2.x  || b1.x > b2.x + b2.w) return 1.0f;
+	}
+	if (yEntry < 0.0f) {
+		// Check that the bounding box started overlapped or not.
+		if (b1.y + b1.h < b2.y || b1.y > b2.y + b2.h) return 1.0f;
+	}
+
 	// if there was no collision
-	if (entryTime > exitTime || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f)
+	/*if (entryTime > exitTime || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f)
 	{
 		normalx = 0.0f;
 		normaly = 0.0f;
 		return 1.0f;
-	}
+	}*/
 
-	else // if there was a collision 
-	{
+	//else // if there was a collision 
+	//{
 		// calculate normal of collided surface
 		if (xEntry > yEntry)
 		{
@@ -306,7 +319,7 @@ float Box::SweptAABB(Box& b1, Box& b2, float& normalx, float& normaly)
 				normaly = -1.0f;
 			}
 		} // return the time of collisionreturn entryTime; 
-	}
+	//}
 
 	return entryTime;
 }
@@ -324,6 +337,8 @@ void Box::Bounce(Box& b1, float l_remTime, float& normalx, float& normaly)
 	if (abs(normaly) > 0.0001f) b1.vy = -b1.vy;
 
 	SetSpriteVelocity(b1);
+	
+
 }
 
 void Box::Slide(Box& box, float l_remTime, float& normalx, float& normaly)
@@ -336,7 +351,6 @@ void Box::Slide(Box& box, float l_remTime, float& normalx, float& normaly)
 	// slide 
 	float dotprod = (box.vx * normaly + box.vy * normalx) * l_remTime;
 	SetBoxVelocity(box, { dotprod * normaly, dotprod * normalx });
-	SetSpriteVelocity(box);
 }
 
 void Box::Push(Box& box, float l_remTime, float& normalx, float& normaly)
@@ -354,11 +368,10 @@ void Box::Push(Box& box, float l_remTime, float& normalx, float& normaly)
 	else if (dotprod < 0.0f) dotprod = -1.0f;
 
 	SetBoxVelocity(box, { dotprod * normaly * magnitude , dotprod * normalx * magnitude });
-	SetSpriteVelocity(box);
 }
 
 
-std::unique_ptr<Box> Box::GetSweptBroadphaseBox(Box& b)
+std::unique_ptr<Box> Box::GetSweptBroadphaseBox(Box& b, float l_dt)
 {
 	if (b.pSpr == nullptr || b.isBroadphaseBox)
 	{
@@ -367,10 +380,10 @@ std::unique_ptr<Box> Box::GetSweptBroadphaseBox(Box& b)
 	}
 	std::unique_ptr<Box> broadphasebox = std::make_unique<Box>();
 
-	broadphasebox->x = b.vx > 0 ? b.x : b.x + b.vx;
-	broadphasebox->y = b.vy > 0 ? b.y : b.y + b.vy;
-	broadphasebox->w = b.vx > 0 ? b.vx + b.w : b.w - b.vx;
-	broadphasebox->h = b.vy > 0 ? b.vy + b.h : b.h - b.vy;
+	broadphasebox->x = b.vx > 0 ? b.x : b.x + b.vx * l_dt;
+	broadphasebox->y = b.vy > 0 ? b.y : b.y + b.vy * l_dt;
+	broadphasebox->w = b.vx > 0 ? b.vx * l_dt + b.w : b.w - b.vx * l_dt;
+	broadphasebox->h = b.vy > 0 ? b.vy * l_dt + b.h : b.h - b.vy * l_dt;
 	broadphasebox->pSpr = b.pSpr;
 	broadphasebox->isBroadphaseBox = true;
 	return std::move(broadphasebox);

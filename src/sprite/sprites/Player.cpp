@@ -144,6 +144,18 @@ void Player::TakeHit(int l_damage)
 	std::cout << "Player took " << l_damage << " damage" << std::endl;
 }
 
+void Player::SetMoving(bool l_moving, bool l_right)
+{
+	if (l_right)
+	{
+		movingRight_ = l_moving;
+	}
+	else
+	{
+		movingLeft_ = l_moving;
+	}
+}
+
 AnimType Player::SyncFSM()
 {
 	fsm.moving = IsMoving();
@@ -214,7 +226,7 @@ void Player::update(const sf::Time& l_dt)
 		
 		if (movingLeft_)
 		{
-			vel_.x = -Player::MoveSpeed;
+			//vel_.x = -Player::MoveSpeed;
 		
 			/*if (grounded_)
 				SetGrounded(false);*/
@@ -224,7 +236,7 @@ void Player::update(const sf::Time& l_dt)
 		}
 		if (movingRight_)
 		{
-			vel_.x = Player::MoveSpeed;
+			//vel_.x = Player::MoveSpeed;
 		/*
 			if (grounded_)
 				SetGrounded(false);*/

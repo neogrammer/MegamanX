@@ -40,9 +40,10 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 		// for player to tiles
 		if (l_sprA.getType() == SpriteType::Actor && (*s).getType() == SpriteType::Tile && dynamic_cast<Player*>(&l_sprA) != nullptr)
 		{
-			if (CheckCollisionAndResolve(l_sprA, *s, CollisionStrategy::Slide))
+			if (CheckCollisionAndResolve(l_sprA, *s, CollisionStrategy::Push, l_dt.asSeconds()))
 			{
 				collisionOccurred = true;
+
 			}
 		}
 
@@ -550,14 +551,14 @@ bool CollisionMgr::DynamicRectVsRect2(ASprite& l_in, ASprite& l_target, sf::Vect
 }
 
 
-bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_staticSpr, CollisionStrategy l_collideStrat)
+bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_staticSpr, CollisionStrategy l_collideStrat, float l_dt)
 {
 	Box box{};
 	Box::SetupBox(box, l_dynamicSpr);
 	Box block{};
 	Box::SetupBox(block, l_staticSpr);
 
-	std::unique_ptr<Box> broadphasebox = { std::move(Box::GetSweptBroadphaseBox(box)) };
+	std::unique_ptr<Box> broadphasebox = { std::move(Box::GetSweptBroadphaseBox(box, l_dt)) };
 
 	if (broadphasebox != nullptr)
 	{
@@ -567,18 +568,40 @@ bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_st
 			float collisiontime = Box::SweptAABB(box, block, normalx, normaly);
 			if (collisiontime > 0.f && collisiontime <= 1.f)
 			{
-				if (normaly == -1.f)
+				float remainingtime = 1.0f - collisiontime;
+
+				if (normaly == 1.f)
+				{
+					
+				
+
+					if (dynamic_cast<Player*>(&l_dynamicSpr) != nullptr)
+					{
+						dispatch(dynamic_cast<Player*>(&l_dynamicSpr)->fsm, evt_ReachedJumpPeak {});
+					}
+				}
+				if (normalx == -1.f || normalx == 1.f)
 				{
 					if (dynamic_cast<Player*>(&l_dynamicSpr) != nullptr)
 					{
+						dynamic_cast<Player*>(&l_dynamicSpr)->SetMoving(false,(normalx == -1.f) ? true : false);
+					}
+					int i = 0;
+				}
+				if (normaly == -1.f)
+				{
+					
+					
+
+					if (dynamic_cast<Player*>(&l_dynamicSpr) != nullptr)
+					{
 						dynamic_cast<Player*>(&l_dynamicSpr)->SetGrounded(true);
-						dispatch(dynamic_cast<Player*>(&l_dynamicSpr)->fsm, evt_Landed{});
+						dispatch(dynamic_cast<Player*>(&l_dynamicSpr)->fsm, evt_Landed {});
 					}
 				}
+				
+				//Box::UpdateBoxVelocity(box, {box.vx, box.vy}, remainingtime);
 
-				Box::UpdateBoxPos(box, collisiontime);
-
-				float remainingtime = 1.0f - collisiontime;
 
 				// resolution Strategy
 				switch (l_collideStrat)
@@ -601,6 +624,10 @@ bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_st
 				default:
 					break;
 				}
+
+				//Box::MoveBox(box, {box.vx, box.vy}, 1.f);
+			
+				Box::SetSpriteVelocity(box, { box.vx, box.vy });
 
 				return true;
 			}

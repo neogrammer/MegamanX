@@ -138,6 +138,15 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	{
 		player_->vel().y += Cfg::Gravity * l_dt.asSeconds();
 	}
+
+	if (dynamic_cast<Player*>(player_.get())->IsMoving())
+	{
+		if (player_->IsFacingRight())
+			player_->vel().x = Player::MoveSpeed;
+		else
+			player_->vel().x = -Player::MoveSpeed;
+	}
+
 	// main handling of player adjustment for gravity and movement colliding against the map tiles
 	if (CollisionMgr::CheckCollisions(*player_, tilemapSolidTiles_, cp, cn, t, l_dt))
 	{

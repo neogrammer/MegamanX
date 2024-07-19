@@ -23,7 +23,7 @@ struct Player : ASprite, ActionTarget<int>
 	bool IsShooting() override;
 	void Shoot() override;
 	void TakeHit(int l_damage);
-
+	void SetMoving(bool l_moving, bool l_right);
 	AnimType SyncFSM();
 	sf::View& GetView();
 	FSM_Player fsm{};
