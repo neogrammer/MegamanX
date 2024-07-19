@@ -13,7 +13,12 @@ namespace g
 	const sf::Time FPS60 = sf::seconds( 1.f / 60.f );
 }
 
-
+enum class CollisionStrategy
+{
+	Bounce,
+	Slide,
+	Push
+};
 
 enum class SpriteType : int
 {

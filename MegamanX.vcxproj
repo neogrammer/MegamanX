@@ -85,6 +85,7 @@
     <ClCompile Include="src\mgmt\GameStateMgr.cpp" />
     <ClCompile Include="src\mgmt\StageMgr.cpp" />
     <ClCompile Include="src\misc\aabb.cpp" />
+    <ClCompile Include="src\misc\Box.cpp" />
     <ClCompile Include="src\res\Cfg.cpp" />
     <ClCompile Include="src\sprite\Animation.cpp" />
     <ClCompile Include="src\sprite\ASprite.cpp" />
@@ -119,6 +120,7 @@
     <ClInclude Include="src\mgmt\GameStateMgr.hpp" />
     <ClInclude Include="src\mgmt\StageMgr.hpp" />
     <ClInclude Include="src\misc\aabb.hpp" />
+    <ClInclude Include="src\misc\Box.hpp" />
     <ClInclude Include="src\misc\globals.hpp" />
     <ClInclude Include="src\misc\Noncopyable.hpp" />
     <ClInclude Include="src\res\Cfg.hpp" />

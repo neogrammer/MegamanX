@@ -133,20 +133,28 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	// enemies
 
 	// update the player after handling the collision checking
-	player_->updateBase(l_dt);
 
 	if (!player_->GetGrounded())
+	{
 		player_->vel().y += Cfg::Gravity * l_dt.asSeconds();
-
+	}
 	// main handling of player adjustment for gravity and movement colliding against the map tiles
 	if (CollisionMgr::CheckCollisions(*player_, tilemapSolidTiles_, cp, cn, t, l_dt))
 	{
 		pointOfContact_.setPosition(cp);
 		collided = true;
-		
-		
 
+		
 	}
+	
+	if (!player_->GetGrounded())
+	{
+		dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Fell{});
+	}
+	
+
+	player_->updateBase(l_dt);
+
 	
 	
 

@@ -54,6 +54,7 @@ struct AABB
 	vf2d LocalCenter();
 	vf2d GetSize();
 	vf2d GetHalfSize();
+	void SetVelocity(sf::Vector2f l_vel);
 	bool IsNone();
 
 private:

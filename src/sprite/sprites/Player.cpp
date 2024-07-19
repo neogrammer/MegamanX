@@ -163,6 +163,11 @@ void Player::update(const sf::Time& l_dt)
 	// apply gravity
 	if (affectedByGravity_)
 	{
+		if (IsMoving() && grounded_)
+		{
+			grounded_ = false;
+		}
+
 		if (!grounded_)
 		{
 			if (!jumpHeld_ && jumpLetGo_ && vel_.y < -40.f)
@@ -179,7 +184,9 @@ void Player::update(const sf::Time& l_dt)
 			}
 
 			prevVelY_ = vel_.y;
-			//vel_.y += Cfg::Gravity * l_dt.asSeconds();
+			
+			
+			
 
 		}
 		else
@@ -287,7 +294,7 @@ void Player::update(const sf::Time& l_dt)
 			dispatch(fsm, evt_StoppedShooting{});
 		}
 	}
-	if (animMgr.getCurrType() != fsm.getAnimType())
+	if (animMgr.getCurrType() != fsm.getAnimType() && animMgr.getCurrType() != AnimType::Count)
 	{
 		if (fsm.getAnimType() == AnimType::Land)
 		{
@@ -384,7 +391,9 @@ void Player::bindActions()
 			grounded_ = false;
 			jumpLetGo_ = true;
 			vel_.y = Player::JumpForce;
+			
 			dispatch(fsm, evt_Jumped{});
+
 		}
 		});
 

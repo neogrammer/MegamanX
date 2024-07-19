@@ -93,6 +93,11 @@ vf2d AABB::GetHalfSize()
     return halfSize;
 }
 
+void AABB::SetVelocity(sf::Vector2f l_vel)
+{
+	
+}
+
 bool AABB::IsNone()
 {
 	return (localCenter.x == 0.f && localCenter.y == 0.f && halfSize.x == 0.f && halfSize.y == 0.f);
