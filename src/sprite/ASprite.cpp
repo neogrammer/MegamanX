@@ -110,6 +110,16 @@ void ASprite::setFixedPosition(sf::Vector2f l_pos)
 	spr_.setPosition(l_pos);
 }
 
+bool ASprite::JustJumped()
+{
+	return justJumped_;
+}
+
+void ASprite::SetJustJumped(bool l_jumped)
+{
+	justJumped_ = l_jumped;
+}
+
 void ASprite::SyncSpriteToAnim(ASprite& l_spr)
 {
 
@@ -177,6 +187,8 @@ void ASprite::updatePosition()
 {
 	if (!isSetExternal)
 	{
+		
+		/*
 		if (this->type_ == SpriteType::Actor)
 		{
 			if (facingRight_ && this->spr_.getPosition().x + vel_.x * gameTime_.asSeconds() > dynamic_cast<Player*>(this)->GetView().getCenter().x)
@@ -216,14 +228,14 @@ void ASprite::updatePosition()
 					spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
 				}
 		
-			}
-		}
-		else
-		{
+			}*/
+		//}
+		//else
+		//{
 			spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
 		}
 		//spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
-	}
+	
 }
 
 

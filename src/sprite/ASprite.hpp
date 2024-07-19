@@ -36,6 +36,8 @@ struct ASprite
 	AnimationMgr animMgr;
 	bool isSetExternal{ false };
 	void setFixedPosition(sf::Vector2f l_pos);
+	bool JustJumped();
+	void SetJustJumped(bool l_jumped);
 
 	static void SyncSpriteToAnim(ASprite& l_spr);
 	float oldHeight{ 0.f };
@@ -46,6 +48,7 @@ struct ASprite
 	void BulletWasDestroyed();
 
 protected:
+	bool justJumped_{ false };
 	bool alive_{ true };
 	SpriteType type_{ SpriteType::Count };
 	SpriteName name_{ SpriteName::Count };

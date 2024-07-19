@@ -3,7 +3,7 @@
 #include <iostream>
 #include <FSM/duck_fold.hpp>
 
-float Player::JumpForce = -1600.f;
+float Player::JumpForce = -60.f;
 float Player::MoveSpeed = 600.f;
 Player::Player(sf::View& l_worldSpace)
 	: ASprite{ SpriteType::Actor, SpriteName::Player, Cfg::textures.get((int)Cfg::Textures::PlayerIdle) }
@@ -175,18 +175,15 @@ void Player::update(const sf::Time& l_dt)
 	// apply gravity
 	if (affectedByGravity_)
 	{
-		if (IsMoving() && grounded_)
-		{
-			grounded_ = false;
-		}
+		
 
 		if (!grounded_)
 		{
-			if (!jumpHeld_ && jumpLetGo_ && vel_.y < -40.f)
+		/*	if (!justJumped_ && !jumpHeld_ && jumpLetGo_ && vel_.y < -40.f)
 			{
 				vel_.y = -40.f;
 				jumpLetGo_ = false;
-			}
+			}*/
 
 			
 
@@ -195,7 +192,7 @@ void Player::update(const sf::Time& l_dt)
 				dispatch(fsm, evt_ReachedJumpPeak{});
 			}
 
-			prevVelY_ = vel_.y;
+		
 			
 			
 			
@@ -224,26 +221,26 @@ void Player::update(const sf::Time& l_dt)
 	else
 	{
 		
-		if (movingLeft_)
-		{
-			//vel_.x = -Player::MoveSpeed;
-		
-			/*if (grounded_)
-				SetGrounded(false);*/
+		//if (movingLeft_)
+		//{
+		//	//vel_.x = -Player::MoveSpeed;
+		//
+		//	/*if (grounded_)
+		//		SetGrounded(false);*/
 
-			//animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
-			dispatch(fsm, evt_StartedMoving{});
-		}
-		if (movingRight_)
-		{
-			//vel_.x = Player::MoveSpeed;
-		/*
-			if (grounded_)
-				SetGrounded(false);*/
+		//	//animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
+		//	dispatch(fsm, evt_StartedMoving{});
+		//}
+		//if (movingRight_)
+		//{
+		//	//vel_.x = Player::MoveSpeed;
+		///*
+		//	if (grounded_)
+		//		SetGrounded(false);*/
 
-			//animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
-			dispatch(fsm, evt_StartedMoving{});
-		}
+		//	//animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
+		//	dispatch(fsm, evt_StartedMoving{});
+		//}
 	}
 	animMgr.SetFacingRight(facingRight_);
 
@@ -398,15 +395,17 @@ void Player::bindActions()
 	bind(Cfg::PlayerInputs::B, [this](const sf::Event&) {
 		jumpHeld_ = true;
 		
-		if (grounded_)
+		if (grounded_ && vel_.y >= 0.f)
 		{
 			grounded_ = false;
 			jumpLetGo_ = true;
 			vel_.y = Player::JumpForce;
 			
 			dispatch(fsm, evt_Jumped{});
-
+			justJumped_ = true;
 		}
+
+		
 		});
 
 

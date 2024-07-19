@@ -367,7 +367,7 @@ void Box::Push(Box& box, float l_remTime, float& normalx, float& normaly)
 	if (dotprod > 0.0f) dotprod = 1.0f;
 	else if (dotprod < 0.0f) dotprod = -1.0f;
 
-	SetBoxVelocity(box, { dotprod * normaly * magnitude , dotprod * normalx * magnitude });
+	AddToBoxVelocity(box, { dotprod * normaly * magnitude , dotprod * normalx * magnitude });
 }
 
 

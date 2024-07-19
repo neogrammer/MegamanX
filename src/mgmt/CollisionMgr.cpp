@@ -39,9 +39,8 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 		// for player to tiles
 		if (l_sprA.getType() == SpriteType::Actor && (*s).getType() == SpriteType::Tile && dynamic_cast<Player*>(&l_sprA) != nullptr)
 		{
-			if (CheckCollisionAndResolve(l_sprA, *s, CollisionStrategy::Count, l_dt.asSeconds(), cp, cn, t))
+			if (CheckCollisionAndResolve(l_sprA, *s, CollisionStrategy::Push, l_dt.asSeconds(), cp, cn, t))
 			{
-				collisionOccurred = true;
 				z.push_back({ s, t });
 
 			}
@@ -211,41 +210,23 @@ bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<
 
 	for (auto j : z)
 	{
-		if (CheckCollisionAndResolve(l_sprA, *j.first, CollisionStrategy::Bounce, l_dt.asSeconds(), cp, cn, t))
+		if (CheckCollisionAndResolve(l_sprA, *j.first, CollisionStrategy::Push, l_dt.asSeconds(), cp, cn, t))
 		{
 			collisionOccurred = true;
 			/*auto tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
 			l_sprA.vel().x += (cn.x * tmp.x * (1.f - t));
 			l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));
+			*/
 
-			if (cn.y != 0.f)
+			if (!(cp.x == -1 || cp.y == -1) && t > 0.f && t <= 1.0f)
 			{
-				l_sprA().move(0.f, l_sprA.vel().y * l_dt.asSeconds());
+				//cp.y += l_sprA.GetRect().height / 2.f;
+				
+				//cp.x += l_sprA.GetRect().width / 2.f;
+			
+					
+		
 			}
-			if (cn.x != 0.f)
-			{
-				l_sprA().move(l_sprA.vel().x * l_dt.asSeconds(), 0.f);
-			}
-			if (l_sprA().getPosition().y + l_sprA().getOrigin().y > cp.y && cn.y == -1.f)
-			{
-				l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
-				l_sprA.vel().y = 0.f;
-			}
-			if (l_sprA().getPosition().y - l_sprA().getOrigin().y < cp.y && cn.y == 1.f)
-			{
-				l_sprA().setPosition(l_sprA().getPosition().x, cp.y - l_sprA().getOrigin().y);
-				l_sprA.vel().y = 0.f;
-			}
-			if (l_sprA().getPosition().x + l_sprA().getOrigin().x > cp.x && cn.x == -1.f)
-			{
-				l_sprA().setPosition(cp.x - l_sprA().getOrigin().x, l_sprA().getPosition().y);
-				l_sprA.vel().x = 0.f;
-			}
-			if (l_sprA().getPosition().x - l_sprA().getOrigin().x < cp.x && cn.x == 1.f)
-			{
-				l_sprA().setPosition(cp.x + l_sprA().getOrigin().x, l_sprA().getPosition().y);
-				l_sprA.vel().x = 0.f;
-			}*/
 		}
 	}
 
@@ -596,10 +577,36 @@ bool CollisionMgr::DynamicRectVsRect2(ASprite& l_in, ASprite& l_target, sf::Vect
 
 bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_staticSpr, CollisionStrategy l_collideStrat, float l_dt, sf::Vector2f& contact_point, sf::Vector2f& contact_normal, float& contact_time)
 {
+	if (!l_dynamicSpr.GetGrounded())
+	{
+		if (l_dynamicSpr.JustJumped() == false)
+			l_dynamicSpr.vel().y += Cfg::Gravity;
+	}
+
 	Box box{};
 	Box::SetupBox(box, l_dynamicSpr);
 	Box block{};
 	Box::SetupBox(block, l_staticSpr);
+
+	
+	if (dynamic_cast<Player*>(&l_dynamicSpr)->IsMoving())
+	{
+		if (l_dynamicSpr.IsFacingRight())
+		{
+			box.vx = Player::MoveSpeed;
+		}
+		else
+		{
+			box.vx = -Player::MoveSpeed;
+		}
+	}
+
+	//if (l_dynamicSpr.JustJumped() == true)
+	//{
+		//box.vy = Player::JumpForce;
+		//l_dynamicSpr.vel().y = Player::JumpForce;
+		//l_dynamicSpr.SetJustJumped(false);
+	//}
 
 	std::unique_ptr<Box> broadphasebox = { std::move(Box::GetSweptBroadphaseBox(box, l_dt)) };
 
@@ -607,100 +614,51 @@ bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_st
 	{
 		if (Box::BroadphaseCheck(*broadphasebox, block))
 		{
-			sf::Vector2f& normal = contact_normal;
-			float& normalx = normal.x;
-			float& normaly = normal.y;
-			float& collisiontime = contact_time;
-			collisiontime = Box::SweptAABB(box, block, normalx, normaly);
-			if (collisiontime > 0.f && collisiontime <= 1.f)
-			{
-				float remainingtime = 1.0f - collisiontime;
-
-				if (normaly == 1.f)
-				{
-					
-				
-
-					if (dynamic_cast<Player*>(&l_dynamicSpr) != nullptr)
-					{
-						dispatch(dynamic_cast<Player*>(&l_dynamicSpr)->fsm, evt_ReachedJumpPeak {});
-					}
-				}
-				if (normalx == -1.f || normalx == 1.f)
-				{
-					if (dynamic_cast<Player*>(&l_dynamicSpr) != nullptr)
-					{
-						dynamic_cast<Player*>(&l_dynamicSpr)->SetMoving(false,(normalx == -1.f) ? true : false);
-					}
-				
-				}
-				if (normaly == -1.f)
-				{
-					
-					
-
-					if (dynamic_cast<Player*>(&l_dynamicSpr) != nullptr)
-					{
-						dynamic_cast<Player*>(&l_dynamicSpr)->SetGrounded(true);
-						dispatch(dynamic_cast<Player*>(&l_dynamicSpr)->fsm, evt_Landed {});
-					}
-				}
-				
-				//Box::UpdateBoxVelocity(box, {box.vx, box.vy}, remainingtime);
 
 
-				// resolution Strategy
-				/*switch (l_collideStrat)
-				{
-				case CollisionStrategy::Bounce:
-				{
-					Box::Bounce(box, remainingtime, normalx, normaly);
-				}
-				break;
-				case CollisionStrategy::Slide:
-				{
-					Box::Slide(box, remainingtime, normalx, normaly);
-				}
-				break;
-				case CollisionStrategy::Push:
-				{
-					Box::Push(box, remainingtime, normalx, normaly);
-				}
-				break;
-				default:
-					break;
-				}*/
-
-				//Box::MoveBox(box, {box.vx, box.vy}, 1.f);
 			
-				//Box::SetSpriteVelocity(box, { box.vx, box.vy });
-				if (l_collideStrat != CollisionStrategy::Count)
-				{
-					switch (l_collideStrat)
-					{
-					case CollisionStrategy::Bounce:
-					{
-						Box::Bounce(box, remainingtime, normalx, normaly);
-					}
-					break;
-					case CollisionStrategy::Slide:
-					{
-						Box::Slide(box, remainingtime, normalx, normaly);
-					}
-					break;
-					case CollisionStrategy::Push:
-					{
-						Box::Push(box, remainingtime, normalx, normaly);
-					}
-					break;
-					default:
-						break;
-					}
 
-					Box::SetSpriteVelocity(box, { box.vx, box.vy });
-				}
-				return true;
+	
+			contact_time = Box::SweptAABB(box, block, contact_normal.x, contact_normal.y);
+			if (contact_time <= 0.f || contact_time > 1.0f)
+			{
+				return false;
+				
 			}
+			
+				
+			
+			
+			float remainingtime = 1.0f - contact_time;
+			
+
+				
+				
+			
+			switch (l_collideStrat)
+			{
+			case CollisionStrategy::Bounce:
+			{
+				Box::Bounce(box, remainingtime, contact_normal.x, contact_normal.y);
+			}
+			break;
+			case CollisionStrategy::Slide:
+			{
+				Box::Slide(box, remainingtime, contact_normal.x, contact_normal.y);
+			}
+			break;
+			case CollisionStrategy::Push:
+			{
+				Box::Push(box, remainingtime, contact_normal.x, contact_normal.y);
+			}
+			break;
+			default:
+				break;
+			}
+			
+			Box::SetSpriteVelocity(box, { l_dynamicSpr.vel().x + box.vx * contact_time,l_dynamicSpr.vel().y + ((l_dynamicSpr.JustJumped()) ? 0.f : (box.vy * contact_time)) });
+			return true;
+			
 
 
 		}

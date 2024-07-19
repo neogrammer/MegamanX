@@ -68,6 +68,7 @@ void SandboxStage::HandleEvent(const sf::Event& l_e)
 void SandboxStage::Update(const sf::Time& l_dt)
 {
 
+
 	if (player_->NeedsStageToShoot())
 	{
 		CreateFriendlyBullet(*player_, SpriteName::BusterBullet);
@@ -83,9 +84,7 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	tmp.push_back(player_);
 
 
-	// collision checking out param variables
-	sf::Vector2f cp, cn;
-	float t;
+	
 
 	// control flags used to determine implementation details
 	bool collided = false;
@@ -112,10 +111,16 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	}
 	
 	// handle bullets to tiles collisions
-	for (auto& p : projectiles_) { if (CollisionMgr::CheckCollisions(*p, tilemapSolidTiles_, cp, cn, t, l_dt) && t <= 1.f) {int fillerJob = 0;} }
+	for (auto& p : projectiles_) {
+		sf::Vector2f cp, cn;
+		float time;
+		if (CollisionMgr::CheckCollisions(*p, tilemapSolidTiles_, cp, cn, time, l_dt) && time <= 1.f) {int fillerJob = 0;} }
 
 	// handle bullets to enemy collisions
-	for (auto& p : projectiles_) { if (CollisionMgr::CheckCollisions(*p, enemies_, cp, cn, t, l_dt) && t <= 1.f) { int fillerJob = 0; } }
+	for (auto& p : projectiles_) { 
+		sf::Vector2f cp, cn;
+		float time;
+		if (CollisionMgr::CheckCollisions(*p, enemies_, cp, cn, time, l_dt) && time <= 1.f) { int fillerJob = 0; } }
 
 	// enemies
 	for (auto& e : enemies_) { e->updateBase(l_dt); }
@@ -123,10 +128,13 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	// handle bullets to player collisions
 	for (auto& p : projectiles_) 
 	{ 
+		
 		// only if bullets arent the player's bullets
 		if (!dynamic_cast<Projectile*>(p.get())->GetFriendly())
 		{
-			if (CollisionMgr::CheckCollisions(*p, tmp, cp, cn, t, l_dt)) { int fillerJob = 0; }
+			sf::Vector2f cp, cn;
+			float time;
+			if (CollisionMgr::CheckCollisions(*p, tmp, cp, cn, time, l_dt)) { int fillerJob = 0; }
 		}
 	}
 
@@ -134,10 +142,8 @@ void SandboxStage::Update(const sf::Time& l_dt)
 
 	// update the player after handling the collision checking
 
-	if (!player_->GetGrounded())
-	{
-		player_->vel().y += Cfg::Gravity * l_dt.asSeconds();
-	}
+	
+
 
 	if (dynamic_cast<Player*>(player_.get())->IsMoving())
 	{
@@ -145,27 +151,78 @@ void SandboxStage::Update(const sf::Time& l_dt)
 			player_->vel().x = Player::MoveSpeed;
 		else
 			player_->vel().x = -Player::MoveSpeed;
+
+		dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_StartedMoving{});
 	}
+	
 
-	// main handling of player adjustment for gravity and movement colliding against the map tiles
-	if (CollisionMgr::CheckCollisions(*player_, tilemapSolidTiles_, cp, cn, t, l_dt))
+	if (dynamic_cast<Player*>(player_.get())->IsMoving() || !player_->GetGrounded())
 	{
-		pointOfContact_.setPosition(cp);
-		collided = true;
-
+		player_->SetGrounded(false);
 		
 	}
 	
-	if (!player_->GetGrounded())
-	{
-		dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Fell{});
-	}
-	
+	std::vector<std::pair<std::shared_ptr<ASprite>, float>> z;
+	z.clear();
 
+	for (auto& t : tilemapSolidTiles_)
+	{
+		sf::Vector2f cp, cn;
+		float time;
+		if (CollisionMgr::CheckCollisionAndResolve(*player_, *t, CollisionStrategy::Count, l_dt.asSeconds(), cp, cn, time))
+		{
+			z.push_back({ t, time });
+
+			
+
+		}
+
+	}
+
+
+	std::sort(z.begin(), z.end(), [](const std::pair<std::shared_ptr<ASprite>, float>& a, const std::pair<std::shared_ptr<ASprite>, float>& b)
+		{
+			return a.second < b.second;
+		});
+
+	sf::Vector2f cp, cn;
+	float time;
+	for (auto& j : z)
+	{
+		
+		if (CollisionMgr::CheckCollisionAndResolve(*player_, *j.first, CollisionStrategy::Push, l_dt.asSeconds(), cp, cn, time))
+		{
+			auto tmp2 = sf::Vector2f{ abs(player_->vel().x), abs(player_->vel().y) };
+			player_->vel().x += (cn.x * tmp2.x * (1.f - time));
+			player_->vel().y += ((player_->JustJumped()) ? 0.f : (cn.y * tmp2.y * (1.f - time)));
+			
+			if (cn.y == -1.f)
+			{
+				player_->SetGrounded(true);
+			}
+		}
+	}
+	if (player_->JustJumped())
+	{
+		player_->SetJustJumped(false);
+	}
+
+	if (player_->GetGrounded() == true)
+		dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Landed {});
+	else
+		dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Fell {});
+			
+	
 	player_->updateBase(l_dt);
 
 	
 	
+	
+
+
+	
+	
+
 
 	// after updating the player's position, if there was a collision, adjust further for gravity and running into walls
 	// hacky, leave as is
@@ -186,12 +243,7 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	{*/
 		// if no collision occurred, player may be standing on ground, but if moving, set grounded to false to checks can be made again
 		// and the player doesn't float midair
-		if (dynamic_cast<Player*>(player_.get())->IsMoving())
-		{
-			player_->SetGrounded(false);
-
-			dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Fell{});
-		}
+	
 	//}
 	//if (collided)
 		//(*player_)().setPosition({ (*player_)().getPosition().x, cp.y - (*player_)().getOrigin().y });
