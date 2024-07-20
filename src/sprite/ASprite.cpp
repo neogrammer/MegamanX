@@ -5,50 +5,23 @@
 
 
 
-ASprite::ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex, sf::IntRect l_startFrame, sf::Vector2f l_boxSize, sf::Vector2f l_boxOffset)
+ASprite::ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex, sf::IntRect l_startFrame)
 	: type_{l_type}
 	, name_{l_name}
 	, spr_{}
 	, vel_{}
 	, gameTime_{g::FPS60}
-	, boxMap{}
+	, animMgr{}
+	, isSetExternal{}
 {
 	spr_.setTexture(l_tex);
 	if (l_startFrame.width != 0 && l_startFrame.height != 0)
 		spr_.setTextureRect(l_startFrame);
 	spr_.setPosition(0.f, 0.f);
 
-	boxMap.clear();
-	boxMap.insert(std::pair( AnimType::None, std::vector<std::shared_ptr<Box>>{} ));
-	boxMap.at(AnimType::None).clear();
-	boxMap.at(AnimType::None).reserve(1);
-	boxMap.at(AnimType::None).emplace_back(std::make_unique<Box>());
+
+	animMgr.AddAnimation(this->spr_, l_tex, AnimLayoutType::Count, AnimType::Count, 1, spr_.getTextureRect(), 1, 1, 0.f, false, true, true, true);
 	
-	boxMap.at(AnimType::None).back()->pSpr = this;
-
-	boxMap.at(AnimType::None).back()->sprXPos = const_cast<float*>(&spr_.getPosition().x);
-	boxMap.at(AnimType::None).back()->sprYPos = const_cast<float*>(&spr_.getPosition().y);
-
-	boxMap.at(AnimType::None).back()->x = l_boxOffset.x;
-	boxMap.at(AnimType::None).back()->y = l_boxOffset.y;
-
-	sf::Vector2f sz{};
-	if (l_boxSize == sf::Vector2f{ 0.f, 0.f })
-	{
-		sf::Vector2f sz = sf::Vector2f(spr_.getTextureRect().getSize());
-	}
-	else
-	{ 
-		sz = l_boxSize;
-	}
-	
-	boxMap.at(AnimType::None).back()->w = sz.x;
-	boxMap.at(AnimType::None).back()->h = sz.y;
-	boxMap.at(AnimType::None).back()->vx = &vel_.x;
-	boxMap.at(AnimType::None).back()->vy = &vel_.y;
-	boxMap.at(AnimType::None).back()->isBroadphaseBox = false;
-	//invariant setup
-
 }
 
 sf::Sprite& ASprite::operator()()
@@ -63,42 +36,48 @@ bool ASprite::IsFacingRight()
 
 
 ASprite::ASprite(const ASprite& other)
+	: type_{ other.type_ }
+	, name_{ other.name_ }
+	, spr_{other.spr_ }
+	, vel_{other.vel_ }
+	, gameTime_{ other.gameTime_ }
+	, animMgr{}
+	, isSetExternal{other.isSetExternal}
 {
 	if (&other == this)
 	{
 		return;
 	}
-	type_ = other.type_;
-	spr_ = other.spr_;
-	vel_ = other.vel_;
-	gameTime_ = other.gameTime_;
 	spr_.setTexture(*const_cast<sf::Texture*>(other.spr_.getTexture()));
-	boxMap.clear();
-	boxMap[AnimType::None] = std::vector<std::shared_ptr<Box>>();
-	boxMap[AnimType::None].clear();
-	boxMap[AnimType::None].push_back(other.boxMap.at(AnimType::None).at(0));
+	(*const_cast<AnimationMgr*>(&other.animMgr)).copyDataTo(this->animMgr, this->spr_);
+
 
 }
 
 ASprite& ASprite::operator=(const ASprite& other)
 {
+
+	if (&other == this)
+	{
+		return *this;
+	}
+	
+
 	this->spr_ = sf::Sprite{};
+	this->spr_ = other.spr_;
 	this->type_ = other.type_;
-	this->vel_ = { 0.f, 0.f };
-	this->gameTime_ = sf::Time::Zero;
+	this->name_ = other.name_;
+	this->vel_ = other.vel_;
+	this->gameTime_ = other.gameTime_;
+	this->isSetExternal = other.isSetExternal;
 	this->spr_.setTexture(*const_cast<sf::Texture*>(other.spr_.getTexture()));
-	this->boxMap.clear();
-	this->boxMap[AnimType::None] = std::vector<std::shared_ptr<Box>>();
-	boxMap[AnimType::None].clear();
-	boxMap[AnimType::None].push_back(other.boxMap.at(AnimType::None).at(0));
+	(*const_cast<AnimationMgr*>(&other.animMgr)).copyDataTo(this->animMgr, this->spr_);
 
 	return *this;
 }
 
 void ASprite::render(sf::RenderWindow& l_wnd)
 {
-	// set texture rect to correct animation rect
-	updateTexRect();
 	// adjust position by velocity
 	updatePosition();
 	l_wnd.draw(spr_);
@@ -134,7 +113,7 @@ void ASprite::SetAlive(bool l_alive)
 	alive_ = l_alive;
 }
 
-sf::IntRect ASprite::GetRect()
+sf::IntRect ASprite::GetTextureRect()
 {
     return this->spr_.getTextureRect();
 }
@@ -166,32 +145,7 @@ void ASprite::SetJustJumped(bool l_jumped)
 	justJumped_ = l_jumped;
 }
 
-void ASprite::SyncSpriteToAnim(ASprite& l_spr)
-{
 
-	float currOriginX = l_spr().getOrigin().x;
-	float currOriginY = l_spr().getOrigin().y;
-
-	float newOriginX = l_spr().getTextureRect().width / 2.f;
-	float newOriginY = l_spr().getTextureRect().height / 2.f;
-
-	float yOriginDiff = abs(newOriginY - currOriginY);
-
-	l_spr().setOrigin({ newOriginX, newOriginY });
-
-	float newHeight = (float)l_spr.GetRect().height;
-
-	float newYOffset = abs(newHeight - l_spr.oldHeight);
-
-	if (l_spr.oldHeight < newHeight)
-	{
-		l_spr().setPosition({ l_spr().getPosition().x, l_spr().getPosition().y + (-1.f * newYOffset) + yOriginDiff});
-	}
-	else if (l_spr.oldHeight > newHeight)
-	{
-		l_spr().setPosition({ l_spr().getPosition().x, l_spr().getPosition().y + newYOffset - yOriginDiff });
-	}
-}
 
 bool ASprite::NeedsStageToShoot()
 {
@@ -222,71 +176,140 @@ void ASprite::updateBase(const sf::Time& l_dt)
 
 bool ASprite::IsShooting()
 {
-    return false;
+	return shooting_;
 }
 
 void ASprite::Shoot()
 {
+	if (!shooting_)
+	{
+		shooting_ = true;
+	}
 }
 
 void ASprite::updatePosition()
 {
 	if (!isSetExternal)
 	{
-		
-		/*
-		if (this->type_ == SpriteType::Actor)
-		{
-			if (facingRight_ && this->spr_.getPosition().x + vel_.x * gameTime_.asSeconds() > dynamic_cast<Player*>(this)->GetView().getCenter().x)
-			{
-				auto diff = ((this->spr_.getPosition().x + vel_.x * gameTime_.asSeconds()) - dynamic_cast<Player*>(this)->GetView().getCenter().x);
-				spr_.setPosition(dynamic_cast<Player*>(this)->GetView().getCenter().x, spr_.getPosition().y + vel_.y * gameTime_.asSeconds());
-				dynamic_cast<Player*>(this)->GetView().move({ diff, 0.f });
-			}
-			else if (!facingRight_ && this->spr_.getPosition().x + vel_.x * gameTime_.asSeconds() < dynamic_cast<Player*>(this)->GetView().getCenter().x)		
-			{
-				auto diff = (dynamic_cast<Player*>(this)->GetView().getCenter().x - (this->spr_.getPosition().x + vel_.x * gameTime_.asSeconds()));
-				if (dynamic_cast<Player*>(this)->GetView().getCenter().x - 800.f - diff >= 0.f)
-				{
-					spr_.setPosition(dynamic_cast<Player*>(this)->GetView().getCenter().x, spr_.getPosition().y + vel_.y * gameTime_.asSeconds());
-					dynamic_cast<Player*>(this)->GetView().move({ -diff, 0.f });
-				}
-				else
-				{
-					if (spr_.getPosition().x - spr_.getOrigin().x + vel_.x * gameTime_.asSeconds() > 32.f)
-						spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
-
-				}
-			}
-			else
-			{
-				if (!facingRight_)
-				{
-					if (spr_.getPosition().x - spr_.getOrigin().x + vel_.x * gameTime_.asSeconds() >= abs(vel_.x * gameTime_.asSeconds()) + 32.f)
-					{
-						spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
-					}
-				
-				
-				}
-				else
-				{
-					spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
-				}
-		
-			}*/
-		//}
-		//else
-		//{
-			spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
-		}
-		//spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
-	
+		spr_.move({ vel_.x * gameTime_.asSeconds(),vel_.y * gameTime_.asSeconds() });
+	}
 }
 
 
-void ASprite::updateTexRect()
+void ASprite::setVelocity(const sf::Vector2f& l_vel)
 {
-	// not implemented
-	oldHeight = (float)GetRect().height;
+	vel_.x = l_vel.x;
+	vel_.y = l_vel.y;
+}
+
+void ASprite::accelerate(sf::Vector2f l_acceleration, float l_dt)
+{
+	vel_.x += l_acceleration.x * l_dt;
+	vel_.y += l_acceleration.y * l_dt;
+}
+
+void ASprite::tickPos(float l_dt)
+{
+	this->spr_.move({vel_.x * l_dt, vel_.y * l_dt});
+}
+
+void ASprite::setPos(sf::Vector2f l_pos)
+{
+	this->spr_.setPosition(l_pos);
+}
+
+void ASprite::move(sf::Vector2f l_offset, float l_dt)
+{
+	this->spr_.move(l_offset * l_dt);
+}
+
+float ASprite::bTop()
+{
+	return this->spr_.getPosition().y - this->spr_.getOrigin().y + (float)animMgr.getCurrBox().top;
+}
+
+float ASprite::bLeft()
+{
+	return this->spr_.getPosition().x - this->spr_.getOrigin().x + (float)animMgr.getCurrBox().left;
+
+}
+
+float ASprite::bRight()
+{
+	return this->spr_.getPosition().x - this->spr_.getOrigin().x + (float)animMgr.getCurrBox().left + (float)animMgr.getCurrBox().width;
+
+}
+
+float ASprite::bBottom()
+{
+	return this->spr_.getPosition().y - this->spr_.getOrigin().y + (float)animMgr.getCurrBox().top + (float)animMgr.getCurrBox().height;
+
+
+}
+
+sf::Vector2f ASprite::boxTL()
+{
+	return {bTop(),bLeft()};
+}
+
+sf::Vector2f ASprite::boxBR()
+{
+	return {bRight(),bBottom()};
+}
+
+sf::FloatRect ASprite::getBoxGlobalBounds()
+{
+	sf::FloatRect tmp = {};
+
+	sf::IntRect bRect = animMgr.getCurrBox();
+	tmp.left = this->spr_.getPosition().x - this->spr_.getOrigin().x + (float)bRect.left;
+	tmp.top = this->spr_.getPosition().y - this->spr_.getOrigin().y + (float)bRect.top;
+	tmp.width = (float)bRect.width;
+	tmp.height = (float)bRect.height;
+
+	return tmp;
+}
+
+void ASprite::setBoxRect(AnimType l_type, uint32_t l_index, bool l_facingRight, const sf::IntRect& l_rect)
+{
+	animMgr.setBoxRect(l_type, l_index, l_facingRight, l_rect);
+}
+
+sf::IntRect ASprite::getBoxRect(AnimType l_type, uint32_t l_index, bool l_facingRight)
+{
+	return animMgr.getBoxRect(l_type, l_index, l_facingRight);
+}
+
+sf::IntRect ASprite::getCurrBoxRect()
+{
+	return animMgr.getCurrBox();
+}
+
+
+
+sf::FloatRect GetSweptBroadphaseBox(ASprite& l_spr1, float l_dt)
+{
+	struct r
+	{
+		float x, y, w, h, vx, vy;
+	};
+
+	r b{ l_spr1.bLeft(),l_spr1.bTop(), (float)l_spr1.getCurrBoxRect().width,  (float)l_spr1.getCurrBoxRect().height, l_spr1.vel().x,l_spr1.vel().y };
+
+	sf::FloatRect broadphasebox = l_spr1.getBoxGlobalBounds();
+
+	broadphasebox.left = b.x;
+	broadphasebox.top = b.y;
+	broadphasebox.width = b.vx > 0 ? b.vx * l_dt + b.w : b.w - b.vx * l_dt;
+	broadphasebox.height = b.vy > 0 ? b.vy * l_dt + b.h : b.h - b.vy * l_dt;
+
+	return broadphasebox;
+}
+
+
+bool BroadphaseCheck(sf::FloatRect l_spr1, ASprite& l_spr2)
+{
+	auto b1 = l_spr1;
+	auto b2 = l_spr2.getBoxGlobalBounds();
+	return !(b1.left + b1.width < l_spr2.bLeft() || b1.left > l_spr2.bRight() || b1.top + b1.height < l_spr2.bTop() || b1.top > l_spr2.bBottom());
 }

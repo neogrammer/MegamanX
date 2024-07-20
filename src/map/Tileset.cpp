@@ -1,5 +1,5 @@
 #include "Tileset.hpp"
-#include <misc/Box.hpp>
+
 #include <fstream>
 #include <res/Cfg.hpp>
 int Tileset::m_numTilesets = 0;
@@ -66,5 +66,5 @@ Tile Tileset::copyTile(int tileID)
 
 sf::IntRect Tileset::GetRect(int tileID)
 {
-	return m_tiles.at(tileID)->GetRect();
+	return m_tiles.at(tileID)->GetTextureRect();
 }

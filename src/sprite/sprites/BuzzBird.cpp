@@ -27,8 +27,6 @@ BuzzBird::BuzzBird() : Enemy{ SpriteName::BuzzBird, Cfg::textures.get((int)Cfg::
 	{
 		Cfg::bboxDB.addToMap(*this, AnimType::ShootStand, i, { 112.f, 100.f }, { 24.f, 174.f });
 	}
-	boxMap[AnimType::None].at(0)->w = 220;
-	boxMap[AnimType::None].at(0)->h = 296;
 
 }
 

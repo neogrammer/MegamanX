@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <vector>
 #include <FSM/duck_fold.hpp>
-#include <misc/Box.hpp>
 
 
 bool CollisionMgr::HandleCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<ASprite>>& l_sprVec, const sf::Time& l_dt)
@@ -75,43 +74,43 @@ bool CollisionMgr::HandleCollisions(ASprite& l_sprA, std::vector<std::shared_ptr
 		z.clear();
 		for (auto& tile : tiles)
 		{
-			float t;
+			float t{};
 			sf::Vector2f contact_point;
 			// first check if a collision occurred and push it back, dont resolve yet
-			if (IsColliding(*player, *tile))
+			t = PlayerVTile(*player, *tile, contact_normal, l_dt);
+			if (t > 0.f && t < 1.0f)
 			{
-				player->vel().y = 0;
-				collisionOccurred = true;
-				break;
-			}
-		}
+				z.push_back({ tile.get(), t });
 				
-			/*	, contact_normal, l_dt);
-			if (contact_time < 1.0f && contact_time >= 0.f)
-			{ 
-				z.push_back({ tile.get(), t}); 
 			}
-		}
-		std::sort(z.begin(), z.end(), [](const std::pair<Tile*, float>& a, const std::pair<Tile*, float>& b)
-			{
-				return a.second < b.second;
-			});
-		for (auto& j : z)
-		{
-			sf::Vector2f cp;
-		
-			if (CheckCollisionAndResolve(*player, *j.first, CollisionStrategy::Push, l_dt.asSeconds(), cp, contact_normal, j.second))
-			{
-				collisionOccurred = true;
 
-				if (contact_normal.y == -1)
+			std::sort(z.begin(), z.end(), [](const std::pair<Tile*, float>& a, const std::pair<Tile*, float>& b)
 				{
-					player->SetGrounded(true);
-					dispatch(player->fsm, evt_Landed{});
+					return a.second < b.second;
+				});
+
+			sf::Vector2f tmpVel{player->vel()};
+			for (auto& j : z)
+			{
+				sf::Vector2f cp;
+				t = PlayerVTile(*player, *tile, contact_normal, l_dt);
+				if (t > 0.f && t < 1.0f)
+				{
+					collisionOccurred = true;
+
+					if (contact_normal.y == -1)
+					{
+						player->SetGrounded(true);
+						dispatch(player->fsm, evt_Landed{});
+					}
+					if (contact_normal.y == -1 || contact_normal.y == 1 || contact_normal.x == -1 || contact_normal.x == 1)
+						Push(*player, 1.0f - t, contact_normal.x, contact_normal.y, tmpVel);
+					
 
 				}
 			}
-		}*/
+			player->setVelocity(tmpVel);
+		}
 	}
 
 	if (!tiles.empty() && !projectiles.empty())
@@ -475,91 +474,6 @@ bool CollisionMgr::DynamicRectVsRect2(ASprite& l_in, ASprite& l_target, sf::Vect
 	return false;
 }
 
-
-bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_staticSpr, CollisionStrategy l_collideStrat, float l_dt, sf::Vector2f& contact_point, sf::Vector2f& contact_normal, float& contact_time)
-{
-		
-	
-	
-	
-
-	
-	
-
-	//if (l_dynamicSpr.JustJumped() == true)
-	//{
-		//box.vy = Player::JumpForce;
-		//l_dynamicSpr.vel().y = Player::JumpForce;
-		//l_dynamicSpr.SetJustJumped(false);
-	//}
-
-
-	Box box{};
-	Box::SetupBox(box, l_dynamicSpr);
-	Box block{};
-	Box::SetupBox(block, l_staticSpr);
-	std::unique_ptr<Box> broadphasebox = { std::move(Box::GetSweptBroadphaseBox(box, l_dt)) };
-
-	if (broadphasebox != nullptr)
-	{
-		if (Box::BroadphaseCheck(*broadphasebox, block))
-		{
-
-
-			
-
-	
-			contact_time = Box::SweptAABB(box, block, contact_normal.x, contact_normal.y);
-			if (contact_time <= 0.f || contact_time > 1.0f)
-			{
-				return false;
-				
-			}
-			
-			if (contact_normal.y == -1)
-			{
-				l_dynamicSpr.SetGrounded(true);
-				l_dynamicSpr.SetJustJumped(false);
-				//l_dynamicSpr.vel().y = 0;
-				//box.vy = 0.f;
-				dispatch(dynamic_cast<Player*>(&l_dynamicSpr)->fsm, evt_Landed {});
-			}
-			
-			
-			float remainingtime = 1.0f - contact_time;
-			
-
-				
-				
-			
-			switch (l_collideStrat)
-			{
-			case CollisionStrategy::Bounce:
-			{
-				Box::Bounce(box, remainingtime, contact_normal.x, contact_normal.y);
-			}
-			break;
-			case CollisionStrategy::Slide:
-			{
-				Box::Slide(box, remainingtime, contact_normal.x, contact_normal.y);
-			}
-			break;
-			case CollisionStrategy::Push:
-			{
-				Box::Push(box, remainingtime, contact_normal.x, contact_normal.y);
-			}
-			break;
-			default:
-				break;
-			}
-			
-			return true;
-		}
-		
-	}
-	return false;
-}
-
 float CollisionMgr::PlayerVTile(Player& l_player, Tile& l_tile, sf::Vector2f& contact_normal, const sf::Time& l_dt)
 {
 	
@@ -567,10 +481,10 @@ float CollisionMgr::PlayerVTile(Player& l_player, Tile& l_tile, sf::Vector2f& co
 
 
 
-			float contact_time = Box::SweptAABB(*l_player.boxMap[AnimType::None].at(0), *l_tile.boxMap[AnimType::None].at(0), contact_normal.x, contact_normal.y);
+			float contact_time = SweptAABB(l_player, l_tile, contact_normal.x, contact_normal.y);
 			if (contact_time < 0.f || contact_time >= 1.0f)
 			{
-				return 1.0f;
+				return 1.1f;
 
 			}
 
@@ -578,14 +492,176 @@ float CollisionMgr::PlayerVTile(Player& l_player, Tile& l_tile, sf::Vector2f& co
 			{
 				l_player.SetGrounded(true);
 				l_player.SetJustJumped(false);
-				//l_dynamicSpr.vel().y = 0;
-				//box.vy = 0.f;
 				dispatch(l_player.fsm, evt_Landed{});
-
 			}
 
 			if(contact_normal.y == -1.f || contact_normal.x == -1.f || contact_normal.x == 1.f || contact_normal.y == 1.f)
 				return contact_time;
 
-	return 1.0f;
+	return 1.1f;
+}
+
+
+
+float CollisionMgr::SweptAABB(ASprite& l_spr1, ASprite& l_spr2, float& normalx, float& normaly)
+{
+	struct r
+	{
+		float x, y, w, h, vx, vy;
+	};
+
+	r b1{ l_spr1.bLeft(),l_spr1.bTop(), (float)l_spr1.getCurrBoxRect().width,  (float)l_spr1.getCurrBoxRect().height, l_spr1.vel().x,l_spr1.vel().y };
+	r b2{};
+	if (dynamic_cast<Tile*>(&l_spr2) != nullptr)
+	{
+	   b2 = r{ l_spr2().getPosition().x, l_spr2().getPosition().y, (float)l_spr2().getTextureRect().width,  (float) l_spr2().getTextureRect().height, l_spr2.vel().x,l_spr2.vel().y};
+
+	}
+	else
+	{
+		b2 = r{ l_spr2.bLeft(),l_spr2.bTop(), (float)l_spr2.getCurrBoxRect().width,  (float)l_spr2.getCurrBoxRect().height, l_spr2.vel().x,l_spr2.vel().y };
+
+	}
+
+	float xInvEntry, yInvEntry;
+	float xInvExit, yInvExit;
+
+	// find the distance between the objects on the near and far sides for both x and y 
+	if (b1.vx > 0.0f)
+	{
+		xInvEntry = b2.x - (b1.x + b1.w);
+		xInvExit = (b2.x + b2.w) - b1.x;
+	}
+	else
+	{
+		xInvEntry = (b2.x + b2.w) - b1.x;
+		xInvExit = b2.x - (b1.x + b1.w);
+	}
+
+	if (b1.vy > 0.0f)
+	{
+		yInvEntry = b2.y - (b1.y + b1.h);
+		yInvExit = (b2.y + b2.h) - b1.y;
+	}
+	else
+	{
+		yInvEntry = (b2.y + b2.h) - b1.y;
+		yInvExit = b2.y - (b1.y + b1.h);
+	}
+
+	// find time of collision and time of leaving for each axis (if statement is to prevent divide by zero) 
+	float xEntry, yEntry;
+	float xExit, yExit;
+
+	if (b1.vx == 0.0f)
+	{
+		xEntry = -std::numeric_limits<float>::infinity();
+		xExit = std::numeric_limits<float>::infinity();
+	}
+	else
+	{
+		xEntry = xInvEntry / b1.vx;
+		xExit = xInvExit / b1.vx;
+	}
+
+	if (b1.vy == 0.0f)
+	{
+		yEntry = -std::numeric_limits<float>::infinity();
+		yExit = std::numeric_limits<float>::infinity();
+	}
+	else
+	{
+		yEntry = yInvEntry / b1.vy;
+		yExit = yInvExit / b1.vy;
+	}
+
+	//if (yEntry > 1.0f) yEntry = -std::numeric_limits<float>::infinity();
+	//if (xEntry > 1.0f) xEntry = -std::numeric_limits<float>::infinity();
+	// Find the earliest/latest times of collision.
+	float entryTime = std::max(xEntry, yEntry);
+	float exitTime = std::min(xExit, yExit);
+
+	if (entryTime > exitTime) return 1.1f; // This check was correct.
+	if (xEntry < 0.0f && yEntry < 0.0f) return 1.1f;
+	if (xEntry < 0.0f) {
+		// Check that the bounding box started overlapped or not.
+		if (b1.x + b1.w < b2.x || b1.x > b2.x + b2.w) return 1.1f;
+	}
+	if (yEntry < 0.0f) {
+		// Check that the bounding box started overlapped or not.
+		if (b1.y + b1.h < b2.y || b1.y > b2.y + b2.h) return 1.1f;
+	}
+
+	// if there was no collision
+	/*if (entryTime > exitTime || xEntry < 0.0f && yEntry < 0.0f || xEntry > 1.0f || yEntry > 1.0f)
+	{
+		normalx = 0.0f;
+		normaly = 0.0f;
+		return 1.0f;
+	}*/
+
+	//else // if there was a collision 
+	//{
+		// calculate normal of collided surface
+	if (xEntry > yEntry)
+	{
+		if (xInvEntry < 0.0f)
+		{
+			normalx = 1.0f;
+			normaly = 0.0f;
+		}
+		else
+		{
+			normalx = -1.0f;
+			normaly = 0.0f;
+		}
+	}
+	else
+	{
+		if (yInvEntry < 0.0f)
+		{
+			normalx = 0.0f;
+			normaly = 1.0f;
+		}
+		else
+		{
+			normalx = 0.0f;
+			normaly = -1.0f;
+		}
+	} // return the time of collisionreturn entryTime; 
+//}
+
+	return entryTime;
+}
+
+void CollisionMgr::Bounce(ASprite& b1, float l_remTime, float& normalx, float& normaly)
+{
+
+	b1.vel().x *= l_remTime;
+	b1.vel().y *= l_remTime;
+	if (abs(normalx) > 0.0001f) b1.vel().x = -(b1.vel().x);
+	if (abs(normaly) > 0.0001f) b1.vel().y = -(b1.vel().y);
+
+}
+
+void CollisionMgr::Slide(ASprite& box, float l_remTime, float& normalx, float& normaly)
+{
+
+	// slide 
+	float dotprod = (box.vel().x * normaly + box.vel().y * normalx) * l_remTime;
+	//SetVelocity(box, {dotprod * normaly, dotprod * normalx});
+}
+
+void CollisionMgr::Push(ASprite& box, float l_remTime, float& normalx, float& normaly, sf::Vector2f& l_tmpVel)
+{
+
+	// push 
+	float magnitude = sqrt((box.vel().x * box.bLeft() + box.vel().y * box.vel().y)) * l_remTime;
+	float dotprod = box.vel().x * normaly + box.vel().y * normalx;
+
+	if (dotprod > 0.0f) dotprod = 1.0f;
+	else if (dotprod < 0.0f) dotprod = -1.0f;
+
+	l_tmpVel += { dotprod* normaly* magnitude, dotprod* normalx* magnitude };
+	// AddToVelocity(box, { dotprod * normaly * magnitude , dotprod * normalx * magnitude });
 }

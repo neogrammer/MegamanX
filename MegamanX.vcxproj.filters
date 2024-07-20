@@ -214,9 +214,6 @@
     <ClCompile Include="src\sprite\sprites\Enemy.cpp">
       <Filter>Source Files\sprite\sprites</Filter>
     </ClCompile>
-    <ClCompile Include="src\misc\Box.cpp">
-      <Filter>Source Files\misc</Filter>
-    </ClCompile>
     <ClCompile Include="src\misc\SpriteKey.cpp">
       <Filter>Source Files\misc</Filter>
     </ClCompile>
@@ -323,9 +320,6 @@
     </ClInclude>
     <ClInclude Include="src\sprite\sprites\Enemy.hpp">
       <Filter>Header Files\sprite\sprites</Filter>
-    </ClInclude>
-    <ClInclude Include="src\misc\Box.hpp">
-      <Filter>Header Files\misc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

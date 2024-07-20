@@ -49,8 +49,7 @@ Player::Player(sf::View& l_worldSpace)
 
 	bindActions();
 
-	boxMap[AnimType::None].at(0)->w = 120;
-	boxMap[AnimType::None].at(0)->h = 184;
+	
 
 }
 
@@ -172,8 +171,6 @@ void Player::update(const sf::Time& l_dt)
 {
 
 	gameTime_ = l_dt;
-
-
 	
 
 	// apply gravity
@@ -181,6 +178,10 @@ void Player::update(const sf::Time& l_dt)
 	{
 		
 	
+
+		// update the player after handling the collision checking
+		if (!GetGrounded())
+			vel().y += Cfg::Gravity * gameTime_.asSeconds();
 
 	
 				
@@ -335,7 +336,7 @@ void Player::update(const sf::Time& l_dt)
 		}
 	}
 
-	ASprite::SyncSpriteToAnim(*this);
+
 }
 
 void Player::bindActions()

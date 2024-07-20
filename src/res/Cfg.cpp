@@ -11,7 +11,7 @@ ResourceManager<sf::SoundBuffer, int> Cfg::sounds = {};
 
 ActionMap<int> Cfg::playerInputs = {};
 
-float Cfg::Gravity = 9.8f;
+float Cfg::Gravity = 4000.f;
 
 BoundingBoxDB Cfg::bboxDB = {};
 

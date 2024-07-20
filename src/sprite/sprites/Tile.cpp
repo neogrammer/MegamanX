@@ -10,8 +10,8 @@ Tile::Tile()
 Tile::Tile(sf::Texture& l_tex)
 	: ASprite{ SpriteType::Tile, SpriteName::NormalTile, l_tex}
 {
-	boxMap[AnimType::None].at(0)->w = 64;
-	boxMap[AnimType::None].at(0)->h = 64;
+	facingRight_ = true;
+	animMgr.SetFacingRight(true);
 
 }
 

@@ -28,7 +28,7 @@ SandboxStage::SandboxStage()
 	pointOfContact_.setOrigin({ 5.0f,5.0f });
 	pointOfContact_.setPosition({-10.f,-10.f});
 
-	boundingBox_.setSize({ (sf::Vector2f)player_->GetRect().getSize() });
+	boundingBox_.setSize({ (sf::Vector2f)player_->GetTextureRect().getSize() });
 	boundingBox_.setFillColor(sf::Color(255,0,0,110));
 	boundingBox_.setOrigin({ (*player_)().getOrigin() });
 	boundingBox_.setPosition({ -1.f * (*player_)().getOrigin().x, -1.f * (*player_)().getOrigin().y });
@@ -95,6 +95,9 @@ void SandboxStage::Update(const sf::Time& l_dt)
 
 	enemies_.erase(std::remove_if(enemies_.begin(), enemies_.end(), [&](auto& e) ->bool { return !e->IsAlive(); }), enemies_.end());
 
+
+
+
 	//update any animated tiles
 	//for (auto& s : tilemap_->GetTiles()) { s->updateBase(l_dt); }
 	std::vector<std::shared_ptr<ASprite>> tmp = {};
@@ -114,10 +117,16 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	}
 	tmp.push_back(player_);
 	// enemies
-
-	// update the player after handling the collision checking
-	if (!player_.get()->GetGrounded())
-		player_->vel().y += Cfg::Gravity * l_dt.asSeconds();
+	// update bullet animations and positions
+	for (auto& b : projectiles_) {
+		b->updateBase(l_dt); if ((*b)().getPosition().x > 1600.f || (*b)().getPosition().x < 0.f) { b->SetAlive(false); }
+	}
+	// enemies
+	for (auto& e : enemies_) { e->updateBase(l_dt); }
+	
+	
+	player_->updateBase(l_dt);
+	
 	
 	
 	CollisionMgr::HandleCollisions(*player_, tmp, l_dt);
@@ -129,14 +138,9 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	}
 	
 	
-	player_->updateBase(l_dt);
+	
 
-	// update bullet animations and positions
-	for (auto& b : projectiles_) {
-		b->updateBase(l_dt); if ((*b)().getPosition().x > 1600.f || (*b)().getPosition().x < 0.f) { b->SetAlive(false); }
-	}
-	// enemies
-	for (auto& e : enemies_) { e->updateBase(l_dt); }
+	
 
 	
 	

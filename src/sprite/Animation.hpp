@@ -30,17 +30,12 @@ struct Animation
 	void Pause();
 	void Resume();
 	void Reset();
-	/*bool IsPlaying();
-	void SetFacingRight(bool l_facingRight);
-	bool IsFacingRight();
-	bool IsOnLastFrame();
-	uint32_t GetCurrIdx();
-	void SetCurrIdx(uint32_t l_idx);
-	sf::IntRect GetCurrFrame();
-	void SetFrame(const sf::IntRect& l_rect);*/
+
 private:
 	std::vector<sf::IntRect> m_framesRight = {};
 	std::vector<sf::IntRect> m_framesLeft = {};
+	std::vector<sf::IntRect> m_boxesRight={};
+	std::vector<sf::IntRect> m_boxesLeft={};
 	sf::Sprite* m_spr{ nullptr };
 	sf::Texture* m_texture{ nullptr };
 	AnimType m_type{ AnimType::Count };
@@ -71,6 +66,7 @@ private:
 	void update(const sf::Time& l_dt);
 	void animate();
 
+	
 
 };
 

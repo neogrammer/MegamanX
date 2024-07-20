@@ -17,20 +17,53 @@ Animation::Animation(sf::Sprite& l_spr, sf::Texture& l_tex, AnimLayoutType l_lay
 	, m_startPos{l_firstFrame.getPosition()}
 	, m_loopStartWait{l_loopStartWait}
 	, m_loopStartWaitTime{l_loopStartWaitTime }
+	, m_boxesLeft{ std::vector<sf::IntRect>{} }
+	, m_boxesRight{ std::vector<sf::IntRect>{} }
 {
 	m_spr->setTexture(*m_texture);
 
-	if (m_layoutType == AnimLayoutType::Vertical)
+	m_framesRight.clear();
+	m_boxesRight.clear();
+	m_framesLeft.clear();
+	m_boxesLeft.clear();
+
+
+	if (m_layoutType == AnimLayoutType::Count && l_type == AnimType::Count && l_numFrames == 1)
 	{
-		loadVStrip();
-	}
-	else if (m_layoutType == AnimLayoutType::Horizontal)
-	{
-		loadHStrip();
+		m_framesRight.reserve(m_numFrames);
+		m_boxesRight.reserve(m_numFrames);
+		for (uint32_t x = 0; x < m_cols; x++)
+		{
+			m_framesRight.emplace_back(sf::IntRect{l_firstFrame});
+			m_boxesRight.push_back(m_framesRight.back());
+		}
+
+
+		if (m_hasLeftFrames)
+		{
+			m_framesLeft.reserve(m_numFrames);
+			m_boxesLeft.reserve(m_numFrames);
+			for (uint32_t x = 0; x < m_cols; x++)
+			{
+				m_framesLeft.emplace_back(sf::IntRect{ l_firstFrame });
+				m_boxesLeft.push_back(m_framesLeft.back());
+			}
+		}
 	}
 	else
 	{
-		loadSquareStrip();
+		if (m_layoutType == AnimLayoutType::Vertical)
+		{
+			loadVStrip();
+		}
+		else if (m_layoutType == AnimLayoutType::Horizontal)
+		{
+			loadHStrip();
+		}
+		else
+		{
+			loadSquareStrip();
+		}
 	}
 
 }
@@ -38,8 +71,8 @@ Animation::Animation(sf::Sprite& l_spr, sf::Texture& l_tex, AnimLayoutType l_lay
 
 void Animation::loadVStrip()
 {
-	m_framesRight.clear();
 	m_framesRight.reserve(m_numFrames);
+	m_boxesRight.reserve(m_numFrames);
 	for (uint32_t x = 0; x < m_rows; x++)
 	{
 
@@ -47,8 +80,8 @@ void Animation::loadVStrip()
 
 	if (m_hasLeftFrames)
 	{
-		m_framesLeft.clear();
 		m_framesLeft.reserve(m_numFrames);
+		m_boxesLeft.reserve(m_numFrames);
 		for (uint32_t x = 0; x < m_rows; x++)
 		{
 
@@ -58,29 +91,31 @@ void Animation::loadVStrip()
 
 void Animation::loadHStrip()
 {
-	m_framesRight.clear();
-	m_framesRight.reserve(m_numFrames);
+	m_framesRight.reserve(m_numFrames +1);
+	m_boxesRight.reserve(m_numFrames + 1);
 	for (uint32_t x = 0; x < m_cols; x++)
 	{
 		m_framesRight.emplace_back(sf::IntRect{ {(int)(m_startPos.x + (x * m_frameSize.x)),m_startPos.y},{m_frameSize.x,m_frameSize.y} });
+		m_boxesRight.push_back( m_framesRight.back() );
 	}
 
 
 	if (m_hasLeftFrames)
 	{
-		m_framesLeft.clear();
-		m_framesLeft.reserve(m_numFrames);
+		m_framesLeft.reserve(m_numFrames+1);
+		m_boxesLeft.reserve(m_numFrames+1);
 		for (uint32_t x = 0; x < m_cols; x++)
 		{
 			m_framesLeft.emplace_back(sf::IntRect{ {(int)(m_startPos.x + (x * m_frameSize.x)),m_startPos.y + m_frameSize.y},{m_frameSize.x,m_frameSize.y} });
+			m_boxesLeft.push_back(m_framesLeft.back());
 		}
 	}
 }
 
 void Animation::loadSquareStrip()
 {
-	m_framesRight.clear();
 	m_framesRight.reserve(m_numFrames);
+	m_boxesRight.reserve(m_numFrames);
 	for (uint32_t x = 0; x < m_rows; x++)
 	{
 		for (uint32_t x = 0; x < m_cols; x++)
@@ -91,8 +126,8 @@ void Animation::loadSquareStrip()
 
 	if (m_hasLeftFrames)
 	{
-		m_framesLeft.clear();
 		m_framesLeft.reserve(m_numFrames);
+		m_boxesLeft.reserve(m_numFrames);
 		for (uint32_t x = 0; x < m_rows; x++)
 		{
 			for (uint32_t x = 0; x < m_cols; x++)
