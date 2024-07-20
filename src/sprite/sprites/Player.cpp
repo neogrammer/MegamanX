@@ -3,7 +3,7 @@
 #include <iostream>
 #include <FSM/duck_fold.hpp>
 
-float Player::JumpForce = -60.f;
+float Player::JumpForce = -1600.f;
 float Player::MoveSpeed = 600.f;
 Player::Player(sf::View& l_worldSpace)
 	: ASprite{ SpriteType::Actor, SpriteName::Player, Cfg::textures.get((int)Cfg::Textures::PlayerIdle) }
@@ -49,7 +49,8 @@ Player::Player(sf::View& l_worldSpace)
 
 	bindActions();
 
-	
+	boxMap[AnimType::None].at(0)->w = 120;
+	boxMap[AnimType::None].at(0)->h = 184;
 
 }
 
@@ -172,18 +173,28 @@ void Player::update(const sf::Time& l_dt)
 
 	gameTime_ = l_dt;
 
+
+	
+
 	// apply gravity
 	if (affectedByGravity_)
 	{
 		
+	
 
-		if (!grounded_)
-		{
-		/*	if (!justJumped_ && !jumpHeld_ && jumpLetGo_ && vel_.y < -40.f)
-			{
-				vel_.y = -40.f;
-				jumpLetGo_ = false;
-			}*/
+	
+				
+				
+				
+
+				
+				
+
+
+			
+
+			
+		
 
 			
 
@@ -197,14 +208,12 @@ void Player::update(const sf::Time& l_dt)
 			
 			
 
-		}
-		else
-		{
+	
 			if (fsm.getAnimType() == AnimType::Rise || fsm.getAnimType() == AnimType::Fall || fsm.getAnimType() == AnimType::TransJump || fsm.getAnimType() == AnimType::TransFall)
 			{
 				dispatch(fsm, evt_ReachedJumpPeak{}, evt_Landed{});
 			}
-		}
+		
 
 
 
@@ -220,6 +229,21 @@ void Player::update(const sf::Time& l_dt)
 	}
 	else
 	{
+
+		if (IsMoving())
+		{
+			if (IsFacingRight())
+				vel().x = Player::MoveSpeed;
+			else
+				vel().x = -Player::MoveSpeed;
+
+
+
+
+			dispatch(fsm, evt_StartedMoving{});
+
+		}
+
 		
 		//if (movingLeft_)
 		//{
@@ -322,6 +346,10 @@ void Player::bindActions()
 		});
 
 	bind(Cfg::PlayerInputs::Right, [this](const sf::Event&) {
+			
+		SetGrounded(false);
+		dispatch(fsm, evt_Fell{});
+
 			if (wasFacingRight_)
 			{
 				movingRight_ = true;
@@ -355,7 +383,8 @@ void Player::bindActions()
 		});
 
 	bind(Cfg::PlayerInputs::Left, [this](const sf::Event&) {
-
+		SetGrounded(false);
+		dispatch(fsm, evt_Fell{});
 			if (!wasFacingRight_)
 			{
 				movingLeft_ = true;
@@ -393,19 +422,8 @@ void Player::bindActions()
 		});
 
 	bind(Cfg::PlayerInputs::B, [this](const sf::Event&) {
-		jumpHeld_ = true;
 		
-		if (grounded_ && vel_.y >= 0.f)
-		{
-			grounded_ = false;
-			jumpLetGo_ = true;
-			vel_.y = Player::JumpForce;
 			
-			dispatch(fsm, evt_Jumped{});
-			justJumped_ = true;
-		}
-
-		
 		});
 
 

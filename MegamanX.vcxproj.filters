@@ -217,6 +217,9 @@
     <ClCompile Include="src\misc\Box.cpp">
       <Filter>Source Files\misc</Filter>
     </ClCompile>
+    <ClCompile Include="src\misc\SpriteKey.cpp">
+      <Filter>Source Files\misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app\Game.hpp">

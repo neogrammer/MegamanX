@@ -3,6 +3,7 @@
 #include <iostream>
 
 
+
 BuzzBird::BuzzBird() : Enemy{ SpriteName::BuzzBird, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw) }
 {
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw), AnimLayoutType::Horizontal, AnimType::Idle, 7Ui64, { {0,0},{220,296} },
@@ -26,6 +27,8 @@ BuzzBird::BuzzBird() : Enemy{ SpriteName::BuzzBird, Cfg::textures.get((int)Cfg::
 	{
 		Cfg::bboxDB.addToMap(*this, AnimType::ShootStand, i, { 112.f, 100.f }, { 24.f, 174.f });
 	}
+	boxMap[AnimType::None].at(0)->w = 220;
+	boxMap[AnimType::None].at(0)->h = 296;
 
 }
 

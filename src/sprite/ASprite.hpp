@@ -7,14 +7,18 @@
 #include <SFML/System/Time.hpp>
 #include <misc/globals.hpp>
 #include <mgmt/AnimationMgr.hpp>
-
+#include <memory>
+#include <vector>
+#include <map>
+#include <misc/globals.hpp>
+#include <misc/Box.hpp>
 
 struct ASprite
 {
 	
 
 	ASprite() = default;
-	ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex);
+	ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex, sf::IntRect l_startFrame = { {0,0},{0,0} },  sf::Vector2f l_boxSize = { 0.f,0.f }, sf::Vector2f l_boxOffset = { 0.f,0.f });
 	virtual ~ASprite() = default;
 
 	ASprite(const ASprite&);
@@ -46,8 +50,9 @@ struct ASprite
 	void BulletWasShot();
 
 	void BulletWasDestroyed();
-
+	std::map<AnimType, std::vector<std::shared_ptr<Box> > > boxMap;
 protected:
+	
 	bool justJumped_{ false };
 	bool alive_{ true };
 	SpriteType type_{ SpriteType::Count };

@@ -12,6 +12,9 @@ Bullet::Bullet(sf::Texture& l_tex, bool l_friendly)
 {
 	animMgr.AddAnimation(spr_, l_tex, AnimLayoutType::Horizontal, AnimType::Idle, 5Ui64, { {0,0},{24,16} },
 		5Ui64, 1Ui64, 0.003f, 0.f, false, true, true);
+	boxMap[AnimType::None].at(0)->w = 24;
+	boxMap[AnimType::None].at(0)->h = 18;
+
 }
 
 

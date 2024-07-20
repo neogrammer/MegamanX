@@ -64,31 +64,6 @@ private:
 	
 };
 
-struct SpriteKey {
-	SpriteType type;
-	SpriteName name;
-	AnimType animType;
-
-	//bool operator==(const SpriteKey& rhs);
-
-	SpriteKey() = default;
-	SpriteKey(SpriteType l_spriteType, SpriteName l_spriteName, AnimType l_animType)
-		: type{l_spriteType}
-		, name{ l_spriteName }
-		, animType{l_animType}
-	{}
-
-	~SpriteKey() = default;
-
-	SpriteKey(const SpriteKey&) = default;
-	SpriteKey& operator=(const SpriteKey&) = default;
-
-	SpriteKey(SpriteKey&&) = default;
-	SpriteKey& operator=(SpriteKey&&) = default;
-
-	// Define the spaceship operator
-	auto operator<=>(const SpriteKey& other) const = default;
-};
 
 
 // Define comparison operators for SpriteKey (optional, but recommended)

@@ -5,14 +5,50 @@
 
 
 
-ASprite::ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex)
+ASprite::ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex, sf::IntRect l_startFrame, sf::Vector2f l_boxSize, sf::Vector2f l_boxOffset)
 	: type_{l_type}
 	, name_{l_name}
 	, spr_{}
 	, vel_{}
 	, gameTime_{g::FPS60}
+	, boxMap{}
 {
 	spr_.setTexture(l_tex);
+	if (l_startFrame.width != 0 && l_startFrame.height != 0)
+		spr_.setTextureRect(l_startFrame);
+	spr_.setPosition(0.f, 0.f);
+
+	boxMap.clear();
+	boxMap.insert(std::pair( AnimType::None, std::vector<std::shared_ptr<Box>>{} ));
+	boxMap.at(AnimType::None).clear();
+	boxMap.at(AnimType::None).reserve(1);
+	boxMap.at(AnimType::None).emplace_back(std::make_unique<Box>());
+	
+	boxMap.at(AnimType::None).back()->pSpr = this;
+
+	boxMap.at(AnimType::None).back()->sprXPos = const_cast<float*>(&spr_.getPosition().x);
+	boxMap.at(AnimType::None).back()->sprYPos = const_cast<float*>(&spr_.getPosition().y);
+
+	boxMap.at(AnimType::None).back()->x = l_boxOffset.x;
+	boxMap.at(AnimType::None).back()->y = l_boxOffset.y;
+
+	sf::Vector2f sz{};
+	if (l_boxSize == sf::Vector2f{ 0.f, 0.f })
+	{
+		sf::Vector2f sz = sf::Vector2f(spr_.getTextureRect().getSize());
+	}
+	else
+	{ 
+		sz = l_boxSize;
+	}
+	
+	boxMap.at(AnimType::None).back()->w = sz.x;
+	boxMap.at(AnimType::None).back()->h = sz.y;
+	boxMap.at(AnimType::None).back()->vx = &vel_.x;
+	boxMap.at(AnimType::None).back()->vy = &vel_.y;
+	boxMap.at(AnimType::None).back()->isBroadphaseBox = false;
+	//invariant setup
+
 }
 
 sf::Sprite& ASprite::operator()()
@@ -37,6 +73,11 @@ ASprite::ASprite(const ASprite& other)
 	vel_ = other.vel_;
 	gameTime_ = other.gameTime_;
 	spr_.setTexture(*const_cast<sf::Texture*>(other.spr_.getTexture()));
+	boxMap.clear();
+	boxMap[AnimType::None] = std::vector<std::shared_ptr<Box>>();
+	boxMap[AnimType::None].clear();
+	boxMap[AnimType::None].push_back(other.boxMap.at(AnimType::None).at(0));
+
 }
 
 ASprite& ASprite::operator=(const ASprite& other)
@@ -46,6 +87,11 @@ ASprite& ASprite::operator=(const ASprite& other)
 	this->vel_ = { 0.f, 0.f };
 	this->gameTime_ = sf::Time::Zero;
 	this->spr_.setTexture(*const_cast<sf::Texture*>(other.spr_.getTexture()));
+	this->boxMap.clear();
+	this->boxMap[AnimType::None] = std::vector<std::shared_ptr<Box>>();
+	boxMap[AnimType::None].clear();
+	boxMap[AnimType::None].push_back(other.boxMap.at(AnimType::None).at(0));
+
 	return *this;
 }
 

@@ -1,4 +1,5 @@
 #include "Tileset.hpp"
+#include <misc/Box.hpp>
 #include <fstream>
 #include <res/Cfg.hpp>
 int Tileset::m_numTilesets = 0;

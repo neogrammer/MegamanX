@@ -10,6 +10,10 @@
 #include <SFML/System/Time.hpp>
 #include <res/Cfg.hpp>
 struct ASprite;
+struct Player;
+struct Tile;
+struct BuzzSaw;
+struct Bullet;
 
 struct CollisionMgr
 {
@@ -27,11 +31,10 @@ struct CollisionMgr
 	static bool RayVsRect(const sf::Vector2f& l_ray_origin, const sf::Vector2f& l_ray_dir, rect& target, sf::Vector2f& l_contact_point, sf::Vector2f& l_contact_normal, float& t_hit_near);
 	static bool DynamicRectVsRect(ASprite& l_in, ASprite& l_target, sf::Vector2f& l_contact_point, sf::Vector2f& l_contact_normal, float& l_contact_time, const sf::Time& fElapsedTime);
 	static bool DynamicRectVsRect2(ASprite& l_in, ASprite& l_target, sf::Vector2f& l_contact_point, sf::Vector2f& l_contact_normal, float& l_contact_time, const sf::Time& fElapsedTime);
-
+	static bool HandleCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<ASprite>>& l_sprVec, const sf::Time& l_dt);
 	static bool CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_staticSpr, CollisionStrategy l_collideStrat, float l_dt, sf::Vector2f& contact_point, sf::Vector2f& contact_normal, float& contact_time);
-private:
-	static sf::FloatRect m_currOverlap;
-	static sf::FloatRect m_prevOverlap;
+	static float PlayerVTile(Player& l_player, Tile& l_tile, sf::Vector2f& contact_normal, const sf::Time& l_dt);
+
 
 };
 

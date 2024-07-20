@@ -1,45 +1,60 @@
 #ifndef BOX_HPP__
 #define BOX_HPP__
 
-#include <sprite/ASprite.hpp>
 #include <memory>
+#include <utility>
+#include <SFML/System/Vector2.hpp>
+struct ASprite;
 // describes an axis-aligned rectangle with a velocity 
 struct Box
 {
+
+	ASprite* pSpr;
 	// position of top-left corner 
-	float x{ 0.f }, y{ 0.f };
+	// points to the actual sprite position
+	float* sprXPos;
+	float* sprYPos;
+
+	// offset
+	float x{ 0 }, y{ 0 };
 
 	// dimensions 
-	float w{0.f}, h{0.f};
+	float w{ 0.f }, h{ 0.f };
 
 	// velocity 
-	float vx{ 0.f }, vy{ 0.f };
+	float* vx;
+	float* vy;
 
 	bool isBroadphaseBox{ false };
 
 	//non-owning
-	ASprite* pSpr{ nullptr };
-	Box() = default;
+
+	Box(); 
 	~Box();
-	Box(const Box&) = delete;
-	Box& operator=(const Box&) = delete;
+	Box(const Box& o) = default;
+	Box& operator=(const Box& o) = default;
 	Box(Box&&) noexcept;
 	Box& operator=(Box&&) noexcept;
 
+	sf::Vector2f getTLPt();
+	sf::Vector2f getTLOffset();
+
+	sf::Vector2f getCenterPt();
+	sf::Vector2f getCenterOffset();
+
+	sf::Vector2f getBRPt();
+	sf::Vector2f getBROffset();
+
+	sf::Vector2f getHSize();
+	sf::Vector2f getSize();
+
 	static void SetupBox(Box& abox, ASprite& l_asprite);
-	static void SetSpriteVelocity(Box& abox);
-	static void SetSpriteVelocity(Box& abox, sf::Vector2f l_vel);
-	static void UpdateSpriteVelocity(Box& abox, float l_dt);
-	static void UpdateSpriteVelocity(Box& abox, sf::Vector2f l_vel, float l_dt);
-	static void UpdateBoxVelocity(Box& abox, sf::Vector2f l_vel, float l_dt);
-	static void SetBoxVelocity(Box& abox, sf::Vector2f l_vel);
-	static void AddToBoxVelocity(Box& abox, sf::Vector2f l_vel);
-	static void UpdateBoxPos(Box& abox, float l_dt);
-	static void SetBoxPos(Box& abox, sf::Vector2f l_pos);
-	static void MoveBox(Box& abox, sf::Vector2f l_offset, float l_dt);
-	static void UpdateSpritePos(Box& abox, float l_dt);
-	static void SetSpritePos(Box& abox, sf::Vector2f l_pos);
-	static void MoveSprite(Box& abox, sf::Vector2f l_offset, float l_dt);
+	static void SetVelocity(Box& abox, sf::Vector2f l_vel);
+	static void UpdateVelocity(Box& abox, sf::Vector2f l_acceleration, float l_dt);
+	static void AddToVelocity(Box& abox, sf::Vector2f l_vel);
+	static void UpdatePos(Box& abox, float l_dt);
+	static void SetPos(Box& abox, sf::Vector2f l_pos);
+	static void Move(Box& abox, sf::Vector2f l_offset, float l_dt);
 
 	static float SweptAABB(Box& b1, Box& b2, float& normalx, float& normaly);
 	static std::unique_ptr<Box> GetSweptBroadphaseBox(Box& b, float l_dt);
@@ -48,7 +63,7 @@ struct Box
 	static void Slide(Box& box, float l_remTime, float& normalx, float& normaly);
 	static void Push(Box& box, float l_remTime, float& normalx, float& normaly);
 
-
+	
 };
 
 /*

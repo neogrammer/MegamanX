@@ -59,6 +59,7 @@ enum class AnimType : int
 	Fall,
 	Land,
 	ShootStand,
+	None,
 	Count
 };
 
@@ -80,6 +81,28 @@ enum class StageType
 	Intro,
 	Sandbox,
 	Count
+};
+
+
+struct SpriteKey {
+	SpriteType type;
+	SpriteName name;
+	AnimType animType;
+
+	//bool operator==(const SpriteKey& rhs);
+
+	SpriteKey() = default;
+	SpriteKey(SpriteType l_spriteType, SpriteName l_spriteName, AnimType l_animType);
+	~SpriteKey() = default;
+
+	SpriteKey(const SpriteKey&) = default;
+	SpriteKey& operator=(const SpriteKey&) = default;
+
+	SpriteKey(SpriteKey&&) = default;
+	SpriteKey& operator=(SpriteKey&&) = default;
+
+	// Define the spaceship operator
+	auto operator<=>(const SpriteKey& other) const = default;
 };
 
 #endif

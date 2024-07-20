@@ -75,13 +75,6 @@ void SandboxStage::Update(const sf::Time& l_dt)
 		player_->BulletWasShot();
 	}
 
-	// update the player's bounding box size for the collision checks
-	//ASprite::SyncSpriteToAnim(*player_);
-
-	// put player into a vector for collision checking
-	std::vector<std::shared_ptr<ASprite>> tmp{};
-	tmp.clear();
-	tmp.push_back(player_);
 
 
 	
@@ -104,116 +97,46 @@ void SandboxStage::Update(const sf::Time& l_dt)
 
 	//update any animated tiles
 	//for (auto& s : tilemap_->GetTiles()) { s->updateBase(l_dt); }
+	std::vector<std::shared_ptr<ASprite>> tmp = {};
+	tmp.clear();
+	tmp.reserve(enemies_.size() + projectiles_.size() + tilemapSolidTiles_.size() + 1);
+	for (auto& s : enemies_)
+	{
+		tmp.push_back(s);
+	}
+	for (auto& s : tilemapSolidTiles_)
+	{
+		tmp.push_back(s);
+	}
+	for (auto& s : projectiles_)
+	{
+		tmp.push_back(s);
+	}
+	tmp.push_back(player_);
+	// enemies
+
+	// update the player after handling the collision checking
+	if (!player_.get()->GetGrounded())
+		player_->vel().y += Cfg::Gravity * l_dt.asSeconds();
+	
+	
+	CollisionMgr::HandleCollisions(*player_, tmp, l_dt);
+
+	if (player_->GetGrounded())
+	{
+		dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Landed {});
+		player_->vel().y = 0.f;
+	}
+	
+	
+	player_->updateBase(l_dt);
 
 	// update bullet animations and positions
 	for (auto& b : projectiles_) {
 		b->updateBase(l_dt); if ((*b)().getPosition().x > 1600.f || (*b)().getPosition().x < 0.f) { b->SetAlive(false); }
 	}
-	
-	// handle bullets to tiles collisions
-	for (auto& p : projectiles_) {
-		sf::Vector2f cp, cn;
-		float time;
-		if (CollisionMgr::CheckCollisions(*p, tilemapSolidTiles_, cp, cn, time, l_dt) && time <= 1.f) {int fillerJob = 0;} }
-
-	// handle bullets to enemy collisions
-	for (auto& p : projectiles_) { 
-		sf::Vector2f cp, cn;
-		float time;
-		if (CollisionMgr::CheckCollisions(*p, enemies_, cp, cn, time, l_dt) && time <= 1.f) { int fillerJob = 0; } }
-
 	// enemies
 	for (auto& e : enemies_) { e->updateBase(l_dt); }
-
-	// handle bullets to player collisions
-	for (auto& p : projectiles_) 
-	{ 
-		
-		// only if bullets arent the player's bullets
-		if (!dynamic_cast<Projectile*>(p.get())->GetFriendly())
-		{
-			sf::Vector2f cp, cn;
-			float time;
-			if (CollisionMgr::CheckCollisions(*p, tmp, cp, cn, time, l_dt)) { int fillerJob = 0; }
-		}
-	}
-
-	// enemies
-
-	// update the player after handling the collision checking
-
-	
-
-
-	if (dynamic_cast<Player*>(player_.get())->IsMoving())
-	{
-		if (player_->IsFacingRight())
-			player_->vel().x = Player::MoveSpeed;
-		else
-			player_->vel().x = -Player::MoveSpeed;
-
-		dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_StartedMoving{});
-	}
-	
-
-	if (dynamic_cast<Player*>(player_.get())->IsMoving() || !player_->GetGrounded())
-	{
-		player_->SetGrounded(false);
-		
-	}
-	
-	std::vector<std::pair<std::shared_ptr<ASprite>, float>> z;
-	z.clear();
-
-	for (auto& t : tilemapSolidTiles_)
-	{
-		sf::Vector2f cp, cn;
-		float time;
-		if (CollisionMgr::CheckCollisionAndResolve(*player_, *t, CollisionStrategy::Count, l_dt.asSeconds(), cp, cn, time))
-		{
-			z.push_back({ t, time });
-
-			
-
-		}
-
-	}
-
-
-	std::sort(z.begin(), z.end(), [](const std::pair<std::shared_ptr<ASprite>, float>& a, const std::pair<std::shared_ptr<ASprite>, float>& b)
-		{
-			return a.second < b.second;
-		});
-
-	sf::Vector2f cp, cn;
-	float time;
-	for (auto& j : z)
-	{
-		
-		if (CollisionMgr::CheckCollisionAndResolve(*player_, *j.first, CollisionStrategy::Push, l_dt.asSeconds(), cp, cn, time))
-		{
-			auto tmp2 = sf::Vector2f{ abs(player_->vel().x), abs(player_->vel().y) };
-			player_->vel().x += (cn.x * tmp2.x * (1.f - time));
-			player_->vel().y += ((player_->JustJumped()) ? 0.f : (cn.y * tmp2.y * (1.f - time)));
-			
-			if (cn.y == -1.f)
-			{
-				player_->SetGrounded(true);
-			}
-		}
-	}
-	if (player_->JustJumped())
-	{
-		player_->SetJustJumped(false);
-	}
-
-	if (player_->GetGrounded() == true)
-		dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Landed {});
-	else
-		dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Fell {});
-			
-	
-	player_->updateBase(l_dt);
 
 	
 	
@@ -307,8 +230,7 @@ void SandboxStage::Render(sf::RenderWindow& l_wnd)
 	for (auto& b : projectiles_) { b->render(l_wnd); }
 
 	// For debugging purposes
-	l_wnd.draw(boundingBox_);
-	l_wnd.draw(pointOfContact_);
+	//l_wnd.draw(boundingBox_);
+	//l_wnd.draw(pointOfContact
+
 }
-
-

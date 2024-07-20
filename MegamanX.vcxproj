@@ -86,6 +86,7 @@
     <ClCompile Include="src\mgmt\StageMgr.cpp" />
     <ClCompile Include="src\misc\aabb.cpp" />
     <ClCompile Include="src\misc\Box.cpp" />
+    <ClCompile Include="src\misc\SpriteKey.cpp" />
     <ClCompile Include="src\res\Cfg.cpp" />
     <ClCompile Include="src\sprite\Animation.cpp" />
     <ClCompile Include="src\sprite\ASprite.cpp" />

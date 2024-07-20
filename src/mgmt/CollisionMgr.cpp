@@ -1,9 +1,10 @@
 #include "CollisionMgr.hpp"
 #include <sprite/sprites/Bullet.hpp>
-
+#include <sprite/sprites/BuzzSaw.hpp>
 #include <sprite/sprites/Player.hpp>
 #include <sprite/sprites/Tile.hpp>
 #include <sprite/sprites/BuzzBird.hpp>
+
 
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -13,276 +14,173 @@
 #include <vector>
 #include <FSM/duck_fold.hpp>
 #include <misc/Box.hpp>
-sf::FloatRect CollisionMgr::m_currOverlap = { { 0.f, 0.f }, { 0.f,0.f } };
-sf::FloatRect CollisionMgr::m_prevOverlap = { { 0.f, 0.f }, { 0.f,0.f } };
+
+
+bool CollisionMgr::HandleCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<ASprite>>& l_sprVec, const sf::Time& l_dt)
+{
+	if (l_sprVec.empty()) return false; // nothing to test against
+	std::vector<std::shared_ptr<Tile>> tiles;
+	tiles.clear();
+	tiles.reserve(l_sprVec.size());
+	std::vector< std::shared_ptr<Projectile>> projectiles;
+	projectiles.clear();
+	projectiles.reserve(l_sprVec.size());
+	std::vector< std::shared_ptr<Enemy>> enemies;
+	enemies.clear();
+	enemies.reserve(l_sprVec.size());
+	sf::Vector2f contact_normal{};
+	float contact_time{};
+	for (auto& s : l_sprVec)
+	{
+		switch (s->getType())
+		{
+		case SpriteType::Tile:
+			tiles.push_back(std::dynamic_pointer_cast<Tile>(s));
+			break;
+		case SpriteType::Enemy:
+		{
+				if (s->getName() == SpriteName::BuzzBird)
+					enemies.push_back(std::dynamic_pointer_cast<BuzzBird>(s));
+		}
+		break;
+		case SpriteType::Projectile:
+		{
+			//if (s->getName() == SpriteName::BuzzSaw)
+				//projectiles.push_back(std::make_shared<BuzzSaw>(std::dynamic_pointer_cast<std::shared_ptr<BuzzSaw>>(s)));
+			if (s->getName() == SpriteName::BusterBullet)
+				projectiles.push_back(std::dynamic_pointer_cast<Bullet>(s));
+		}
+			break;
+		default:
+			break;
+		}
+	}
+	tiles.shrink_to_fit();
+	enemies.shrink_to_fit();
+	projectiles.shrink_to_fit();
+	Player* player = nullptr;
+	
+	if (l_sprA.getType() == SpriteType::Actor)
+		player = dynamic_cast<Player*>(&l_sprA);
+
+
+	bool collisionOccurred{ false };
+
+	// check collisions with the map tiles
+	
+	if (!tiles.empty() && player)
+	{
+
+		std::vector<std::pair<Tile*, float>> z; 	// for sorting collisions for proper swept aabb resolution
+		z.clear();
+		for (auto& tile : tiles)
+		{
+			float t;
+			sf::Vector2f contact_point;
+			// first check if a collision occurred and push it back, dont resolve yet
+			if (IsColliding(*player, *tile))
+			{
+				player->vel().y = 0;
+				collisionOccurred = true;
+				break;
+			}
+		}
+				
+			/*	, contact_normal, l_dt);
+			if (contact_time < 1.0f && contact_time >= 0.f)
+			{ 
+				z.push_back({ tile.get(), t}); 
+			}
+		}
+		std::sort(z.begin(), z.end(), [](const std::pair<Tile*, float>& a, const std::pair<Tile*, float>& b)
+			{
+				return a.second < b.second;
+			});
+		for (auto& j : z)
+		{
+			sf::Vector2f cp;
+		
+			if (CheckCollisionAndResolve(*player, *j.first, CollisionStrategy::Push, l_dt.asSeconds(), cp, contact_normal, j.second))
+			{
+				collisionOccurred = true;
+
+				if (contact_normal.y == -1)
+				{
+					player->SetGrounded(true);
+					dispatch(player->fsm, evt_Landed{});
+
+				}
+			}
+		}*/
+	}
+
+	if (!tiles.empty() && !projectiles.empty())
+	{
+		for (auto& bullet : projectiles)
+		{
+			for (auto& tile : tiles)
+			{
+				if (RectVsRect(*(ASprite*)bullet.get(), *(ASprite*)tile.get()))
+				{
+					(*(ASprite*)bullet.get()).SetAlive(false);
+
+					collisionOccurred = true;
+				}
+			}
+		}
+	}
+
+	if (!enemies.empty() && !projectiles.empty())
+	{
+		for (auto& bullet : projectiles)
+		{
+			for (auto& enemy : enemies)
+			{
+				if ((*bullet).GetFriendly())
+				{
+					if (RectVsRect(*(ASprite*)bullet.get(), *(ASprite*)enemy.get()))
+					{
+						(*(ASprite*)bullet.get()).SetAlive(false);
+						enemy->TakeHit(bullet->GetDamage());
+						collisionOccurred = true;
+					}
+				}
+			}
+		}
+	}
+	
+	if (player && !projectiles.empty())
+	{
+		for (auto& bullet : projectiles)
+		{
+				if (!(*bullet).GetFriendly())
+				{
+					if (RectVsRect(*(ASprite*)bullet.get(), *(ASprite*)player))
+					{
+						(*(ASprite*)bullet.get()).SetAlive(false);
+						player->TakeHit(bullet->GetDamage());
+						collisionOccurred = true;
+					}
+				}
+		}
+	}
+		
+
+	return collisionOccurred;
+
+}
 
 
 bool CollisionMgr::CheckCollisions(ASprite& l_sprA, std::vector<std::shared_ptr<ASprite>> l_sprVec, sf::Vector2f& cp, sf::Vector2f& cn, float& t, const sf::Time& l_dt)
 {
-	bool collisionOccurred = false;
-	SpriteType playerCollidedType = SpriteType::Count;
-	std::vector<std::pair<std::shared_ptr<ASprite>, float>> z;
-	z.clear();
-	// now check from lower bounds to upper bounds only as 
-	// this is the space the sprite is in before and after the movement
-	// assuming sprB is static, not moving
-
-	for (auto& s : l_sprVec)
-	{
-		// if same , try again
-		if (&l_sprA == s.get())
-		{
-			continue;
-		}
-
-
-		// for player to tiles
-		if (l_sprA.getType() == SpriteType::Actor && (*s).getType() == SpriteType::Tile && dynamic_cast<Player*>(&l_sprA) != nullptr)
-		{
-			if (CheckCollisionAndResolve(l_sprA, *s, CollisionStrategy::Push, l_dt.asSeconds(), cp, cn, t))
-			{
-				z.push_back({ s, t });
-
-			}
-		}
-
-			//playerCollidedType = SpriteType::Tile;
-			//if (DynamicRectVsRect2(l_sprA, *s, cp, cn, t, l_dt))
-			//{
-			//	collisionOccurredPlayerOnTile = true;
-			//	z.push_back({ s, t });
-			//	//l_sprA.vel().x = 0.f;
-			//	//l_sprA.vel().y = 0.f;
-			//	l_sprA.SetGrounded(true);	
-			//}
-		//	playerCollidedType = SpriteType::Tile;
-
-		//	if (l_sprA.vel().y != 0.f)
-		//	{
-		//		auto tmp = l_sprA.vel().x;
-		//		l_sprA.vel().x = 0.f;
-		//		if (DynamicRectVsRect2(l_sprA, *s, cp, cn, t, l_dt) && fabs(t) <= 1.f )
-		//		{
-		//			if (cn.y != 0.f)
-		//			{
-		//				if (cn.y == -1.f)
-		//				{
-
-		//					l_sprA.vel().y = 0;
-		//					if (l_sprA().getPosition().y + l_sprA().getOrigin().y >= cp.y)
-		//					{
-		//						//push up
-		//						l_sprA.vel().y = 0.f;
-
-		//						auto diff = (l_sprA().getPosition().y - l_sprA().getOrigin().y) - cp.y;
-		//						l_sprA().move({ 0.f, (l_sprA.GetRect().height + diff) });
-		//						l_sprA.SetGrounded(true);
-		//						dispatch(dynamic_cast<Player*>(&l_sprA)->fsm, evt_Landed {});
-		//					
-		//					}
-		//					else
-		//					{
-		//						// push down
-
-		//						l_sprA.vel().y = 0.f;
-
-		//						auto diff = (l_sprA().getPosition().y - l_sprA().getOrigin().y) - cp.y;
-		//						l_sprA().move({ 0.f, (l_sprA.GetRect().height + diff)});
-		//						l_sprA.SetGrounded(true);
-		//						dispatch(dynamic_cast<Player*>(&l_sprA)->fsm, evt_Landed {});
-		//					}
-		//				}
-		//			}
-		//		}
-		//		l_sprA.vel().x = tmp;
-
-		//	}
-		//	
-		//	if (DynamicRectVsRect2(l_sprA, *s, cp, cn, t, l_dt))
-		//	{
-		//		auto tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
-		//		collisionOccurred = true;
-		//		if (cn.x != 0.0f)
-		//		{
-		//			if (cn.x == 1.f)
-		//			{
-		//				// push left
-		//				
-		//				if (l_sprA().getPosition().x - l_sprA().getOrigin().x < cp.x)
-		//				{
-		//					//push up
-		//					l_sprA.vel().x = 0.f;
-
-		//					auto diff = cp.x - (l_sprA().getPosition().x + l_sprA().getOrigin().x);
-		//					l_sprA().move({ (l_sprA.GetRect().width + diff), 0.f });
-		//				}
-		//				else
-		//				{
-		//					//push up
-		//					l_sprA.vel().x = 0.f;
-
-		//					auto diff = cp.x - (l_sprA().getPosition().x + l_sprA().getOrigin().x);
-		//					l_sprA().move({ (l_sprA.GetRect().width + diff), 0.f });
-		//				}
-		//			}
-		//			else
-		//			{
-		//				// push right
-		//				if (l_sprA().getPosition().x + l_sprA().getOrigin().x >= cp.x)
-		//				{
-		//					//push left
-		//					l_sprA.vel().x = 0.f;
-
-		//					auto diff = (l_sprA().getPosition().x - l_sprA().getOrigin().x) - cp.x;
-		//					l_sprA().move({-1.f*(l_sprA.GetRect().width + diff), 0.f });
-		//				}
-		//				else
-		//				{
-
-		//					//push up
-		//					l_sprA.vel().x = 0.f;
-
-		//					auto diff = (l_sprA().getPosition().x - l_sprA().getOrigin().x) - cp.x;
-		//					l_sprA().move({-1.f*(l_sprA.GetRect().width + diff), 0.f 	}
-		//			}
-		//	/////////////////////////////l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));
-		//	///////////////////////////l_sprA.vel().x += (cn.x * tmp.x * (1.f - t));
-		//		//////////////////////////////////////
-		//		/*/////////////////if (cn.y == -1.f)
-		//		//////////////////{
-		//		//////////////////	l_sprA.SetGrounded(true);
-		//		//////////////////	collisionOccurredPlayerOnTile;
-		//		//////////////////}
-		//		//////////////////z.push_back({ s, t });*/
-		//		/////////////////////////
-		//	}
-		//}
-
-		// for bullet to tiles
-			if (l_sprA.getType() == SpriteType::Projectile && (*s).getType() == SpriteType::Tile)
-			{
-				if (RectVsRect(l_sprA, *s))
-				{
-					l_sprA.SetAlive(false);
-
-					collisionOccurred = true;
-				}
-
-			}
-
-			// for bullet to enemies
-			if (l_sprA.getType() == SpriteType::Projectile && (*s).getType() == SpriteType::Enemy)
-			{
-				if (dynamic_cast<Projectile*>(&l_sprA)->GetFriendly())
-				{
-					if (RectVsRect(l_sprA, *s))
-					{
-						dynamic_cast<Enemy*>(s.get())->TakeHit(dynamic_cast<Projectile*>(&l_sprA)->GetDamage());
-						l_sprA.SetAlive(false);
-						collisionOccurred = true;
-					}
-				}
-
-			}
-
-			// for bullet to player
-			if (l_sprA.getType() == SpriteType::Projectile && (*s).getType() == SpriteType::Actor && (*s).getName() == SpriteName::Player && dynamic_cast<Player*>(s.get()) != nullptr)
-			{
-				if (!dynamic_cast<Projectile*>(&l_sprA)->GetFriendly())
-				{
-					if (RectVsRect(l_sprA, *s))
-					{
-						dynamic_cast<Player*>(s.get())->TakeHit(dynamic_cast<Projectile*>(&l_sprA)->GetDamage());
-						l_sprA.SetAlive(false);
-						collisionOccurred = true;
-
-					}
-				}
-			}
-
-	}
-
-	std::sort(z.begin(), z.end(), [](const std::pair<std::shared_ptr<ASprite>, float>& a, const std::pair<std::shared_ptr<ASprite>, float>& b)
-		{
-			return a.second < b.second;
-		});
-
-
-	for (auto j : z)
-	{
-		if (CheckCollisionAndResolve(l_sprA, *j.first, CollisionStrategy::Push, l_dt.asSeconds(), cp, cn, t))
-		{
-			collisionOccurred = true;
-			/*auto tmp = sf::Vector2f{ std::abs(l_sprA.vel().x), std::abs(l_sprA.vel().y) };
-			l_sprA.vel().x += (cn.x * tmp.x * (1.f - t));
-			l_sprA.vel().y += (cn.y * tmp.y * (1.f - t));
-			*/
-
-			if (!(cp.x == -1 || cp.y == -1) && t > 0.f && t <= 1.0f)
-			{
-				//cp.y += l_sprA.GetRect().height / 2.f;
-				
-				//cp.x += l_sprA.GetRect().width / 2.f;
-			
-					
-		
-			}
-		}
-	}
-
-	
-	
-
-		/////////////// 
-		////////////////
-		////////////////
-		////////////////
-		//////////////
-		////////////////
-		////////////////
-		////////////////
-		//////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		////////////////
-		/////////////// 
-
-		return collisionOccurred;
+	return false;
 }
-
 
 bool CollisionMgr::IsColliding(ASprite& l_sprA, ASprite& l_sprB)
 {
 	auto tmp1 = l_sprA().getOrigin();
 	auto tmp2 = l_sprB().getOrigin();
-
+	sf::FloatRect m_currOverlap{ { 0.f,0.0f }, { 0.f,0.f } }, m_prevOverlap{ {0.f,0.f} , { 0.f,0.f } };
 	if (l_sprA().getGlobalBounds().intersects(l_sprB().getGlobalBounds(), m_currOverlap))
 	{
 		sf::FloatRect tmp = l_sprA().getGlobalBounds();
@@ -304,7 +202,8 @@ bool CollisionMgr::IsColliding(ASprite& l_sprA, ASprite& l_sprB)
 void CollisionMgr::ResolveActor(ASprite& l_spr)
 {
 
-	
+	sf::FloatRect m_currOverlap{ { 0.f,0.0f }, { 0.f,0.f } }, m_prevOverlap{ {0.f,0.f} , { 0.f,0.f } };
+
 	if (m_prevOverlap.width <= 0 && m_prevOverlap.height <= 0)
 	{
 		if (m_currOverlap.width >= m_currOverlap.height)
@@ -354,6 +253,8 @@ void CollisionMgr::ResolveActor(ASprite& l_spr)
 
 void CollisionMgr::ResolveProjectile(ASprite& l_sprA, ASprite& l_sprB)
 {
+	sf::FloatRect m_currOverlap{ { 0.f,0.0f }, { 0.f,0.f } }, m_prevOverlap{ {0.f,0.f} , { 0.f,0.f } };
+
 	if (m_prevOverlap.width < 0 && m_prevOverlap.height < 0)
 	{
 		l_sprA.vel().x = 0.f;
@@ -577,29 +478,13 @@ bool CollisionMgr::DynamicRectVsRect2(ASprite& l_in, ASprite& l_target, sf::Vect
 
 bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_staticSpr, CollisionStrategy l_collideStrat, float l_dt, sf::Vector2f& contact_point, sf::Vector2f& contact_normal, float& contact_time)
 {
-	if (!l_dynamicSpr.GetGrounded())
-	{
-		if (l_dynamicSpr.JustJumped() == false)
-			l_dynamicSpr.vel().y += Cfg::Gravity;
-	}
-
-	Box box{};
-	Box::SetupBox(box, l_dynamicSpr);
-	Box block{};
-	Box::SetupBox(block, l_staticSpr);
+		
+	
+	
+	
 
 	
-	if (dynamic_cast<Player*>(&l_dynamicSpr)->IsMoving())
-	{
-		if (l_dynamicSpr.IsFacingRight())
-		{
-			box.vx = Player::MoveSpeed;
-		}
-		else
-		{
-			box.vx = -Player::MoveSpeed;
-		}
-	}
+	
 
 	//if (l_dynamicSpr.JustJumped() == true)
 	//{
@@ -608,6 +493,11 @@ bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_st
 		//l_dynamicSpr.SetJustJumped(false);
 	//}
 
+
+	Box box{};
+	Box::SetupBox(box, l_dynamicSpr);
+	Box block{};
+	Box::SetupBox(block, l_staticSpr);
 	std::unique_ptr<Box> broadphasebox = { std::move(Box::GetSweptBroadphaseBox(box, l_dt)) };
 
 	if (broadphasebox != nullptr)
@@ -626,7 +516,14 @@ bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_st
 				
 			}
 			
-				
+			if (contact_normal.y == -1)
+			{
+				l_dynamicSpr.SetGrounded(true);
+				l_dynamicSpr.SetJustJumped(false);
+				//l_dynamicSpr.vel().y = 0;
+				//box.vy = 0.f;
+				dispatch(dynamic_cast<Player*>(&l_dynamicSpr)->fsm, evt_Landed {});
+			}
 			
 			
 			float remainingtime = 1.0f - contact_time;
@@ -656,13 +553,39 @@ bool CollisionMgr::CheckCollisionAndResolve(ASprite& l_dynamicSpr, ASprite& l_st
 				break;
 			}
 			
-			Box::SetSpriteVelocity(box, { l_dynamicSpr.vel().x + box.vx * contact_time,l_dynamicSpr.vel().y + ((l_dynamicSpr.JustJumped()) ? 0.f : (box.vy * contact_time)) });
 			return true;
-			
-
-
 		}
 		
 	}
 	return false;
+}
+
+float CollisionMgr::PlayerVTile(Player& l_player, Tile& l_tile, sf::Vector2f& contact_normal, const sf::Time& l_dt)
+{
+	
+
+
+
+
+			float contact_time = Box::SweptAABB(*l_player.boxMap[AnimType::None].at(0), *l_tile.boxMap[AnimType::None].at(0), contact_normal.x, contact_normal.y);
+			if (contact_time < 0.f || contact_time >= 1.0f)
+			{
+				return 1.0f;
+
+			}
+
+			if (contact_normal.y == -1)
+			{
+				l_player.SetGrounded(true);
+				l_player.SetJustJumped(false);
+				//l_dynamicSpr.vel().y = 0;
+				//box.vy = 0.f;
+				dispatch(l_player.fsm, evt_Landed{});
+
+			}
+
+			if(contact_normal.y == -1.f || contact_normal.x == -1.f || contact_normal.x == 1.f || contact_normal.y == 1.f)
+				return contact_time;
+
+	return 1.0f;
 }
