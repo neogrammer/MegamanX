@@ -125,7 +125,7 @@ void SandboxStage::Update(const sf::Time& l_dt)
 	for (auto& e : enemies_) { e->updateBase(l_dt); }
 	
 	
-	player_->updateBase(l_dt);
+
 	
 	
 	
@@ -137,7 +137,7 @@ void SandboxStage::Update(const sf::Time& l_dt)
 		player_->vel().y = 0.f;
 	}
 	
-	
+	player_->updateBase(l_dt);
 	
 
 	

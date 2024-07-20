@@ -512,9 +512,9 @@ float CollisionMgr::SweptAABB(ASprite& l_spr1, ASprite& l_spr2, float& normalx, 
 
 	r b1{ l_spr1.bLeft(),l_spr1.bTop(), (float)l_spr1.getCurrBoxRect().width,  (float)l_spr1.getCurrBoxRect().height, l_spr1.vel().x,l_spr1.vel().y };
 	r b2{};
-	if (dynamic_cast<Tile*>(&l_spr2) != nullptr)
+	if (dynamic_cast<Tile*>(&l_spr2))
 	{
-	   b2 = r{ l_spr2().getPosition().x, l_spr2().getPosition().y, (float)l_spr2().getTextureRect().width,  (float) l_spr2().getTextureRect().height, l_spr2.vel().x,l_spr2.vel().y};
+	   b2 = r{ l_spr2().getPosition().x - l_spr2().getOrigin().x, l_spr2().getOrigin().y, (float)l_spr2().getTextureRect().width,  (float) l_spr2().getTextureRect().height,0.f, 0.f};
 
 	}
 	else
@@ -581,15 +581,15 @@ float CollisionMgr::SweptAABB(ASprite& l_spr1, ASprite& l_spr2, float& normalx, 
 	float entryTime = std::max(xEntry, yEntry);
 	float exitTime = std::min(xExit, yExit);
 
-	if (entryTime > exitTime) return 1.1f; // This check was correct.
-	if (xEntry < 0.0f && yEntry < 0.0f) return 1.1f;
+	if (entryTime > exitTime) return 1.0f; // This check was correct.
+	if (xEntry < 0.0f && yEntry < 0.0f) return 1.0f;
 	if (xEntry < 0.0f) {
 		// Check that the bounding box started overlapped or not.
-		if (b1.x + b1.w < b2.x || b1.x > b2.x + b2.w) return 1.1f;
+		if (b1.x + b1.w < b2.x || b1.x > b2.x + b2.w) return 1.0f;
 	}
 	if (yEntry < 0.0f) {
 		// Check that the bounding box started overlapped or not.
-		if (b1.y + b1.h < b2.y || b1.y > b2.y + b2.h) return 1.1f;
+		if (b1.y + b1.h < b2.y || b1.y > b2.y + b2.h) return 1.0f;
 	}
 
 	// if there was no collision
@@ -662,6 +662,6 @@ void CollisionMgr::Push(ASprite& box, float l_remTime, float& normalx, float& no
 	if (dotprod > 0.0f) dotprod = 1.0f;
 	else if (dotprod < 0.0f) dotprod = -1.0f;
 
-	l_tmpVel += { dotprod* normaly* magnitude, dotprod* normalx* magnitude };
+	box.vel() = {dotprod * normaly * magnitude, dotprod * normalx * magnitude};
 	// AddToVelocity(box, { dotprod * normaly * magnitude , dotprod * normalx * magnitude });
 }
