@@ -21,22 +21,7 @@ struct vf2d
 };
 
 
-struct rect
-{
-	rect();
-	rect(ASprite* l_spr);
-	~rect() = default;
-	rect(const rect&) = default;
-	rect& operator=(const rect&) = default;
-	rect(rect&&) = delete;
-	rect& operator=(rect&&) = delete;
-	ASprite* spr{ nullptr };
-	vf2d pos;
-	vf2d size;
-	vf2d vel;
 
-	void Reset();
-};
 
 struct AABB
 {

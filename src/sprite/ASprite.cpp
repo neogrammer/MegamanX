@@ -93,6 +93,16 @@ sf::Vector2f& ASprite::vel()
 	return vel_;
 }
 
+const sf::Sprite& ASprite::getSpr() const
+{
+	return spr_;
+}
+
+const sf::Vector2f& ASprite::getVel() const
+{
+	return vel_;
+}
+
 SpriteType ASprite::getType()
 {
 	return type_;
@@ -223,36 +233,36 @@ void ASprite::move(sf::Vector2f l_offset, float l_dt)
 	this->spr_.move(l_offset * l_dt);
 }
 
-float ASprite::bTop()
+const float ASprite::bTop() const
 {
-	return this->spr_.getPosition().y - this->spr_.getOrigin().y + (float)animMgr.getCurrBox().top;
+	return this->spr_.getPosition().y - this->spr_.getOrigin().y + (float)this->getCurrBoxRect().top;
 }
 
-float ASprite::bLeft()
+const float ASprite::bLeft() const
 {
-	return this->spr_.getPosition().x - this->spr_.getOrigin().x + (float)animMgr.getCurrBox().left;
-
-}
-
-float ASprite::bRight()
-{
-	return this->spr_.getPosition().x - this->spr_.getOrigin().x + (float)animMgr.getCurrBox().left + (float)animMgr.getCurrBox().width;
+	return this->spr_.getPosition().x - this->spr_.getOrigin().x + (float)this->getCurrBoxRect().left;
 
 }
 
-float ASprite::bBottom()
+const float ASprite::bRight() const
 {
-	return this->spr_.getPosition().y - this->spr_.getOrigin().y + (float)animMgr.getCurrBox().top + (float)animMgr.getCurrBox().height;
+	return this->spr_.getPosition().x - this->spr_.getOrigin().x + (float)this->getCurrBoxRect().left + (float)this->getCurrBoxRect().width;
+
+}
+
+const float ASprite::bBottom() const
+{
+	return this->spr_.getPosition().y - this->spr_.getOrigin().y + (float)this->getCurrBoxRect().top + (float)this->getCurrBoxRect().height;
 
 
 }
 
-sf::Vector2f ASprite::boxTL()
+const sf::Vector2f ASprite::boxTL() const
 {
 	return {bTop(),bLeft()};
 }
 
-sf::Vector2f ASprite::boxBR()
+const sf::Vector2f ASprite::boxBR() const
 {
 	return {bRight(),bBottom()};
 }
@@ -280,7 +290,7 @@ sf::IntRect ASprite::getBoxRect(AnimType l_type, uint32_t l_index, bool l_facing
 	return animMgr.getBoxRect(l_type, l_index, l_facingRight);
 }
 
-sf::IntRect ASprite::getCurrBoxRect()
+const sf::IntRect& ASprite::getCurrBoxRect() const
 {
 	return animMgr.getCurrBox();
 }

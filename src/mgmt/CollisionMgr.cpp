@@ -69,48 +69,52 @@ bool CollisionMgr::HandleCollisions(ASprite& l_sprA, std::vector<std::shared_ptr
 	
 	if (!tiles.empty() && player)
 	{
+		sf::Vector2f cp, cn;
+		float ct = 0.f;
 
 		std::vector<std::pair<Tile*, float>> z; 	// for sorting collisions for proper swept aabb resolution
 		z.clear();
+		
 		for (auto& tile : tiles)
 		{
-			float t{};
-			sf::Vector2f contact_point;
+			
 			// first check if a collision occurred and push it back, dont resolve yet
-			t = PlayerVTile(*player, *tile, contact_normal, l_dt);
-			if (t > 0.f && t < 1.0f)
+			if (DynamicRectVsRect(*player, *tile,cp, cn, ct, l_dt))
 			{
-				z.push_back({ tile.get(), t });
-				
+				collisionOccurred = true;
+
+				z.push_back({ tile.get(), ct });
 			}
-
-			std::sort(z.begin(), z.end(), [](const std::pair<Tile*, float>& a, const std::pair<Tile*, float>& b)
-				{
-					return a.second < b.second;
-				});
-
-			sf::Vector2f tmpVel{player->vel()};
-			for (auto& j : z)
+			if (cn.y == -1.f)
 			{
-				sf::Vector2f cp;
-				t = PlayerVTile(*player, *tile, contact_normal, l_dt);
-				if (t > 0.f && t < 1.0f)
-				{
-					collisionOccurred = true;
+				player->SetGrounded(true);
+				dispatch(player->fsm, evt_Landed{});
+			}
+			if (cn.y == 1.f)
+			{
+				dispatch(player->fsm, evt_ReachedJumpPeak{});
+			}
+		}
 
-					if (contact_normal.y == -1)
-					{
-						player->SetGrounded(true);
-						dispatch(player->fsm, evt_Landed{});
-					}
-					if (contact_normal.y == -1 || contact_normal.y == 1 || contact_normal.x == -1 || contact_normal.x == 1)
-						Push(*player, 1.0f - t, contact_normal.x, contact_normal.y, tmpVel);
-					
+		
+		std::sort(z.begin(), z.end(), [](const std::pair<Tile*, float>& a, const std::pair<Tile*, float>& b)
+			{
+				return a.second < b.second;
+			});
+
+		for (auto& j : z)
+		{
+			if (DynamicRectVsRect(*player, *j.first, cp, cn, ct , l_dt))
+			{
+				if (ct <= 1.f)
+				{
 
 				}
+				player->vel().x += cn.x * abs(player->vel().x) * (1.f - ct);
+				player->vel().y += cn.y * abs(player->vel().y) * (1.f - ct);
 			}
-			player->setVelocity(tmpVel);
 		}
+		
 	}
 
 	if (!tiles.empty() && !projectiles.empty())
@@ -290,38 +294,35 @@ void CollisionMgr::ResolveProjectile(ASprite& l_sprA, ASprite& l_sprB)
 bool CollisionMgr::PointVsRect(const sf::Vector2f& l_p, ASprite& l_spr)
 {
 	vf2d p{ l_p.x, l_p.y };
-	rect r(&l_spr);
-	r.Reset();
+	rect r;
+	r.pos = l_spr.getBoxGlobalBounds().getPosition();
+	r.size = l_spr.getBoxGlobalBounds().getSize();
+	r.vel = { 0.f,0.f };
 
 	return p.x >= r.pos.x && p.y >= r.pos.y && p.x < r.pos.x + r.size.x && p.y < r.pos.y + r.size.y;
 }
 
 bool CollisionMgr::RectVsRect(ASprite& l_spr1, ASprite& l_spr2)
 {
-	rect r1(&l_spr1);
-	rect r2(&l_spr2);
-
-	r1.Reset();
-	r2.Reset();
+	rect r1;
+	r1.pos = l_spr1.getBoxGlobalBounds().getPosition();
+	r1.size = l_spr1.getBoxGlobalBounds().getSize();
+	r1.vel = { 0.f,0.f };
+	rect r2;
+	r2.pos = l_spr2.getBoxGlobalBounds().getPosition();
+	r2.size = l_spr2.getBoxGlobalBounds().getSize();
+	r2.vel = { 0.f,0.f };
 
 	return (r1.pos.x < r2.pos.x + r2.size.x && r1.pos.x + r1.size.x > r2.pos.x &&
 		r1.pos.y < r2.pos.y + r2.size.y && r1.pos.y + r1.size.y > r2.pos.y);
 
 }
 
-bool CollisionMgr::RayVsRect(const sf::Vector2f& l_ray_origin, const sf::Vector2f& l_ray_dir, rect& target, sf::Vector2f& l_contact_point, sf::Vector2f& l_contact_normal, float& l_t_hit_near)
+bool CollisionMgr::RayVsRect(const sf::Vector2f& ray_origin, const sf::Vector2f& ray_dir, rect& target, sf::Vector2f& contact_point, sf::Vector2f& contact_normal, float& t_hit_near)
 {
-	vf2d ray_origin(l_ray_origin.x, l_ray_origin.y);
-	vf2d ray_dir(l_ray_dir.x, l_ray_dir.y);
-
-
-
-	vf2d contact_point;
-	vf2d contact_normal;
-	float& t_hit_near = l_t_hit_near;
-
-	vf2d tl = target.pos;
-	vf2d br = { tl.x + target.size.x, tl.y + target.size.y };
+	
+	sf::Vector2f tl = target.pos;
+	sf::Vector2f br = { tl.x + target.size.x, tl.y + target.size.y };
 
 
 	float near_t_x = (tl.x - ray_origin.x) / ray_dir.x;
@@ -374,103 +375,37 @@ bool CollisionMgr::RayVsRect(const sf::Vector2f& l_ray_origin, const sf::Vector2
 			contact_normal = { 0.f,-1.f };
 	}
 
-	l_contact_point = { contact_point.x, contact_point.y };
-	l_contact_normal = { contact_normal.x, contact_normal.y };
-	// t_hit_near is a ref
 	return true;
 }
 
-bool CollisionMgr::DynamicRectVsRect(ASprite& l_in, ASprite& l_target, sf::Vector2f& l_contact_point, sf::Vector2f& l_contact_normal, float& l_contact_time, const sf::Time& fElapsedTime)
+bool CollisionMgr::DynamicRectVsRect(const ASprite& in, const ASprite& target, sf::Vector2f& cp, sf::Vector2f& cn, float& ct, const sf::Time& dt)
 {
-	rect in(&l_in);
-	in.Reset();
-	rect target(&l_target);
-	target.Reset();
 
-	if (in.vel.x == 0 && in.vel.y == 0)
+
+	if (in.getVel().x == 0 && in.getVel().y == 0)
 	{
 		return false;
 	}
-	ASprite* spr = new Tile{};
-	*spr = l_target;
-	spr->vel() = l_target.vel();
-	(*spr)().setPosition({ target.pos.x - (in.size.x / 2.f), target.pos.y - (in.size.y / 2.f) });
-	(*spr)() = l_target();
-	(*spr)().setTexture(*const_cast<sf::Texture*>(l_target().getTexture()));
-	(*spr)().setTextureRect(l_target().getTextureRect());
-	rect expanded_target(spr);
-	expanded_target.Reset();
-	expanded_target.size.x = target.size.x + in.size.x;
-	expanded_target.size.y = target.size.y + in.size.y;
-	(*spr)().setOrigin({ expanded_target.size.x / 2.f,expanded_target.size.y / 2.f });
 
-	
-	if (l_in.vel().x < 0)
-	{
 
-	}
-	float offx{ 0.f }, offy{ 0.f };
-	if (l_in.vel().x > 0)
-	{
-		offx = l_in().getOrigin().x;
-	}
-	else if (l_in.vel().x < 0)
-	{
-		offx = -1.f * l_in().getOrigin().x;
-	}
-	if (l_in.vel().y > 0)
-	{
-		offy = l_in().getOrigin().y;
-	}
-	else if (l_in.vel().y < 0)
-	{
-		offy = -1.f * l_in().getOrigin().y;
-	}
-	
-	sf::Vector2f end_point = { l_in().getPosition().x + offx + (l_in.vel().x * fElapsedTime.asSeconds()), l_in().getPosition().y + offy + (l_in.vel().y * fElapsedTime.asSeconds())};
-	sf::Vector2f dir = { end_point.x - l_in().getPosition().x, end_point.y - l_in().getPosition().y };
-	//dir.x *= l_in().getOrigin().x;
-	//dir.y *= l_in().getOrigin().y;
+	rect expanded_target;
 
-	if (RayVsRect(l_in().getPosition(), dir, expanded_target, l_contact_point, l_contact_normal, l_contact_time))
+	expanded_target.pos = sf::Vector2f(target.getSpr().getPosition().x - target.getSpr().getOrigin().x - (float)in.getCurrBoxRect().width / 2.f, target.getSpr().getPosition().y - target.getSpr().getOrigin().y - (float)in.getCurrBoxRect().height / 2.f);
+	expanded_target.size = sf::Vector2f((float)target.getSpr().getTextureRect().height + (float)in.getCurrBoxRect().width, (float)target.getSpr().getTextureRect().height + (float)in.getCurrBoxRect().height);
+	expanded_target.vel = sf::Vector2f({ 0.f, 0.f });
+
+
+
+
+
+	if (RayVsRect({ in.bLeft() + (float)in.getCurrBoxRect().width / 2.f, in.bTop() + (float)in.getCurrBoxRect().height / 2.f }, {in.getVel().x * dt.asSeconds(), in.getVel().y * dt.asSeconds()}, expanded_target, cp, cn, ct))
 	{
-		if (l_contact_time <= 1.0f)
+		if (ct <= 1.0f)
 		{
-			delete spr;
 			return true;
 		}	
 	}
-	delete spr;
-	return false;
-}
 
-bool CollisionMgr::DynamicRectVsRect2(ASprite& l_in, ASprite& l_target, sf::Vector2f& l_contact_point, sf::Vector2f& l_contact_normal, float& l_contact_time, const sf::Time& fElapsedTime)
-{
-	rect in(&l_in);
-	in.Reset();
-	rect target(&l_target);
-	target.Reset();
-
-	if (in.vel.x == 0 && in.vel.y == 0)
-	{
-		return false;
-	}
-	sf::Vector2f velDir = l_in.vel();
-	float lengthOfVel = sqrtf((float)pow(l_in.vel().x, 2) + (float)pow(l_in.vel().y, 2));
-	velDir.x /= lengthOfVel;
-	velDir.y /= lengthOfVel;
-
-	sf::Vector2f startPoint{ l_in().getPosition().x + (velDir.x * l_in().getOrigin().x),  l_in().getPosition().y + (velDir.y * l_in().getOrigin().y)};
-	sf::Vector2f end_point = { startPoint.x + (l_in.vel().x * fElapsedTime.asSeconds()), startPoint.y + (l_in.vel().y * fElapsedTime.asSeconds())};
-	sf::Vector2f dir = { end_point.x - startPoint.x, end_point.y - startPoint.y};
-
-	if (RayVsRect(startPoint, dir, target, l_contact_point, l_contact_normal, l_contact_time))
-	{
-		if (l_contact_time <= 1.0f)
-		{
-			return true;
-		}
-	}
 	return false;
 }
 

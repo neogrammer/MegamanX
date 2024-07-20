@@ -17,51 +17,6 @@ vf2d::vf2d(float l_x, float l_y)
 
 }
 
-rect::rect()
-	: pos{ 0.f,0.f }
-	, size{ 0.f,0.f }
-	, vel{0.f,0.f}
-	, spr{nullptr}
-{
-
-}
-
-rect::rect(ASprite* l_spr)
-	: spr{ l_spr }
-	, pos{0.f,0.f}
-	, size{0.f,0.f}
-	, vel{0.f,0.f}
-{
-	Reset();
-}
-
-void rect::Reset()
-{
-	if (spr == nullptr)
-	{
-		pos = { 0.f, 0.f };
-		size = { 0.f, 0.f };
-		vel = { 0.f,0.f };
-	}
-	else
-	{ 
-		AABB bbox = Cfg::bboxDB.getAABB(*spr, spr->animMgr.getCurrType(), spr->animMgr.getCurrFrameIdx());
-		if (bbox.IsNone())
-		{
-			pos = { (*spr)().getGlobalBounds().left - ((*spr)().getGlobalBounds().width / 2.f) + (*spr)().getOrigin().x,
-			(*spr)().getGlobalBounds().top - ((*spr)().getGlobalBounds().height / 2.f) + (*spr)().getOrigin().y };
-			size = { (float)(*spr)().getTextureRect().width, (float)(*spr)().getTextureRect().height };
-			vel = { spr->vel().x, spr->vel().y };
-		}
-		else
-		{
-			pos = { (*spr)().getGlobalBounds().left - ((*spr)().getGlobalBounds().width / 2.f) + (*spr)().getOrigin().x + bbox.TopLeftFromCenter().x,
-			(*spr)().getGlobalBounds().top - ((*spr)().getGlobalBounds().height / 2.f) + (*spr)().getOrigin().y + bbox.TopLeftFromCenter().y };
-			size = { bbox.GetSize() };
-			vel = { spr->vel().x, spr->vel().y };
-		}
-	}
-}
 
 AABB::AABB(sf::Vector2f l_center, sf::Vector2f l_size)
 	: localCenter{l_center.x, l_center.y}

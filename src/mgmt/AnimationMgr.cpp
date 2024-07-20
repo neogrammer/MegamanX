@@ -150,16 +150,18 @@ sf::IntRect AnimationMgr::getBoxRect(AnimType l_type, uint32_t l_index, bool l_f
 
 }
 
-const sf::IntRect& AnimationMgr::getCurrBox()
+const sf::IntRect& AnimationMgr::getCurrBox() const 
 {
-	if (!m_currAnim)
+	
+	if (this->m_facingRight)
 	{
-		
+		return m_currAnim->m_boxesRight[m_currAnim->m_currFrame];
 	}
-	if (m_facingRight)
-		return m_currAnim->m_boxesRight.at(m_currAnim->m_currFrame);
 	else
-		return m_currAnim->m_boxesLeft.at(m_currAnim->m_currFrame);
+	{
+		return m_currAnim->m_boxesLeft[m_currAnim->m_currFrame];
+	}
+	
 }
 
 void AnimationMgr::copyDataTo(AnimationMgr& l_mgr, sf::Sprite& l_spr)

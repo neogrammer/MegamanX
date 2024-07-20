@@ -53,22 +53,23 @@ struct ASprite
 	
 
 	sf::Vector2f& vel();
-
+	const sf::Sprite& getSpr() const;
+	const sf::Vector2f& getVel() const;
 	void setVelocity(const sf::Vector2f& l_vel);
 	void accelerate(sf::Vector2f l_acceleration, float l_dt);
 	void tickPos(float l_dt);
 	void setPos(sf::Vector2f l_pos);
 	void move(sf::Vector2f l_offset, float l_dt);
-	float bTop();
-	float bLeft();
-	float bRight();
-	float bBottom();
-	sf::Vector2f boxTL();
-	sf::Vector2f boxBR();
-	sf::FloatRect getBoxGlobalBounds();
+									const float					   bTop() const;
+									const float					  bLeft() const;
+									const float					 bRight() const;
+									const float					bBottom() const;
+									const sf::Vector2f			  boxTL() const;
+									const sf::Vector2f			  boxBR() const;
+								 sf::FloatRect getBoxGlobalBounds();
 	void setBoxRect(AnimType l_type, uint32_t l_index, bool l_facingRight, const sf::IntRect& l_rect);
 	sf::IntRect getBoxRect(AnimType l_type, uint32_t l_index, bool l_facingRight);
-	sf::IntRect getCurrBoxRect();
+	const sf::IntRect& getCurrBoxRect() const;
 
 protected:
 	

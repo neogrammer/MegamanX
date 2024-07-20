@@ -2,6 +2,7 @@
 #define GLOBALS_HPP__
 #include <SFML/System/Time.hpp>
 #include <string>
+#include <SFML/System/Vector2.hpp>
 
 namespace g
 {
@@ -103,6 +104,13 @@ struct SpriteKey {
 
 	// Define the spaceship operator
 	auto operator<=>(const SpriteKey& other) const = default;
+};
+
+struct rect
+{
+	sf::Vector2f pos;
+	sf::Vector2f size;
+	sf::Vector2f vel;
 };
 
 #endif
