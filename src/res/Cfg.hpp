@@ -5,7 +5,6 @@
 #include "ResourceManager.hpp"
 #include <action/ActionMap.hpp>
 #include <vector>
-#include <misc/aabb.hpp>
 
 struct Cfg
 {
@@ -19,6 +18,7 @@ struct Cfg
 	enum class Textures : int { Tileset1, BGSpace, Bullet1, BirdSheetWSaw, 
 		PlayerIdle, PlayerRun, PlayerTransRun, PlayerShootStand, 
 		PlayerTransJump, PlayerRise, PlayerTransFall, PlayerFall, PlayerLand,
+		PlayerAtlas, PlayerAtlasLeft,PlayerSheet,
 		Count };
 	enum class Fonts : int { Count };
 	enum class Music : int { Count };
@@ -43,8 +43,8 @@ struct Cfg
 
 	static ActionMap<int> playerInputs;
 	static float Gravity;
+	static float Friction;
 
-	static BoundingBoxDB bboxDB;
 private:
     // initalize the resources for the entire game
     static void initFonts();

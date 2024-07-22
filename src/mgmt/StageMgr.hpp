@@ -23,6 +23,7 @@ struct StageMgr
 	void Update(const sf::Time& l_dt);
 	void Render(sf::RenderWindow& l_wnd);
 
+
 private:
 	std::unique_ptr<Stage> m_currStage;
 };

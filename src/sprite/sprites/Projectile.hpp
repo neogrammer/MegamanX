@@ -10,7 +10,7 @@ struct Projectile : ASprite
 {
 
 	Projectile();
-	Projectile(sf::Texture& l_tex, SpriteName l_name, bool l_friendly = true);
+	Projectile(sf::Texture& l_tex, SpriteName l_name, bool l_friendly = true, sf::IntRect l_rect = { {0,0},{0,0} }, sf::IntRect l_bbox = { {0,0},{0,0} });
 	virtual ~Projectile() override = default;
 
 	Projectile(const Projectile&);
@@ -21,6 +21,7 @@ struct Projectile : ASprite
 	bool GetFriendly();
 	int GetDamage();
 protected:
+	static int BULLETSPEED;
 	bool m_friendly{};
 	int m_damage{};
 };

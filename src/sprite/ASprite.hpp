@@ -11,14 +11,15 @@
 #include <vector>
 #include <map>
 #include <misc/globals.hpp>
+#include <sprite/AABB.hpp>
 
-
-struct ASprite
+struct ASprite : AABB
 {
-	
+	friend struct SandboxStage;
+	friend struct Stage;
 
 	ASprite() = default;
-	ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex, sf::IntRect l_startFrame = { {0,0},{0,0} });
+	ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex, sf::IntRect l_startFrame = { {0,0},{0,0} }, sf::IntRect l_bbox = { {0,0},{0,0} });
 	virtual ~ASprite() = default;
 
 	ASprite(const ASprite&);
@@ -71,8 +72,17 @@ struct ASprite
 	sf::IntRect getBoxRect(AnimType l_type, uint32_t l_index, bool l_facingRight);
 	const sf::IntRect& getCurrBoxRect() const;
 
-protected:
-	
+	void collideAABB(AABB other);
+	void updatePhysics(float gravity_, float friction_);
+	std::vector<ASprite*> blockXTiles{};
+	float blockVelX_{};
+	float blockPosYBefore_{};
+	float blockPosYAfter_{};
+	ASprite* closestTile_{ nullptr };
+
+	bool blockX_{ false };
+	sf::Sprite spr_;
+	bool jumping_{ true };
 	bool justJumped_{ false };
 	bool alive_{ true };
 	SpriteType type_{ SpriteType::Count };
@@ -85,7 +95,7 @@ protected:
 	bool facingRight_{ true };
 	bool wasFacingRight_{ true };
 	bool shooting_{ false };
-	sf::Time shootDelay_{sf::seconds(0.08f)};
+	sf::Time shootDelay_{ sf::seconds(0.08f) };
 	sf::Time shootElapsed_{ sf::Time::Zero };
 
 	int maxBullets_{ 5 };
@@ -94,9 +104,11 @@ protected:
 	bool invincible_{ false };
 	sf::Time invincibleTime_ = sf::Time::Zero;
 
-	sf::Sprite spr_;
+
 	sf::Vector2f vel_;
 	sf::Time gameTime_;
+
+
 
 
 	// std::unordered_map<AnimType, Animation> animMap_;

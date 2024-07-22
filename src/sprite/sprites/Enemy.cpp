@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-Enemy::Enemy(SpriteName l_name, sf::Texture& l_tex) : ASprite{ SpriteType::Enemy, l_name, l_tex }
+Enemy::Enemy(SpriteName l_name, sf::Texture& l_tex, sf::IntRect l_rect, sf::IntRect l_bbox) : ASprite{ SpriteType::Enemy, l_name, l_tex, l_rect, l_bbox }
 {}
 
 Enemy::Enemy(const Enemy&)

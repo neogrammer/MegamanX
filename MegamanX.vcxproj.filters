@@ -139,6 +139,9 @@
     <Filter Include="Resource Files\assets\tex\backgrounds\space">
       <UniqueIdentifier>{542056d8-9639-425a-9518-e610fa8cf23d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\sprite\tpl">
+      <UniqueIdentifier>{54096068-ce76-483f-a7e1-b7027564ec28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -162,9 +165,6 @@
     </ClCompile>
     <ClCompile Include="src\mgmt\GameStateMgr.cpp">
       <Filter>Source Files\mgmt</Filter>
-    </ClCompile>
-    <ClCompile Include="src\stage\Stage.cpp">
-      <Filter>Source Files\stage</Filter>
     </ClCompile>
     <ClCompile Include="src\stage\stages\SandboxStage.cpp">
       <Filter>Source Files\stage\stages</Filter>
@@ -199,9 +199,6 @@
     <ClCompile Include="src\map\Tilemap.cpp">
       <Filter>Source Files\map</Filter>
     </ClCompile>
-    <ClCompile Include="src\misc\aabb.cpp">
-      <Filter>Source Files\misc</Filter>
-    </ClCompile>
     <ClCompile Include="src\sprite\sprites\BuzzBird.cpp">
       <Filter>Source Files\sprite\sprites</Filter>
     </ClCompile>
@@ -214,8 +211,8 @@
     <ClCompile Include="src\sprite\sprites\Enemy.cpp">
       <Filter>Source Files\sprite\sprites</Filter>
     </ClCompile>
-    <ClCompile Include="src\misc\SpriteKey.cpp">
-      <Filter>Source Files\misc</Filter>
+    <ClCompile Include="src\stage\Stage.cpp">
+      <Filter>Source Files\stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -291,9 +288,6 @@
     <ClInclude Include="src\map\Tilemap.hpp">
       <Filter>Header Files\map</Filter>
     </ClInclude>
-    <ClInclude Include="src\misc\aabb.hpp">
-      <Filter>Header Files\misc</Filter>
-    </ClInclude>
     <ClInclude Include="src\FSM\FSM.hpp">
       <Filter>Header Files\FSM</Filter>
     </ClInclude>
@@ -321,6 +315,9 @@
     <ClInclude Include="src\sprite\sprites\Enemy.hpp">
       <Filter>Header Files\sprite\sprites</Filter>
     </ClInclude>
+    <ClInclude Include="src\sprite\AABB.hpp">
+      <Filter>Header Files\sprite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\res\tpl\ResourceManager.tpl">
@@ -337,6 +334,9 @@
     </None>
     <None Include="assets\data\tileset\tileset1.dat">
       <Filter>Resource Files\assets\data\tileset</Filter>
+    </None>
+    <None Include="src\sprite\tpl\AABB.tpl">
+      <Filter>Header Files\sprite\tpl</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -381,6 +381,24 @@
     </Image>
     <Image Include="assets\tex\backgrounds\space\BG1_0_4800x2700.png">
       <Filter>Resource Files\assets\tex\backgrounds\space</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\mm_best_65x80_sheet_edit.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\mm_best_65x80_3.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\mm_sheet_130x160.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\mm_atlast.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\mm_atlast_left.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
+    </Image>
+    <Image Include="assets\tex\megaman\mmsheet.png">
+      <Filter>Resource Files\assets\tex\megaman</Filter>
     </Image>
   </ItemGroup>
 </Project>

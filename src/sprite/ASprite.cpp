@@ -5,8 +5,9 @@
 
 
 
-ASprite::ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex, sf::IntRect l_startFrame)
-	: type_{l_type}
+ASprite::ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex, sf::IntRect l_startFrame, sf::IntRect l_bbox)
+	: AABB{l_bbox.left, l_bbox.top, l_bbox.width, l_bbox.height}
+	, type_{l_type}
 	, name_{l_name}
 	, spr_{}
 	, vel_{}
@@ -14,13 +15,14 @@ ASprite::ASprite(SpriteType l_type, SpriteName l_name, sf::Texture& l_tex, sf::I
 	, animMgr{}
 	, isSetExternal{}
 {
+	blockXTiles.clear();
 	spr_.setTexture(l_tex);
 	if (l_startFrame.width != 0 && l_startFrame.height != 0)
 		spr_.setTextureRect(l_startFrame);
 	spr_.setPosition(0.f, 0.f);
 
 
-	animMgr.AddAnimation(this->spr_, l_tex, AnimLayoutType::Count, AnimType::Count, 1, spr_.getTextureRect(), 1, 1, 0.f, false, true, true, true);
+	animMgr.AddAnimation(this->spr_, l_tex, AnimLayoutType::Count, AnimType::None, 1, spr_.getTextureRect(), 1, 1, 0.f, false, true, true, true);
 	
 }
 
@@ -42,7 +44,8 @@ ASprite::ASprite(const ASprite& other)
 	, vel_{other.vel_ }
 	, gameTime_{ other.gameTime_ }
 	, animMgr{}
-	, isSetExternal{other.isSetExternal}
+	, isSetExternal{ other.isSetExternal }
+	, blockXTiles{}
 {
 	if (&other == this)
 	{
@@ -50,6 +53,7 @@ ASprite::ASprite(const ASprite& other)
 	}
 	spr_.setTexture(*const_cast<sf::Texture*>(other.spr_.getTexture()));
 	(*const_cast<AnimationMgr*>(&other.animMgr)).copyDataTo(this->animMgr, this->spr_);
+	blockXTiles.clear();
 
 
 }
@@ -72,6 +76,8 @@ ASprite& ASprite::operator=(const ASprite& other)
 	this->isSetExternal = other.isSetExternal;
 	this->spr_.setTexture(*const_cast<sf::Texture*>(other.spr_.getTexture()));
 	(*const_cast<AnimationMgr*>(&other.animMgr)).copyDataTo(this->animMgr, this->spr_);
+	this->blockXTiles = std::vector<ASprite*>{};
+	this->blockXTiles.clear();
 
 	return *this;
 }
@@ -79,7 +85,7 @@ ASprite& ASprite::operator=(const ASprite& other)
 void ASprite::render(sf::RenderWindow& l_wnd)
 {
 	// adjust position by velocity
-	updatePosition();
+	//updatePosition();
 	l_wnd.draw(spr_);
 
 	if (movingRight_)
@@ -259,7 +265,7 @@ const float ASprite::bBottom() const
 
 const sf::Vector2f ASprite::boxTL() const
 {
-	return {bTop(),bLeft()};
+	return {bLeft(), bTop()};
 }
 
 const sf::Vector2f ASprite::boxBR() const
@@ -272,10 +278,8 @@ sf::FloatRect ASprite::getBoxGlobalBounds()
 	sf::FloatRect tmp = {};
 
 	sf::IntRect bRect = animMgr.getCurrBox();
-	tmp.left = this->spr_.getPosition().x - this->spr_.getOrigin().x + (float)bRect.left;
-	tmp.top = this->spr_.getPosition().y - this->spr_.getOrigin().y + (float)bRect.top;
-	tmp.width = (float)bRect.width;
-	tmp.height = (float)bRect.height;
+	tmp.left += this->spr_.getPosition().x - this->spr_.getOrigin().x;
+	tmp.top += this->spr_.getPosition().y - this->spr_.getOrigin().y;
 
 	return tmp;
 }
@@ -293,6 +297,60 @@ sf::IntRect ASprite::getBoxRect(AnimType l_type, uint32_t l_index, bool l_facing
 const sf::IntRect& ASprite::getCurrBoxRect() const
 {
 	return animMgr.getCurrBox();
+}
+
+void ASprite::collideAABB(AABB yellow)
+{
+	// broadphase..  check disqualifes collision
+	if (this->bttm < yellow.tp || this->tp > yellow.bttm || this->lft > yellow.rt || this->rt < yellow.lft) return;
+
+	// entered a collision
+
+
+	// can only collide yellow. one side at a time, so else if works
+	if (this->bttm >= yellow.tp && this->oBttm < yellow.oTp)
+	{
+		this->setBottom(yellow.tp - 0.1f);
+		this->vy = yellow.vy;
+		this->jumping_ = false;
+	}
+	else if (this->tp <= yellow.bttm && this->oTp > yellow.oBttm)
+	{
+		this->setTop(yellow.bttm + 0.1f);
+		this->vy = yellow.vy;
+	}
+	else if (this->rt >= yellow.lft && this->oRt < yellow.oLft)
+	{
+		this->setRight(yellow.lft - 0.1f);
+		this->vx = yellow.vx;
+	}
+	else if (this->lft <= yellow.rt && this->oLft > yellow.oRt)
+	{
+		this->setLeft(yellow.rt + 0.1f);
+		this->vx = yellow.vx;
+	}
+}
+
+void ASprite::updatePhysics(float gravity_, float friction_)
+{
+	this->vy += gravity_;
+	this->vx *= friction_;
+	this->vy *= friction_;
+
+	this->oBttm = this->bttm;
+	this->oLft = this->lft;
+	this->oRt = this->rt;
+	this->oTp= this->tp;
+
+	this->lft += this->vx;
+	this->tp += this->vy;
+
+	this->rt = this->lft + this->w;
+	this->bttm = this->tp + this->h;
+
+
+
+
 }
 
 

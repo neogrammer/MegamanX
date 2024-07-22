@@ -6,15 +6,17 @@ void AnimationMgr::AddAnimation(sf::Sprite& l_spr, sf::Texture& l_tex, AnimLayou
 {
 
 	m_animMap.insert({ l_type, { l_spr, l_tex,  l_layoutType, l_type, l_numFrames,  l_firstFrame, l_cols, l_rows,  l_frameDelay, l_lingerWait, l_hasLeft, l_looping,l_persistent, l_loopStartWait, l_loopStartWaitTime} });
-
+	if (!m_currAnim)
+	{
 		m_currAnim = &m_animMap[l_type];
 		m_fallback = m_currAnim;
 		l_spr.setTextureRect(l_firstFrame);
+	}
 }
 
 void AnimationMgr::SwitchAnimation(AnimType l_type, AnimType l_fallback)
 {
-	if (l_type != m_currAnim->m_type)
+	if (l_type != m_currAnim->m_type && l_type != AnimType::Count)
 	{
 		m_currAnim = &m_animMap[l_type];
 
@@ -93,33 +95,44 @@ uint32_t AnimationMgr::getCurrFrameIdx()
 	if (!m_currAnim)
 	{
 		return 0Ui64;
+		m_currAnim = &this->m_animMap[AnimType::None];
 	}
     return m_currAnim->m_currFrame;
 }
 
-void AnimationMgr::setBoxRect(AnimType l_type, uint32_t l_index, bool l_facingRight, sf::IntRect l_box)
+void AnimationMgr::setBoxRect(AnimType l_type, uint32_t l_index, bool l_facingRight, sf::IntRect l_box, sf::IntRect l_leftRect)
 {
 	if (m_animMap.find(l_type) != m_animMap.end())
 	{
 		
 
-		if (l_facingRight)
-		{
+	
 
 			if (l_index >= 0 && l_index < m_animMap.at(l_type).m_boxesRight.size())
+			{
 				m_animMap[l_type].m_boxesRight[l_index] = l_box;
+			}
 			else
+			{
 				std::cout << "index out of range of m_boxesRight vector" << std::endl;
-		}
-		else
-		{
-			if (l_index >= 0 && l_index < m_animMap.at(l_type).m_boxesLeft.size())
+				throw std::runtime_error("index out of range, animationMgr::setBoxRect");
+			}
+
+		
+			if (l_leftRect.getSize().x == 0 || l_leftRect.getSize().y == 0)
+			{
 				m_animMap[l_type].m_boxesLeft[l_index] = l_box;
+			}
 			else
-				std::cout << "index out of range of m_boxesLeft vector" << std::endl;
-		}
+			{
+				m_animMap[l_type].m_boxesLeft[l_index] = l_leftRect;
+			}
 	}
-	std::cout << "AnimType does not exist in mgr" << std::endl;
+	else
+	{
+		std::cout << "AnimType does not exist in mgr" << std::endl;
+		throw std::runtime_error("SetBoxRect failed, animtype does not exist in the mgr, need to create it");
+	}
 }
 
 sf::IntRect AnimationMgr::getBoxRect(AnimType l_type, uint32_t l_index, bool l_facingRight)
@@ -141,18 +154,27 @@ sf::IntRect AnimationMgr::getBoxRect(AnimType l_type, uint32_t l_index, bool l_f
 			if (l_index >= 0 && l_index < m_animMap.at(l_type).m_boxesLeft.size())
 				return m_animMap[l_type].m_boxesLeft.at(l_index);
 			else
-				std::cout << "index out of range of m_boxesLeft vector" << std::endl;
+				std::cout << "index out of range of m_boxesLeft vector" << std::endl;	
 		}
 		throw std::runtime_error("BadCall::AnimationMgr::getBoxRect");
 	}
 	std::cout << "AnimType does not exist in mgr" << std::endl;
-	throw std::runtime_error("BadCall::AnimationMgr::getBoxRect");
-
+	return this->m_currAnim->m_spr->getTextureRect();
+	
 }
 
 const sf::IntRect& AnimationMgr::getCurrBox() const 
 {
-	
+	if (!m_currAnim)
+	{
+		std::cout << "currAnim not set" << std::endl;
+		throw std::runtime_error("BadCall::AnimationMgr::getCurrBox no m_currAnim set!");
+	}
+	if (m_currAnim->m_boxesRight.size() == 0 || m_currAnim->m_boxesLeft.size() == 0)
+	{
+		return this->m_currAnim->m_spr->getTextureRect();
+	}
+
 	if (this->m_facingRight)
 	{
 		return m_currAnim->m_boxesRight[m_currAnim->m_currFrame];
@@ -171,5 +193,10 @@ void AnimationMgr::copyDataTo(AnimationMgr& l_mgr, sf::Sprite& l_spr)
 	{
 		l_mgr.m_animMap.insert_or_assign(a.first, a.second);
 		l_mgr.m_animMap[a.first].m_spr = &l_spr;
+		if (!l_mgr.m_currAnim)
+		{
+			l_mgr.m_currAnim = &l_mgr.m_animMap[a.first];
+		}
 	}
+
 }

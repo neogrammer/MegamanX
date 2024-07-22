@@ -11,9 +11,8 @@ ResourceManager<sf::SoundBuffer, int> Cfg::sounds = {};
 
 ActionMap<int> Cfg::playerInputs = {};
 
-float Cfg::Gravity = 4000.f;
-
-BoundingBoxDB Cfg::bboxDB = {};
+float Cfg::Gravity = 4000.8f;
+float Cfg::Friction = 0.9f;
 
 void Cfg::Initialize()
 {
@@ -48,18 +47,17 @@ void Cfg::initTextures()
 	textures.load((int)Textures::PlayerTransFall, "assets/tex/megaman/trans_fall120x184_1.png");
 	textures.load((int)Textures::PlayerFall, "assets/tex/megaman/fall120x184_1.png");
 	textures.load((int)Textures::PlayerLand, "assets/tex/megaman/land120x184_2.png");
+	textures.load((int)Textures::PlayerAtlas, "assets/tex/megaman/mm_sheet_130x160.png");
+	textures.load((int)Textures::PlayerAtlas, "assets/tex/megaman/mm_atlast_left.png");
+	textures.load((int)Textures::PlayerSheet, "assets/tex/megaman/mmsheet.png");
+
 	textures.load((int)Textures::BGSpace, "assets/tex/backgrounds/space/BG1_0_4800x2700.png");
-
-
 	textures.load((int)Textures::BirdSheetWSaw, "assets/tex/enemies/BirdSheet220x296_3Rows_7_9_2.png");
-
-
 }
 
 void Cfg::initPlayerInputs()
 {
 	// realtime events
-
 	// Keyboard pressed commands
 	playerInputs.map(Cfg::PlayerInputs::X, Action(sf::Keyboard::Num9));
 	playerInputs.map(Cfg::PlayerInputs::Y, Action(sf::Keyboard::X));
@@ -75,7 +73,6 @@ void Cfg::initPlayerInputs()
 	playerInputs.map(Cfg::PlayerInputs::Down, Action(sf::Keyboard::Down));
 	playerInputs.map(Cfg::PlayerInputs::Left, Action(sf::Keyboard::Left));
 	playerInputs.map(Cfg::PlayerInputs::Right, Action(sf::Keyboard::Right));
-
 
 	// Joystick Controls
 	// Axis mappings

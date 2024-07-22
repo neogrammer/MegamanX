@@ -16,7 +16,7 @@ struct AnimationMgr
 	Animation* currFallback();
 	AnimType getCurrType();
 	uint32_t getCurrFrameIdx();
-	void setBoxRect(AnimType l_type, uint32_t l_index, bool l_facingRight, sf::IntRect l_box);
+	void setBoxRect(AnimType l_type, uint32_t l_index, bool l_facingRight, sf::IntRect l_box, sf::IntRect l_leftRect = { {0,0},{0,0} });
 	sf::IntRect getBoxRect(AnimType l_type, uint32_t l_index, bool l_facingRight);
 	const sf::IntRect& getCurrBox() const;
 	void copyDataTo(AnimationMgr& l_mgr, sf::Sprite& l_spr);

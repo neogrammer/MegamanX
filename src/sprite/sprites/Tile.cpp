@@ -1,14 +1,8 @@
 #include "Tile.hpp"
 #include <res/Cfg.hpp>
 
-Tile::Tile()
-	: ASprite{}
-{
-
-}
-
-Tile::Tile(sf::Texture& l_tex)
-	: ASprite{ SpriteType::Tile, SpriteName::NormalTile, l_tex}
+Tile::Tile(sf::Texture& l_tex, sf::IntRect l_startFrame, sf::IntRect l_bbox)
+	: ASprite{ SpriteType::Tile, SpriteName::NormalTile, l_tex, l_startFrame, ((l_bbox.width == 0) ? sf::IntRect(0,0,l_startFrame.width,l_startFrame.height) : l_bbox )}
 {
 	facingRight_ = true;
 	animMgr.SetFacingRight(true);

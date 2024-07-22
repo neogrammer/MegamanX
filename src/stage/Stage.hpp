@@ -29,6 +29,13 @@ struct Stage
 	virtual void Render(sf::RenderWindow& l_wnd) = 0;
 	void CreateFriendlyBullet(ASprite& l_spr, SpriteName l_name);
 	StageType getType();
+	std::vector<ASprite*> GetFloorTiles();
+	void CollideFloor();
+	void CollideYAfter();
+	void CollideXBefore(float l_dt);
+	void FinishCollidePlayer(const sf::Time& l_dt);
+	void SetupPlayerMovement(const sf::Time& l_dt);
+	void HandlePlayerMovement(const sf::Time& l_dt);
 
 protected:
 

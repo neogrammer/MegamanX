@@ -14,14 +14,6 @@ namespace g
 	const sf::Time FPS60 = sf::seconds( 1.f / 60.f );
 }
 
-enum class CollisionStrategy
-{
-	Bounce,
-	Slide,
-	Push,
-	Count
-};
-
 enum class SpriteType : int
 {
 	Actor,
@@ -82,28 +74,6 @@ enum class StageType
 	Intro,
 	Sandbox,
 	Count
-};
-
-
-struct SpriteKey {
-	SpriteType type;
-	SpriteName name;
-	AnimType animType;
-
-	//bool operator==(const SpriteKey& rhs);
-
-	SpriteKey() = default;
-	SpriteKey(SpriteType l_spriteType, SpriteName l_spriteName, AnimType l_animType);
-	~SpriteKey() = default;
-
-	SpriteKey(const SpriteKey&) = default;
-	SpriteKey& operator=(const SpriteKey&) = default;
-
-	SpriteKey(SpriteKey&&) = default;
-	SpriteKey& operator=(SpriteKey&&) = default;
-
-	// Define the spaceship operator
-	auto operator<=>(const SpriteKey& other) const = default;
 };
 
 struct rect

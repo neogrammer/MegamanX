@@ -6,40 +6,39 @@
 float Player::JumpForce = -1600.f;
 float Player::MoveSpeed = 600.f;
 Player::Player(sf::View& l_worldSpace)
-	: ASprite{ SpriteType::Actor, SpriteName::Player, Cfg::textures.get((int)Cfg::Textures::PlayerIdle) }
+	: ASprite{ SpriteType::Actor, SpriteName::Player, Cfg::textures.get((int)Cfg::Textures::PlayerIdle), {{0,0},{136,184}}, {{0,0},{136,184}} }
 	, ActionTarget<int>{Cfg::playerInputs}
 	, worldView_{l_worldSpace}
 {
-	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerIdle), AnimLayoutType::Horizontal, AnimType::Idle, 3Ui64, { {0,0},{120,136} },
-		3Ui64, 1Ui64, 0.24f, 0.f, true, true, true, true, 5.f);
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerSheet), AnimLayoutType::Horizontal, AnimType::Idle, 3Ui64, { {0,4*184},{136, 184} },
+		3Ui64, 1Ui64, 0.24f, 4.f, true, true, true);
 
-	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerRun), AnimLayoutType::Horizontal, AnimType::Run, 10Ui64, { {0,0},{136,140} },
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerSheet), AnimLayoutType::Horizontal, AnimType::Run, 10Ui64, { {0,0},{136, 184} },
 		10Ui64, 1Ui64, 0.075f, 0.f, true, true, true);
 
-	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerTransRun), AnimLayoutType::Horizontal, AnimType::TransRun, 1Ui64, { {0,0},{135,136} },
-		1Ui64, 1Ui64, 0.14f, 0.f, true, false, false);
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerSheet), AnimLayoutType::Horizontal, AnimType::TransRun, 1Ui64, { {0,2*184},{136, 184} },
+		1Ui64, 1Ui64, 0.24f, 0.f, true, false, false);
 
-
-	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerShootStand), AnimLayoutType::Horizontal, AnimType::ShootStand, 2Ui64, { {0,0},{120,136} },
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerSheet), AnimLayoutType::Horizontal, AnimType::ShootStand, 2Ui64, { {0,14*184},{136, 184} },
 		2Ui64, 1Ui64, 0.14f, 0.04f, true, true, true, true, 0.04f);
 
-	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerTransJump), AnimLayoutType::Horizontal, AnimType::TransJump, 2Ui64, { {0,0},{120,184} },
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerSheet), AnimLayoutType::Horizontal, AnimType::TransJump, 2Ui64, { {0,8 * 184},{136, 184} },
 		2Ui64, 1Ui64, 0.14f, 0.f, true, false, false);
 
-	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerRise), AnimLayoutType::Horizontal, AnimType::Rise, 1Ui64, { {0,0},{120,184} },
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerSheet), AnimLayoutType::Horizontal, AnimType::Rise, 1Ui64, { {0,12*184},{136, 184} },
 		1Ui64, 1Ui64, 0.14f, 0.f, true, false, true);
 
-	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerTransFall), AnimLayoutType::Horizontal, AnimType::TransFall, 1Ui64, { {0,0},{120,184} },
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerSheet), AnimLayoutType::Horizontal, AnimType::TransFall, 1Ui64, { {0,16 * 184}, { 136, 184 } },
 		1Ui64, 1Ui64, 0.14f, 0.f, true, false, false);
 
-	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerFall), AnimLayoutType::Horizontal, AnimType::Fall, 1Ui64, { {0,0},{120,184} },
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerSheet), AnimLayoutType::Horizontal, AnimType::Fall, 1Ui64, { {0,6 * 184},{136, 184} },
 		1Ui64, 1Ui64, 0.14f, 0.f, true, false, true);
 
-	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerLand), AnimLayoutType::Horizontal, AnimType::Land, 2Ui64, { {0,0},{120,184} },
+	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::PlayerSheet), AnimLayoutType::Horizontal, AnimType::Land, 2Ui64, { {0,10 * 184},{136, 184} },
 		2Ui64, 1Ui64, 0.14f, 0.f, true, false, false);
 
 
-	spr_.setOrigin({ 60.f, 92.f });
+	spr_.setOrigin({ 68.f, 92.f });
 	spr_.setPosition({ 600.f, 496.f - 92.f - 64.f });
 
 	affectedByGravity_ = true;
@@ -48,26 +47,7 @@ Player::Player(sf::View& l_worldSpace)
 	
 
 	bindActions();
-
-	
-
 }
-
-//
-//Player::Player(const Player& other)
-//	: ASprite(other)
-//	, ActionTarget<int>{Cfg::playerInputs}
-//	
-//{
-//	bindActions();
-//}
-//
-//Player& Player::operator=(const Player& other)
-//{
-//	this->spr_ = other.spr_;
-//	this->spr_.setTexture(*const_cast<sf::Texture*>(other.spr_.getTexture()));
-//	return *this;
-//}
 
 void Player::processInput()
 {
@@ -171,110 +151,14 @@ void Player::update(const sf::Time& l_dt)
 {
 
 	gameTime_ = l_dt;
-	
-
-	// apply gravity
-	if (affectedByGravity_)
-	{
-		
-	
-
-		// update the player after handling the collision checking
-		if (!GetGrounded())
-			vel().y += Cfg::Gravity * gameTime_.asSeconds();
-
-	
-				
-				
-				
-
-				
-				
 
 
-			
-
-			
-		
-
-			
-
-			if (vel_.y > 0.f && fsm.getAnimType() != AnimType::TransFall && fsm.getAnimType() != AnimType::Fall)
-			{
-				dispatch(fsm, evt_ReachedJumpPeak{});
-			}
-
-		
-			
-			
-			
-
-	
-			if (fsm.getAnimType() == AnimType::Rise || fsm.getAnimType() == AnimType::Fall || fsm.getAnimType() == AnimType::TransJump || fsm.getAnimType() == AnimType::TransFall)
-			{
-				dispatch(fsm, evt_ReachedJumpPeak{}, evt_Landed{});
-			}
-		
-
-
-
-
-	}
-	// apply input force, if any
-	if (!movingLeft_ && !movingRight_)
-	{
-		vel_.x = 0.f;
-		// if (grounded_)
-		//animMgr.SwitchAnimation(AnimType::Idle);
-		dispatch(fsm, evt_StoppedMoving{});
-	}
-	else
-	{
-
-		if (IsMoving())
-		{
-			if (IsFacingRight())
-				vel().x = Player::MoveSpeed;
-			else
-				vel().x = -Player::MoveSpeed;
-
-
-
-
-			dispatch(fsm, evt_StartedMoving{});
-
-		}
-
-		
-		//if (movingLeft_)
-		//{
-		//	//vel_.x = -Player::MoveSpeed;
-		//
-		//	/*if (grounded_)
-		//		SetGrounded(false);*/
-
-		//	//animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
-		//	dispatch(fsm, evt_StartedMoving{});
-		//}
-		//if (movingRight_)
-		//{
-		//	//vel_.x = Player::MoveSpeed;
-		///*
-		//	if (grounded_)
-		//		SetGrounded(false);*/
-
-		//	//animMgr.SwitchAnimation(AnimType::TransRun, AnimType::Run);
-		//	dispatch(fsm, evt_StartedMoving{});
-		//}
-	}
-	animMgr.SetFacingRight(facingRight_);
+	tickPos(l_dt.asSeconds());
 
 
 
 	// must be in a valid animatable state, thus a always is not Count
 	AnimType a = SyncFSM();
-
-	
 
 	switch (a)
 	{
@@ -300,8 +184,6 @@ void Player::update(const sf::Time& l_dt)
 	default:
 		break;
 	}
-
-	
 
 	if (animMgr.currentIsOnLastFrame() && animMgr.currIsReadyToPop() && animMgr.currFallback() != nullptr)
 	{
@@ -336,6 +218,7 @@ void Player::update(const sf::Time& l_dt)
 		}
 	}
 
+	
 
 }
 
@@ -347,9 +230,6 @@ void Player::bindActions()
 		});
 
 	bind(Cfg::PlayerInputs::Right, [this](const sf::Event&) {
-			
-		SetGrounded(false);
-		dispatch(fsm, evt_Fell{});
 
 			if (wasFacingRight_)
 			{
@@ -377,15 +257,15 @@ void Player::bindActions()
 				facingRight_ = false;
 				movingLeft_ = false;
 				movingRight_ = true;
-				//wasFacingRight_ = true;
+			
 			}
-		
+			SetGrounded(false);
+			dispatch(fsm, evt_StartedMoving{});
 			pressingRight_ = true;
 		});
 
 	bind(Cfg::PlayerInputs::Left, [this](const sf::Event&) {
-		SetGrounded(false);
-		dispatch(fsm, evt_Fell{});
+	
 			if (!wasFacingRight_)
 			{
 				movingLeft_ = true;
@@ -419,6 +299,8 @@ void Player::bindActions()
 				facingRight_ = false;
 
 			pressingLeft_ = true;
+			dispatch(fsm, evt_StartedMoving{});
+			SetGrounded(false);
 		
 		});
 

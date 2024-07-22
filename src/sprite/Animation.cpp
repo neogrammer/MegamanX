@@ -30,24 +30,20 @@ Animation::Animation(sf::Sprite& l_spr, sf::Texture& l_tex, AnimLayoutType l_lay
 
 	if (m_layoutType == AnimLayoutType::Count && l_type == AnimType::Count && l_numFrames == 1)
 	{
-		m_framesRight.reserve(m_numFrames);
-		m_boxesRight.reserve(m_numFrames);
+		m_framesRight.reserve(1);
+		m_boxesRight.reserve(1);
 		for (uint32_t x = 0; x < m_cols; x++)
 		{
-			m_framesRight.emplace_back(sf::IntRect{l_firstFrame});
+			m_framesRight.emplace_back(sf::IntRect{ l_firstFrame });
 			m_boxesRight.push_back(m_framesRight.back());
 		}
-
-
-		if (m_hasLeftFrames)
+		
+		m_framesLeft.reserve(1);
+		m_boxesLeft.reserve(1);
+		for (uint32_t x = 0; x < m_cols; x++)
 		{
-			m_framesLeft.reserve(m_numFrames);
-			m_boxesLeft.reserve(m_numFrames);
-			for (uint32_t x = 0; x < m_cols; x++)
-			{
-				m_framesLeft.emplace_back(sf::IntRect{ l_firstFrame });
-				m_boxesLeft.push_back(m_framesLeft.back());
-			}
+			m_framesLeft.emplace_back(sf::IntRect{ l_firstFrame });
+			m_boxesLeft.push_back(m_framesLeft.back());
 		}
 	}
 	else
@@ -91,22 +87,30 @@ void Animation::loadVStrip()
 
 void Animation::loadHStrip()
 {
-	m_framesRight.reserve(m_numFrames +1);
-	m_boxesRight.reserve(m_numFrames + 1);
+	m_framesRight.reserve(m_numFrames);
+	m_boxesRight.reserve(m_numFrames);
 	for (uint32_t x = 0; x < m_cols; x++)
 	{
 		m_framesRight.emplace_back(sf::IntRect{ {(int)(m_startPos.x + (x * m_frameSize.x)),m_startPos.y},{m_frameSize.x,m_frameSize.y} });
 		m_boxesRight.push_back( m_framesRight.back() );
 	}
 
-
+	m_framesLeft.reserve(m_numFrames);
+	m_boxesLeft.reserve(m_numFrames);
 	if (m_hasLeftFrames)
 	{
-		m_framesLeft.reserve(m_numFrames+1);
-		m_boxesLeft.reserve(m_numFrames+1);
+		
 		for (uint32_t x = 0; x < m_cols; x++)
 		{
 			m_framesLeft.emplace_back(sf::IntRect{ {(int)(m_startPos.x + (x * m_frameSize.x)),m_startPos.y + m_frameSize.y},{m_frameSize.x,m_frameSize.y} });
+			m_boxesLeft.push_back(m_framesLeft.back());
+		}
+	}
+	else
+	{
+		for (uint32_t x = 0; x < m_cols; x++)
+		{
+			m_framesLeft.emplace_back(sf::IntRect{ {(int)(m_startPos.x + (x * m_frameSize.x)),m_startPos.y},{m_frameSize.x,m_frameSize.y} });
 			m_boxesLeft.push_back(m_framesLeft.back());
 		}
 	}
@@ -148,18 +152,31 @@ void Animation::update(const sf::Time& l_dt)
 			animate();
 		}
 
-
 		m_spr->setTexture(*m_texture);
 		
 		
 		if (m_facingRight)
 		{
-			m_spr->setTextureRect(m_framesRight[m_currFrame]);
+			if (m_framesRight.size() == 0)
+			{
+				m_spr->setScale({ 1.f, 1.f });
+			}
+			else
+			{
+				m_spr->setTextureRect(m_framesRight[m_currFrame]);
+			}
 		}
 		else
 		{
-			if (m_hasLeftFrames)
+			if (m_framesLeft.size() == 0)
+			{
+				m_spr->setScale({ -1.f, 1.f });
+			}
+			else
+			{
+				m_spr->setScale({ 1.f, 1.f });
 				m_spr->setTextureRect(m_framesLeft[m_currFrame]);
+			}
 		}
 	}
 }

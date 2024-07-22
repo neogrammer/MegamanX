@@ -5,7 +5,7 @@
 
 struct Enemy : ASprite
 {
-	Enemy(SpriteName l_name, sf::Texture& l_tex);
+	Enemy(SpriteName l_name, sf::Texture& l_tex, sf::IntRect l_rect = {{0,0},{0,0}}, sf::IntRect l_bbox = { {0,0},{0,0} });
 	virtual ~Enemy() override = default;
 
 	Enemy(const Enemy&);

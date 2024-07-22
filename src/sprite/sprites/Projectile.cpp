@@ -1,14 +1,16 @@
 #include "Projectile.hpp"
 #include <res/Cfg.hpp>
 
+int Projectile::BULLETSPEED = 0.f;
+
 Projectile::Projectile()
 	: ASprite{}
 {
 
 }
 
-Projectile::Projectile(sf::Texture& l_tex, SpriteName l_name, bool l_friendly)
-	: ASprite{ SpriteType::Projectile, SpriteName::Count, l_tex }
+Projectile::Projectile(sf::Texture& l_tex, SpriteName l_name, bool l_friendly, sf::IntRect l_rect, sf::IntRect l_bbox)
+	: ASprite{ SpriteType::Projectile, SpriteName::Count, l_tex, l_rect, l_bbox }
 	, m_friendly{ l_friendly }
 	, m_damage{ 1 }
 {

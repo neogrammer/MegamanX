@@ -4,7 +4,7 @@
 
 
 
-BuzzBird::BuzzBird() : Enemy{ SpriteName::BuzzBird, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw) }
+BuzzBird::BuzzBird() : Enemy{ SpriteName::BuzzBird, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw) , { {0,0},{220,296} } }
 {
 	animMgr.AddAnimation(spr_, Cfg::textures.get((int)Cfg::Textures::BirdSheetWSaw), AnimLayoutType::Horizontal, AnimType::Idle, 7Ui64, { {0,0},{220,296} },
 		7Ui64, 1Ui64, 0.16f, 0.f, false, true, true, true, 4.f);
@@ -17,16 +17,6 @@ BuzzBird::BuzzBird() : Enemy{ SpriteName::BuzzBird, Cfg::textures.get((int)Cfg::
 	affectedByGravity_ = false;
 
 	animMgr.SwitchAnimation(AnimType::Idle);
-
-	for (int i = 0; i < 7; i++)
-	{
-		Cfg::bboxDB.addToMap(*this, AnimType::Idle, i, { 112.f, 100.f }, { 24.f, 174.f });
-	}
-
-	for (int i = 0; i < 9; i++)
-	{
-		Cfg::bboxDB.addToMap(*this, AnimType::ShootStand, i, { 112.f, 100.f }, { 24.f, 174.f });
-	}
 
 }
 

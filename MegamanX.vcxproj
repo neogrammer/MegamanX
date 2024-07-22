@@ -84,8 +84,6 @@
     <ClCompile Include="src\mgmt\CollisionMgr.cpp" />
     <ClCompile Include="src\mgmt\GameStateMgr.cpp" />
     <ClCompile Include="src\mgmt\StageMgr.cpp" />
-    <ClCompile Include="src\misc\aabb.cpp" />
-    <ClCompile Include="src\misc\SpriteKey.cpp" />
     <ClCompile Include="src\res\Cfg.cpp" />
     <ClCompile Include="src\sprite\Animation.cpp" />
     <ClCompile Include="src\sprite\ASprite.cpp" />
@@ -119,11 +117,11 @@
     <ClInclude Include="src\mgmt\CollisionMgr.hpp" />
     <ClInclude Include="src\mgmt\GameStateMgr.hpp" />
     <ClInclude Include="src\mgmt\StageMgr.hpp" />
-    <ClInclude Include="src\misc\aabb.hpp" />
     <ClInclude Include="src\misc\globals.hpp" />
     <ClInclude Include="src\misc\Noncopyable.hpp" />
     <ClInclude Include="src\res\Cfg.hpp" />
     <ClInclude Include="src\res\ResourceManager.hpp" />
+    <ClInclude Include="src\sprite\AABB.hpp" />
     <ClInclude Include="src\sprite\Animation.hpp" />
     <ClInclude Include="src\sprite\ASprite.hpp" />
     <ClInclude Include="src\sprite\sprites\Bullet.hpp" />
@@ -141,6 +139,7 @@
     <None Include="src\action\tpl\ActionMap.tpl" />
     <None Include="src\action\tpl\ActionTarget.tpl" />
     <None Include="src\res\tpl\ResourceManager.tpl" />
+    <None Include="src\sprite\tpl\AABB.tpl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\tex\backgrounds\space\BG1_0_4800x2700.png" />
@@ -149,6 +148,12 @@
     <Image Include="assets\tex\megaman\fall120x184_1.png" />
     <Image Include="assets\tex\megaman\idle120x136_3.png" />
     <Image Include="assets\tex\megaman\land120x184_2.png" />
+    <Image Include="assets\tex\megaman\mmsheet.png" />
+    <Image Include="assets\tex\megaman\mm_atlast.png" />
+    <Image Include="assets\tex\megaman\mm_atlast_left.png" />
+    <Image Include="assets\tex\megaman\mm_best_65x80_3.png" />
+    <Image Include="assets\tex\megaman\mm_best_65x80_sheet_edit.png" />
+    <Image Include="assets\tex\megaman\mm_sheet_130x160.png" />
     <Image Include="assets\tex\megaman\rise120x184_1.png" />
     <Image Include="assets\tex\megaman\run136x140_10.png" />
     <Image Include="assets\tex\megaman\shoot_stand120x136_2.png" />

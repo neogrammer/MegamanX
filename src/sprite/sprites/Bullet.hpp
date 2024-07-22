@@ -7,7 +7,7 @@ struct Bullet : Projectile
 {
 
 	Bullet();
-	Bullet(sf::Texture& l_tex, bool l_friendly = true);
+	Bullet(sf::Texture& l_tex, bool l_friendly = true, bool l_facingRight = true);
 	virtual ~Bullet() override = default;
 
 	Bullet(const Bullet&);

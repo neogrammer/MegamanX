@@ -4,14 +4,23 @@
 Bullet::Bullet()
 	: Projectile{}
 {
-
+	
 }
 
-Bullet::Bullet(sf::Texture& l_tex, bool l_friendly)
-	: Projectile{ l_tex, SpriteName::BusterBullet, l_friendly }
+Bullet::Bullet(sf::Texture& l_tex, bool l_friendly, bool l_facingRight)
+	: Projectile{ l_tex, SpriteName::BusterBullet, l_friendly, { {0,0},{24,16} }, { {0,0},{24,16} } }
 {
-	animMgr.AddAnimation(spr_, l_tex, AnimLayoutType::Horizontal, AnimType::Idle, 5Ui64, { {0,0},{24,16} },
+	animMgr.AddAnimation(spr_, l_tex, AnimLayoutType::Horizontal, AnimType::Idle, 5Ui64, { {0,0},{24,16} }, 
 		5Ui64, 1Ui64, 0.003f, 0.f, false, true, true);
+
+	if (!l_facingRight)
+	{
+		BULLETSPEED = -500;
+	}
+	else
+	{
+		BULLETSPEED = 500;
+	}
 
 }
 
@@ -46,5 +55,6 @@ void Bullet::processInput()
 void Bullet::update(const sf::Time& l_dt)
 {
 	gameTime_ = l_dt;
+	spr_.move({ BULLETSPEED * l_dt.asSeconds(), 0.f });
 	animMgr.Update(l_dt);
 }

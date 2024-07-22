@@ -7,6 +7,9 @@
 
 struct Player : ASprite, ActionTarget<int>
 {
+	friend struct SandboxStage;
+	friend struct Stage;
+	
 	Player() = delete;
 	Player(sf::View& l_worldSpace);
 	~Player() override = default;
