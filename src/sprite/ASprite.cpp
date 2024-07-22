@@ -88,10 +88,22 @@ void ASprite::render(sf::RenderWindow& l_wnd)
 	//updatePosition();
 	l_wnd.draw(spr_);
 
-	if (movingRight_)
-		wasFacingRight_ = true;
-	if (movingLeft_)
-		wasFacingRight_ = false;
+	wasFacingRight_ = facingRight_;
+	if (vel_.x < 0.f)
+	{
+		movingLeft_ = true;
+		movingRight_ = false;
+	}
+	else if (vel_.x > 0.f)
+	{
+		movingLeft_ = false;
+		movingRight_ = true;
+	}
+	else
+	{
+		movingLeft_ = false;
+		movingRight_ = false;
+	}
 }
 
 sf::Vector2f& ASprite::vel()

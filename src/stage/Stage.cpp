@@ -104,6 +104,9 @@ void Stage::CollideXBefore(float l_dt)
 	// pushing back up when neccessary
 	player_->blockX_ = false;
 	player_->blockPosYBefore_ = player_->spr_.getPosition().y;
+
+	
+
 	if ((!player_->movingLeft_ && !player_->movingRight_) || player_->vel_.x == 0.f) return;
 
 	std::vector<ASprite*> sideTiles{};
@@ -145,7 +148,7 @@ void Stage::CollideXBefore(float l_dt)
 
 			}
 		}
-		else if (player_->movingLeft_ && player_->vel_.x < 0.f)
+		else if (player_->movingLeft_)
 		{
 			for (auto& tile : checkedTmp)
 			{
@@ -234,6 +237,7 @@ player_->vel_.x = 0.f;
 void Stage::FinishCollidePlayer(const sf::Time& l_dt)
 {
 	player_->vel_.x = player_->blockVelX_;
+	player_->collidingOnX_ = false;
 	if (player_->blockX_)
 	{
 		// dont move on x, sweep
@@ -246,22 +250,23 @@ void Stage::FinishCollidePlayer(const sf::Time& l_dt)
 			if (player_->movingRight_)
 				playerRect = { {player_->spr_.getPosition().x - player_->spr_.getOrigin().x,  player_->spr_.getPosition().y - player_->spr_.getOrigin().y },{(float)player_->spr_.getTextureRect().width + player_->vel_.x * l_dt.asSeconds(), (float)player_->spr_.getTextureRect().height} };
 			else
-				playerRect = { {player_->spr_.getPosition().x - player_->spr_.getOrigin().x + player_->vel_.x * l_dt.asSeconds() ,  player_->spr_.getPosition().y - player_->spr_.getOrigin().y},{(float)player_->spr_.getTextureRect().width + player_->vel_.x * l_dt.asSeconds(), (float)player_->spr_.getTextureRect().height} };
+				playerRect = { {player_->spr_.getPosition().x - player_->spr_.getOrigin().x + player_->vel_.x * l_dt.asSeconds() ,  player_->spr_.getPosition().y - player_->spr_.getOrigin().y},{(float)player_->spr_.getTextureRect().width - player_->vel_.x * l_dt.asSeconds(), (float)player_->spr_.getTextureRect().height} };
 
 			if (player_->closestTile_)
 			{
 				player_->vx = 0.f;
-				player_->vel().x = 0.f;
+				player_->vel_.x = 0.f;
 				if (player_->movingRight_)
 				{
 					player_->spr_.setPosition((float)player_->getSpr().getPosition().x + (player_->closestTile_->spr_.getPosition().x - player_->getSpr().getPosition().x) - player_->spr_.getOrigin().x - player_->closestTile_->spr_.getOrigin().x - 0.1f, player_->getSpr().getPosition().y);
 					player_->setRight(player_->closestTile_->spr_.getPosition().x - player_->closestTile_->spr_.getOrigin().x - 0.1f);
+					player_->collidingOnX_ = true;
 				}
 				else
 				{
 					player_->spr_.setPosition((float)player_->getSpr().getPosition().x - (player_->getSpr().getPosition().x - player_->closestTile_->spr_.getPosition().x) + player_->spr_.getOrigin().x + player_->closestTile_->spr_.getOrigin().x + 0.1f, player_->getSpr().getPosition().y);
 					player_->setLeft(player_->closestTile_->spr_.getPosition().x + player_->closestTile_->spr_.getOrigin().x + 0.1f);
-
+					player_->collidingOnX_ = true;
 				}
 			}
 		}
@@ -275,22 +280,23 @@ void Stage::FinishCollidePlayer(const sf::Time& l_dt)
 				if (player_->movingRight_)
 					playerRect = { {player_->spr_.getPosition().x - player_->spr_.getOrigin().x,  player_->spr_.getPosition().y - player_->spr_.getOrigin().y },{(float)player_->spr_.getTextureRect().width + player_->vel_.x * l_dt.asSeconds(), (float)player_->spr_.getTextureRect().height} };
 				else
-					playerRect = { {player_->spr_.getPosition().x - player_->spr_.getOrigin().x + player_->vel_.x * l_dt.asSeconds() ,  player_->spr_.getPosition().y - player_->spr_.getOrigin().y},{(float)player_->spr_.getTextureRect().width + player_->vel_.x * l_dt.asSeconds(), (float)player_->spr_.getTextureRect().height} };
+					playerRect = { {player_->spr_.getPosition().x - player_->spr_.getOrigin().x + player_->vel_.x * l_dt.asSeconds() ,  player_->spr_.getPosition().y - player_->spr_.getOrigin().y},{(float)player_->spr_.getTextureRect().width - player_->vel_.x * l_dt.asSeconds(), (float)player_->spr_.getTextureRect().height} };
 
 				if (player_->closestTile_)
 				{
 					player_->vx = 0.f;
-					player_->vel().x = 0.f;
+					player_->vel_.x = 0.f;
 					if (player_->movingRight_)
 					{
 						player_->spr_.setPosition((float)player_->getSpr().getPosition().x + (player_->closestTile_->spr_.getPosition().x - player_->getSpr().getPosition().x) - player_->spr_.getOrigin().x - player_->closestTile_->spr_.getOrigin().x - 0.1f, player_->getSpr().getPosition().y);
 						player_->setRight(player_->closestTile_->spr_.getPosition().x - player_->closestTile_->spr_.getOrigin().x - 0.1f);
+						player_->collidingOnX_ = true;
 					}
 					else
 					{
 						player_->spr_.setPosition((float)player_->getSpr().getPosition().x - (player_->getSpr().getPosition().x - player_->closestTile_->spr_.getPosition().x) + player_->spr_.getOrigin().x + player_->closestTile_->spr_.getOrigin().x + 0.1f, player_->getSpr().getPosition().y);
 						player_->setLeft(player_->closestTile_->spr_.getPosition().x + player_->closestTile_->spr_.getOrigin().x + 0.1f);
-
+						player_->collidingOnX_ = true;
 					}
 				}
 			}
@@ -304,22 +310,23 @@ void Stage::FinishCollidePlayer(const sf::Time& l_dt)
 					if (player_->movingRight_)
 						playerRect = { {player_->spr_.getPosition().x - player_->spr_.getOrigin().x,  player_->spr_.getPosition().y - player_->spr_.getOrigin().y },{(float)player_->spr_.getTextureRect().width + player_->vel_.x * l_dt.asSeconds(), (float)player_->spr_.getTextureRect().height} };
 					else
-						playerRect = { {player_->spr_.getPosition().x - player_->spr_.getOrigin().x + player_->vel_.x * l_dt.asSeconds() ,  player_->spr_.getPosition().y - player_->spr_.getOrigin().y},{(float)player_->spr_.getTextureRect().width + player_->vel_.x * l_dt.asSeconds(), (float)player_->spr_.getTextureRect().height} };
+						playerRect = { {player_->spr_.getPosition().x - player_->spr_.getOrigin().x + player_->vel_.x * l_dt.asSeconds() ,  player_->spr_.getPosition().y - player_->spr_.getOrigin().y},{(float)player_->spr_.getTextureRect().width - player_->vel_.x * l_dt.asSeconds(), (float)player_->spr_.getTextureRect().height} };
 
 					if (player_->closestTile_)
 					{
 						player_->vx = 0.f;
-						player_->vel().x = 0.f;
+						player_->vel_.x = 0.f;
 						if (player_->movingRight_)
 						{
 							player_->spr_.setPosition((float)player_->getSpr().getPosition().x + (player_->closestTile_->spr_.getPosition().x - player_->getSpr().getPosition().x) - player_->spr_.getOrigin().x - player_->closestTile_->spr_.getOrigin().x - 0.1f, player_->getSpr().getPosition().y);
 							player_->setRight(player_->closestTile_->spr_.getPosition().x - player_->closestTile_->spr_.getOrigin().x - 0.1f);
+							player_->collidingOnX_ = true;
 						}
 						else
 						{
 							player_->spr_.setPosition((float)player_->getSpr().getPosition().x - (player_->getSpr().getPosition().x - player_->closestTile_->spr_.getPosition().x) + player_->spr_.getOrigin().x + player_->closestTile_->spr_.getOrigin().x + 0.1f, player_->getSpr().getPosition().y);
 							player_->setLeft(player_->closestTile_->spr_.getPosition().x + player_->closestTile_->spr_.getOrigin().x + 0.1f);
-
+							player_->collidingOnX_ = true;
 						}
 					}
 				}
@@ -347,15 +354,36 @@ void Stage::FinishCollidePlayer(const sf::Time& l_dt)
 
 void Stage::SetupPlayerMovement(const sf::Time& l_dt)
 {
+	if (player_->falling_)
+	{
+		player_->affectedByGravity_ = true;
+	}
+	else
+	{
+		player_->affectedByGravity_ = false;
+	}
 	// apply gravity
 	if (player_->affectedByGravity_)
 	{
 		// update the player after handling the collision checking
-		if (!player_->GetGrounded())
+		if (!player_->GetGrounded() && !player_->inFreeFall_)
 		{
 			player_->vel().y += Cfg::Gravity * l_dt.asSeconds();
 			dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Fell {});
 
+		}
+		else
+		{
+			if (!player_->inFreeFall_)
+			{
+				if (player_->justJumped_)
+				{
+					player_->falling_ = false;
+					player_->justJumped_ = false;
+					player_->jumping_ = false;
+					player_->fallFastFlag_ = false;
+				}
+			}
 		}
 	}
 	// apply input force, if any
@@ -379,16 +407,8 @@ void Stage::SetupPlayerMovement(const sf::Time& l_dt)
 			dynamic_cast<Player*>(player_.get())->SetMoving(false, dynamic_cast<Player*>(player_.get())->facingRight_);
 			dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_StoppedMoving {});
 		}
-		if (player_->vel().x > 0.f)
-		{
-			// check tiles to the right and see if any are in the area from where the player is, to where it will be,
-			// those will be deep checked
-		}
-		else if (player_->vel().x < 0.f)
-		{
-			// check tiles to the right and see if any are in the area from where the player is, to where it will be,
-			// those will be deep checked
-		}
+
+		
 	}
 }
 
@@ -404,23 +424,26 @@ void Stage::HandlePlayerMovement(const sf::Time& l_dt)
 	player_->updateBase(l_dt);
 
 	// collide y only
-	CollideYAfter();
+	CollideYAfter(l_dt);
 
 	// restore movement on x, tick and collide to the right position
 	FinishCollidePlayer(l_dt);
 
 }
-void Stage::CollideYAfter()
+void Stage::CollideYAfter(const sf::Time& l_dt)
 {
 
 
 	std::vector<ASprite*> floorTiles{};
+	std::vector<ASprite*> roofTiles{};
+	roofTiles.clear();
 	floorTiles.clear();
 	std::vector<ASprite*> noTiles{};
 	noTiles.clear();
 	std::vector<ASprite*> checkedTmp{};
 	checkedTmp.clear();
 	checkedTmp.reserve(tilemapSolidTiles_.size());
+
 
 	for (auto& tile : tilemapSolidTiles_)
 	{
@@ -434,6 +457,8 @@ void Stage::CollideYAfter()
 	bool firstCheck{ true };
 	ASprite* closestToPlayer{ nullptr };
 	floorTiles.reserve(checkedTmp.size());
+	roofTiles.reserve(checkedTmp.size());
+
 	if (checkedTmp.empty())
 	{
 		goto NO_COLLIDE;
@@ -442,33 +467,88 @@ void Stage::CollideYAfter()
 	{
 		for (auto& tile : checkedTmp)
 		{
-			if (tile->getSpr().getPosition().y - tile->getSpr().getOrigin().y > player_->getSpr().getPosition().y + player_->getSpr().getOrigin().y - ((float)(*tile)().getTextureRect().height / 10.f))
+			if (player_->falling_)
 			{
-				floorTiles.push_back(tile);
+				if (tile->getSpr().getPosition().y - tile->getSpr().getOrigin().y > player_->getSpr().getPosition().y + player_->getSpr().getOrigin().y - ((float)(*tile)().getTextureRect().height / 10.f))
+				{
+					floorTiles.push_back(tile);
+				}
 			}
+			else if (player_->jumping_ || player_->inFreeFall_)
+			{
+				if (tile->getSpr().getPosition().y + tile->getSpr().getOrigin().y < player_->getSpr().getPosition().y - player_->getSpr().getOrigin().y + ((float)(*tile)().getTextureRect().height / 10.f))
+				{
+					roofTiles.push_back(tile);
+				}
+			}
+
 		}
+
 		floorTiles.shrink_to_fit();
-		if (floorTiles.empty())
+		roofTiles.shrink_to_fit();
+
+		if ((floorTiles.empty() && player_->falling_) || (roofTiles.empty() && (player_->jumping_ || player_->inFreeFall_)))
 		{
 			goto NO_COLLIDE;
 		}
 		else
 		{
-			sf::FloatRect playerRect{ {player_->spr_.getPosition().x - player_->spr_.getOrigin().x,  player_->spr_.getPosition().y - player_->spr_.getOrigin().y },{(float)player_->spr_.getTextureRect().width, (float)player_->spr_.getTextureRect().height} };
-
-			for (auto& tile : floorTiles)
+			if (player_->falling_ && !player_->inFreeFall_)
 			{
-				sf::FloatRect tileRect{ {tile->spr_.getPosition().x - tile->spr_.getOrigin().x,  tile->spr_.getPosition().y - tile->spr_.getOrigin().y },{(float)tile->spr_.getTextureRect().width, (float)tile->spr_.getTextureRect().height} };
+				sf::FloatRect playerRect{ {player_->spr_.getPosition().x - player_->spr_.getOrigin().x,  
+					player_->spr_.getPosition().y - player_->spr_.getOrigin().y },
+					{(float)player_->spr_.getTextureRect().width, 
+					(float)player_->spr_.getTextureRect().height + player_->vel_.y * l_dt.asSeconds() } };
 
-				//if (playerRect.intersects(tileRect))
-				if (player_->spr_.getPosition().y + player_->spr_.getOrigin().y >= tile->spr_.getPosition().y - tile->spr_.getOrigin().y)
+				for (auto& tile : floorTiles)
 				{
-					player_->vy = 0.f;
-					player_->SetGrounded(true);
-					dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Landed {});
-					player_->vel().y = 0.f;
-					player_->spr_.setPosition((float)player_->getSpr().getPosition().x, (float)(player_->getSpr().getPosition().y - ((player_->spr_.getPosition().y + player_->spr_.getOrigin().y) - (tile->spr_.getPosition().y - tile->spr_.getOrigin().y)) - 0.1f));
-					player_->setBottom(tile->tp - 0.1f);
+					sf::FloatRect tileRect{ {tile->spr_.getPosition().x - tile->spr_.getOrigin().x, 
+						tile->spr_.getPosition().y - tile->spr_.getOrigin().y },
+						{(float)tile->spr_.getTextureRect().width, 
+						(float)tile->spr_.getTextureRect().height} };
+
+					//if (playerRect.intersects(tileRect))
+					if (player_->spr_.getPosition().y + player_->spr_.getOrigin().y >= tile->spr_.getPosition().y - tile->spr_.getOrigin().y)
+					{
+						player_->vy = 0.f;
+						player_->SetGrounded(true);
+						dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Landed {});
+						player_->vel().y = 0.f;
+						player_->spr_.setPosition((float)player_->getSpr().getPosition().x, (float)(player_->getSpr().getPosition().y - ((player_->spr_.getPosition().y + player_->spr_.getOrigin().y) - (tile->spr_.getPosition().y - tile->spr_.getOrigin().y)) - 0.1f));
+						player_->setBottom(tile->tp - 0.1f);
+					}
+				}
+			}
+			else
+			{
+				if (player_->jumping_ || player_->inFreeFall_)
+				{
+					sf::FloatRect playerRect{ {player_->spr_.getPosition().x - player_->spr_.getOrigin().x,
+						player_->spr_.getPosition().y - player_->spr_.getOrigin().y - player_->vel().y * l_dt.asSeconds() },
+						{(float)player_->spr_.getTextureRect().width,
+						(float)player_->spr_.getTextureRect().height + (player_->vel_.y * l_dt.asSeconds())} };
+
+					for (auto& tile : floorTiles)
+					{
+						sf::FloatRect tileRect{ {tile->spr_.getPosition().x - tile->spr_.getOrigin().x,
+							tile->spr_.getPosition().y - tile->spr_.getOrigin().y },
+							{(float)tile->spr_.getTextureRect().width,
+							(float)tile->spr_.getTextureRect().height} };
+
+						//if (playerRect.intersects(tileRect))
+						if ((player_->spr_.getPosition().y - player_->spr_.getOrigin().y - (player_->vel().y * l_dt.asSeconds())) <= (tile->spr_.getPosition().y + tile->spr_.getOrigin().y))
+						{
+							player_->vy = 0.f;
+							player_->jumping_ = false;
+							player_->inFreeFall_ = false;
+							player_->falling_ = true;
+							player_->SetGrounded(false);
+							dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_ReachedJumpPeak{});
+							player_->vel().y = 0.f;
+							player_->spr_.setPosition((float)player_->getSpr().getPosition().x, (float)(player_->getSpr().getPosition().y + (player_->spr_.getPosition().y + player_->spr_.getOrigin().y) + (tile->spr_.getPosition().y + tile->spr_.getOrigin().y) + 0.1f));
+							player_->setTop(tile->bttm + 0.1f);
+						}
+					}
 				}
 			}
 
@@ -476,7 +556,7 @@ void Stage::CollideYAfter()
 	}
 NO_COLLIDE:
 
-	if (!player_->GetGrounded())
+	if (!player_->GetGrounded() && !player_->jumping_ && !player_->inFreeFall_)
 	{
 		dispatch(dynamic_cast<Player*>(player_.get())->fsm, evt_Fell {});
 	}

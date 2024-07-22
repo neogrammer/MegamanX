@@ -43,7 +43,8 @@ Player::Player(sf::View& l_worldSpace)
 
 	affectedByGravity_ = true;
 	grounded_ = false;
-
+	inFreeFall_ = false;
+	falling_ = true;
 	
 
 	bindActions();
@@ -64,6 +65,7 @@ void Player::processInput()
 		dispatch(fsm, evt_StoppedShooting{});
 	}
 
+
 	if (pressingRight_ == true && pressingLeft_ == true)
 	{
 		movingRight_ = false;
@@ -79,6 +81,62 @@ void Player::processInput()
 		}
 	}
 
+	if (jumpHeld_)
+	{
+		if (GetGrounded())
+		{
+			justJumped_ = true;
+			jumping_ = true;
+			SetGrounded(false);
+			fallFastFlag_ = false;
+			dispatch(fsm, evt_Jumped{});
+			vel_.y = -600.f;
+		}
+
+		if (jumping_ || inFreeFall_)
+		{
+			if (fallFastFlag_ == false)
+			{
+				vel_.y += 1.f;
+			}
+			else
+			{
+				vel_.y += 5.f;
+			}
+		}
+	}
+	else
+	{
+		if (jumping_ || inFreeFall_)
+		{
+			if (fallFastFlag_ == false)
+			{
+				fallFastFlag_ = true;
+			}
+			vel_.y += 5.f;
+		}
+	}
+
+
+	if (jumping_)
+	{
+		if (vel_.y >= -40.f)
+		{
+			jumping_ = false;
+			inFreeFall_ = true;
+			dispatch(fsm, evt_ReachedJumpPeak{});
+		}
+	}
+	else if (inFreeFall_)
+	{
+		if (vel_.y >= 0.f)
+		{
+			inFreeFall_ = false;
+			falling_ = true;
+			dispatch(fsm, evt_Fell{});
+			// gravity will take over from here
+		}
+	}
 }
 
 bool Player::IsMoving()
@@ -152,6 +210,8 @@ void Player::update(const sf::Time& l_dt)
 
 	gameTime_ = l_dt;
 
+
+	std::cout << collidingOnX_ << std::endl;
 
 	tickPos(l_dt.asSeconds());
 
@@ -236,7 +296,7 @@ void Player::bindActions()
 				movingRight_ = true;
 				movingLeft_ = false;
 				facingRight_ = true;
-			}
+			}		
 			else if (movingLeft_ && !wasFacingRight_)
 			{
 				if (!pressingLeft_)
@@ -254,23 +314,39 @@ void Player::bindActions()
 			}
 			else
 			{
-				facingRight_ = false;
-				movingLeft_ = false;
-				movingRight_ = true;
+				if (!pressingLeft_)
+				{
+					movingRight_ = true;
+					facingRight_ = true;
+					movingLeft_ = false;
+				}
+				else
+				{
+					facingRight_ = false;
+					movingLeft_ = false;
+					movingRight_ = false;
+				}
+			
 			
 			}
 			SetGrounded(false);
 			dispatch(fsm, evt_StartedMoving{});
 			pressingRight_ = true;
+			if (!jumping_)
+			{
+				inFreeFall_ = false;
+				falling_ = true;
+			}
 		});
 
 	bind(Cfg::PlayerInputs::Left, [this](const sf::Event&) {
 	
-			if (!wasFacingRight_)
+			if (wasFacingRight_)
 			{
 				movingLeft_ = true;
 				movingRight_ = false;
 				facingRight_ = false;
+				wasFacingRight_ = false;
 			}
 			else if (movingRight_ && wasFacingRight_)
 			{
@@ -295,16 +371,25 @@ void Player::bindActions()
 				wasFacingRight_ = false;
 			}
 
-			if (!pressingRight_)
-				facingRight_ = false;
-
+		
+			facingRight_ = false;
+			movingLeft_ = true;
+			movingRight_ = false;
+		
 			pressingLeft_ = true;
 			dispatch(fsm, evt_StartedMoving{});
 			SetGrounded(false);
+			if (!jumping_)
+			{
+				inFreeFall_ = false;
+				falling_ = true;
+			}
 		
 		});
 
 	bind(Cfg::PlayerInputs::B, [this](const sf::Event&) {
+		// Jump Button
+		jumpHeld_ = true;
 		
 			
 		});

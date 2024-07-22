@@ -31,7 +31,7 @@ struct Stage
 	StageType getType();
 	std::vector<ASprite*> GetFloorTiles();
 	void CollideFloor();
-	void CollideYAfter();
+	void CollideYAfter(const sf::Time& l_dt);
 	void CollideXBefore(float l_dt);
 	void FinishCollidePlayer(const sf::Time& l_dt);
 	void SetupPlayerMovement(const sf::Time& l_dt);

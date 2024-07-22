@@ -79,11 +79,14 @@ struct ASprite : AABB
 	float blockPosYBefore_{};
 	float blockPosYAfter_{};
 	ASprite* closestTile_{ nullptr };
-
+	bool falling_{ false };
+	bool inFreeFall_{ false };
+	bool fallFastFlag_{ false };
 	bool blockX_{ false };
 	sf::Sprite spr_;
-	bool jumping_{ true };
-	bool justJumped_{ false };
+	bool jumping_{ false };
+	bool justJumped_{ true };
+	bool collidingOnX_{ false };
 	bool alive_{ true };
 	SpriteType type_{ SpriteType::Count };
 	SpriteName name_{ SpriteName::Count };

@@ -1,7 +1,7 @@
 #include "Projectile.hpp"
 #include <res/Cfg.hpp>
 
-int Projectile::BULLETSPEED = 0.f;
+int Projectile::BULLETSPEED = 0;
 
 Projectile::Projectile()
 	: ASprite{}

@@ -190,16 +190,16 @@ void SandboxStage::Render(sf::RenderWindow& l_wnd)
 	// draw bullets
 	for (auto& b : projectiles_) { b->render(l_wnd); }
 
-	//l_wnd.draw(castline);
+	l_wnd.draw(castline);
 
 	// For debugging purposes
-	//l_wnd.draw(boundingBox_);
-	//l_wnd.draw(castline);
-	//if (playerColliding)
-	//{
-		//l_wnd.draw(pointOfContact_);
-		//l_wnd.draw(normLine);
-	//}
+	l_wnd.draw(boundingBox_);
+	l_wnd.draw(castline);
+	if (playerColliding)
+	{
+		l_wnd.draw(pointOfContact_);
+		l_wnd.draw(normLine);
+	}
 
 	
 
